@@ -1,7 +1,10 @@
 { config, lib, pkgs, ... }: {
   isoImage.isoName = lib.mkForce "nixos-bootstrap.iso";
 
-  networking.hostName = "nixos-bootstrap";
+  networking.hostName = "bootstrap";
+
+  # Enable flakes.
+  nix.package = pkgs.nixFlakes;
 
   # Enable mDNS discovery.
   services.avahi.enable = true;
