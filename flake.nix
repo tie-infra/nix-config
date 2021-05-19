@@ -2,8 +2,8 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs = { url = "nixpkgs/nixos-unstable-small"; };
-    deploy-rs = { url = "github:serokell/deploy-rs"; };
+    nixpkgs.url = "nixpkgs/nixos-20.09";
+    deploy-rs.url = "github:serokell/deploy-rs";
   };
 
   outputs = { self, nixpkgs, deploy-rs }: {
