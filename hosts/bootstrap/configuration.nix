@@ -14,12 +14,10 @@
   # Enable SSH access.
   services.openssh.enable = true;
   services.openssh.startWhenNeeded = true;
-  services.openssh.hostKeys = [
-    {
-      path = "/etc/ssh/ssh_host_ed25519_key";
-      type = "ed25519";
-    }
-  ];
+  services.openssh.hostKeys = [{
+    path = "/etc/ssh/ssh_host_ed25519_key";
+    type = "ed25519";
+  }];
   services.openssh.passwordAuthentication = false;
   services.openssh.challengeResponseAuthentication = false;
   services.openssh.extraConfig = ''
