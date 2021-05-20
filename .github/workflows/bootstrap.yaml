@@ -15,6 +15,7 @@ jobs:
           install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
           extra_nix_config: |
             experimental-features = nix-command flakes
+            github-access-token = ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
         run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"
