@@ -9,23 +9,19 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2.3.4
-
       - name: Install nix
         uses: cachix/install-nix-action@v13
         with:
-          install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
-          nix_path: nixpkgs=nixos-unstable-small
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+          nix_path: nixpkgs=nixos-20.09
+
+      - name: Install nixFlakes
+        run: nix-env -iA nixpkgs.nixFlakes
 
       - name: Build image
-        run: nix build
+        run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"
 
       - name: Release image
-        run: gh release upload -R="${repo}" "${tag_name}" result/iso/nixos-bootstrap.iso
+        run: gh release upload -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/nixos-bootstrap.iso
         env:
-          repo: ${{ github.repository }}
           tag_name: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
