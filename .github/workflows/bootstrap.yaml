@@ -23,7 +23,7 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
       - name: Release image
-        run: gh release upload -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/nixos-bootstrap.iso
+        run: gh release upload -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/*.iso
         env:
           tag_name: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,4 @@
 { config, lib, pkgs, ... }: {
-  isoImage.isoName = lib.mkForce "nixos-bootstrap.iso";
-
   networking.hostName = "bootstrap";
 
   # Enable flakes.
