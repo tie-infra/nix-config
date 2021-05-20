@@ -9,7 +9,6 @@
     experimental-features = nix-command flakes
   '';
 
-
   # Enable mDNS discovery.
   services.avahi.enable = true;
   services.avahi.publish.enable = true;
