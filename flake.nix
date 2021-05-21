@@ -38,11 +38,13 @@
     deploy.nodes.nia = {
       hostname = "nia.b1nary.tk";
       profiles.system = {
-        sshUser = "nixos";
         user = "root";
         path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nia;
       };
     };
+
+    deploy.sshUser = "nixos";
+    deploy.sshOpts = [ "-o" "CheckHostIP=no" ];
 
     devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
       buildInputs = [

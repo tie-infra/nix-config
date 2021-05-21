@@ -21,9 +21,9 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Write known_hosts file
+        working-directory: ${{ env.home }}/.ssh
         run: |
-          mkdir -p "$HOME"/.ssh
-          cat >>"$HOME"/.ssh/known_hosts <<EOF
+          cat >>known_hosts <<EOF
           nia.b1nary.tk ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTj3dTGAmFEWd9WLLSax3UChDIao5fkkjt30iSuKwCW
           EOF
 
