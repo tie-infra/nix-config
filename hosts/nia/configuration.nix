@@ -1,9 +1,7 @@
 { config, pkgs, ... }: {
   system.stateVersion = "20.09";
 
-  imports = [
-    ./hardware.nix
-  ];
+  imports = [ ./hardware.nix ];
 
   networking.hostName = "nia";
   networking.hostId = "c2e4086f";

@@ -39,7 +39,8 @@
       hostname = "nia.b1nary.tk";
       profiles.system = {
         user = "root";
-        path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nia;
+        path = deploy-rs.lib.x86_64-linux.activate.nixos
+          self.nixosConfigurations.nia;
       };
     };
 
@@ -47,11 +48,11 @@
     deploy.sshOpts = [ "-o" "CheckHostIP=no" ];
 
     devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
-      buildInputs = [
-        deploy-rs.defaultPackage.x86_64-linux
-      ];
+      buildInputs = [ deploy-rs.defaultPackage.x86_64-linux ];
     };
 
-    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+    checks =
+      builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy)
+      deploy-rs.lib;
   };
 }
