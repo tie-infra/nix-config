@@ -24,5 +24,32 @@
         ./hosts/bootstrap/configuration.nix
       ];
     };
+
+    nixosConfigurations.nia = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./modules/profiles/nix-flakes.nix
+        ./modules/profiles/avahi-mdns.nix
+        ./modules/profiles/openssh.nix
+        ./hosts/nia/configuration.nix
+      ];
+    };
+
+    deploy.nodes.nia = {
+      hostname = "188.32.42.222";
+      profiles.system = {
+        sshUser = "nixos";
+        user = "root";
+        path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nia;
+      };
+    };
+
+    devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+      buildInputs = [
+        deploy-rs.defaultPackage.x86_64-linux
+      ];
+    };
+
+    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
   };
 }

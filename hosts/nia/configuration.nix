@@ -26,6 +26,7 @@
   };
 
   security.sudo.wheelNeedsPassword = false;
+  nix.trustedUsers = [ "@wheel" ];
 
   services.openssh.hostKeys = [{
     path = "/persist/ssh/ssh_host_ed25519_key";
