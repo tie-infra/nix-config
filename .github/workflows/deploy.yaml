@@ -21,8 +21,8 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Set up SSH
-        working-directory: ${{ env.home }}
         run: |
+          cd "$HOME"
           mkdir -p .ssh && cd .ssh
           cat >>known_hosts <<EOF
           nia.b1nary.tk ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTj3dTGAmFEWd9WLLSax3UChDIao5fkkjt30iSuKwCW
