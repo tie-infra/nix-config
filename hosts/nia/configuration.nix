@@ -6,13 +6,45 @@
   networking.hostName = "nia";
   networking.hostId = "c2e4086f";
 
-  networking.enableIPv6 = true;
-
   time.timeZone = "Europe/Moscow";
 
+  networking.enableIPv6 = true;
   networking.useDHCP = false;
-  networking.interfaces.enp2s0.useDHCP = true;
   networking.interfaces.enp3s0.useDHCP = true;
+  networking.dhcpcd.extraConfig = "ipv4only";
+  # Both default dhcpcd and systemd-networkd don’t work on this network for some reason.
+  # What’s even more weird is that dhcpcd (though an older version) on Alpine host is working.
+  # To be fair, that was after some non-trivial efforts and at least Nix configuration is
+  # reproducible.
+  systemd.services.dibbler-client = {
+    description = "Portable DHCPv6 client";
+    wantedBy = [ "multi-user.target" "network-online.target" ];
+    wants = [ "network.target" ];
+    before = [ "network-online.target" ];
+    unitConfig = {
+      ConditionCapability = "CAP_NET_ADMIN";
+    };
+    serviceConfig = {
+      Type = "exec";
+      ExecStart = "${pkgs.dibbler}/bin/dibbler-client run";
+      Restart = "always";
+      PrivateTmp = true;
+    };
+  };
+  # See http://klub.com.pl/dhcpv6/doc/dibbler-user.pdf
+  environment.etc."dibbler/client.conf".text = ''
+    inactive-mode
+    iface enp3s0 {
+       rapid-commit yes
+       ia
+       option dns-server
+    }
+  '';
+
+  systemd.tmpfiles.rules = [
+    "L /var/db/dhcpcd - - - - /persist/dhcpcd"
+    "L /var/lib/dibbler - - - - /persist/dibbler"
+  ];
 
   users.mutableUsers = false;
   users.users.nixos = {
