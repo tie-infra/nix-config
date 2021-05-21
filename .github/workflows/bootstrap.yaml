@@ -16,6 +16,12 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
+      - name: Set up cachix
+        uses: cachix/cachix-action@v10
+        with:
+          name: yamporg
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
       - name: Build image
         run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"#"${deriv}"
         env:
