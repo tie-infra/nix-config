@@ -18,6 +18,7 @@ jobs:
 
       - name: Write known_hosts file
         run: |
+          mkdir -p "$HOME"/.ssh
           cat >>"$HOME"/.ssh/known_hosts <<EOF
           nia.b1nary.tk ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTj3dTGAmFEWd9WLLSax3UChDIao5fkkjt30iSuKwCW
           EOF
