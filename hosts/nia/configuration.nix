@@ -6,6 +6,8 @@
   networking.hostName = "nia";
   networking.hostId = "c2e4086f";
 
+  networking.enableIPv6 = true;
+
   time.timeZone = "Europe/Moscow";
 
   networking.useDHCP = false;
