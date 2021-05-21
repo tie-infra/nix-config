@@ -17,8 +17,9 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Build image
-        run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"
+        run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"#"${deriv}"
         env:
+          deriv: nixosConfigurations.bootstrap.config.system.build.isoImage
           NIX_CONFIG: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 

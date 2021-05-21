@@ -7,9 +7,9 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
 
+    # See also https://github.com/yaxitech/ragenix
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
-    # See also https://github.com/yaxitech/ragenix
   };
 
   outputs = { self, nixpkgs, deploy-rs, agenix }: {
@@ -24,8 +24,5 @@
         ./hosts/bootstrap/configuration.nix
       ];
     };
-
-    defaultPackage.x86_64-linux =
-      self.nixosConfigurations.bootstrap.config.system.build.isoImage;
   };
 }
