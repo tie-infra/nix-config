@@ -23,8 +23,9 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build image
-        run: nix build github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"#"${deriv}"
+        run: nix build "${installable}#${deriv}"
         env:
+          installable: github:${{ github.repository }}/${{ github.sha }}
           deriv: nixosConfigurations.bootstrap.config.system.build.isoImage
           NIX_CONFIG: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
