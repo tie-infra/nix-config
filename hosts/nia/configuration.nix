@@ -8,8 +8,6 @@
 
   time.timeZone = "Europe/Moscow";
 
-  services.netdata.enable = true;
-
   networking.enableIPv6 = true;
   networking.useDHCP = false;
   networking.interfaces.enp3s0.useDHCP = true;
