@@ -1,0 +1,33 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install nix
+        uses: cachix/install-nix-action@v13
+        with:
+          install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Write known_hosts file
+        run: |
+          cat >>"$HOME"/.ssh/known_hosts <<EOF
+          nia.b1nary.tk ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTj3dTGAmFEWd9WLLSax3UChDIao5fkkjt30iSuKwCW
+          EOF
+
+      - uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Run deploy-rs
+        run: nix develop -c deploy github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"
+        env:
+          NIX_CONFIG: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
