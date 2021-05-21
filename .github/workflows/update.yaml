@@ -1,0 +1,36 @@
+name: Flake Update
+on:
+  workflow_dispatch:
+  schedule:
+    # At 10:00 UTC on Friday.
+    - cron: '0 10 * * 5'
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install nix
+        uses: cachix/install-nix-action@v13
+        with:
+          install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Checkout code
+        uses: actions/checkout@v2.3.4
+
+      - name: Update dependencies
+        run: nix flake update --recreate-lock-file
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v3.9.2
+        with:
+          author: GitHub <actions@github.com>
+          committer: GitHub <actions@github.com>
+          commit-message: 'feat: run flake update'
+          branch: feat/run-flake-update
+          delete-branch: true
+          title: Run flake update
+          body: |
+            This PR updates flake dependencies in lockfile.
