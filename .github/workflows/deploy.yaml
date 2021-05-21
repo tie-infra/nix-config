@@ -27,8 +27,8 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Checkout code
+        uses: actions/checkout@2.3.4
+
       - name: Run deploy-rs
-        run: nix develop -c deploy github:"${GITHUB_REPOSITORY}"/"${GITHUB_SHA}"
-        env:
-          NIX_CONFIG: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        run: nix develop -c deploy
