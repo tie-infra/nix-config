@@ -46,6 +46,12 @@
     "L /var/lib/dibbler - - - - /persist/dibbler"
   ];
 
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  }
+
   users.mutableUsers = false;
   users.users.nixos = {
     uid = 1000;
