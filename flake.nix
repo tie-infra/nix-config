@@ -36,7 +36,7 @@
     };
 
     deploy.nodes.nia = {
-      hostname = "188.32.42.222";
+      hostname = "nia.b1nary.tk";
       profiles.system = {
         sshUser = "nixos";
         user = "root";
