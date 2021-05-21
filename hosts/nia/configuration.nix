@@ -8,6 +8,9 @@
 
   time.timeZone = "Europe/Moscow";
 
+  services.zfs.autoSnapshot.enable = true;
+  services.zfs.autoScrub.enable = true;
+
   networking.enableIPv6 = true;
   networking.useDHCP = false;
   networking.interfaces.enp3s0.useDHCP = true;
@@ -40,7 +43,6 @@
        option dns-server
     }
   '';
-
   systemd.tmpfiles.rules = [
     "L /var/db/dhcpcd - - - - /persist/dhcpcd"
     "L /var/lib/dibbler - - - - /persist/dibbler"
