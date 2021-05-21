@@ -24,9 +24,7 @@
     wantedBy = [ "multi-user.target" "network-online.target" ];
     wants = [ "network.target" ];
     before = [ "network-online.target" ];
-    unitConfig = {
-      ConditionCapability = "CAP_NET_ADMIN";
-    };
+    unitConfig.ConditionCapability = "CAP_NET_ADMIN";
     serviceConfig = {
       Type = "exec";
       ExecStart = "${pkgs.dibbler}/bin/dibbler-client run";
