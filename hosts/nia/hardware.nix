@@ -11,6 +11,11 @@
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/disk/by-id/wwn-0x50014ee056712ea6";
 
+  # See https://grahamc.com/blog/erase-your-darlings
+  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zfs rollback -r rpool/local/root@blank
+  '';
+
   fileSystems."/" =
     { device = "rpool/local/root";
       fsType = "zfs";
