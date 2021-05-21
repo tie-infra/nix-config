@@ -45,7 +45,10 @@
     };
 
     deploy.sshUser = "nixos";
-    deploy.sshOpts = [ "-o" "CheckHostIP=no" ];
+    deploy.sshOpts = let f = ./known_hosts; in [
+      "-o" "CheckHostIP=no"
+      "-o" "UserKnownHostsFile=${f}"
+    ];
 
     devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
       buildInputs = [ deploy-rs.defaultPackage.x86_64-linux ];

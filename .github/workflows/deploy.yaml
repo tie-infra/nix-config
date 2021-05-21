@@ -27,15 +27,8 @@ jobs:
           name: yamporg
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Set up SSH
-        run: |
-          cd "$HOME"
-          mkdir -p .ssh && cd .ssh
-          cat >>known_hosts <<EOF
-          nia.b1nary.tk ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTj3dTGAmFEWd9WLLSax3UChDIao5fkkjt30iSuKwCW
-          EOF
-
-      - uses: webfactory/ssh-agent@v0.5.2
+      - name: Set up ssh-agent
+        uses: webfactory/ssh-agent@v0.5.2
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
