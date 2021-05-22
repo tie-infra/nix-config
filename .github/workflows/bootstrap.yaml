@@ -23,15 +23,14 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build image
-        run: nix build "${installable}#${deriv}"
+        run: nix build "${installable}"
         env:
           installable: github:${{ github.repository }}/${{ github.sha }}
-          deriv: nixosConfigurations.bootstrap.config.system.build.isoImage
           NIX_CONFIG: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
       - name: Release image
-        run: gh release upload --clobber -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/*.iso
+        run: gh release upload --clobber -R="${GITHUB_REPOSITORY}" "${tag_name}" result/bootstrap/iso/*.iso
         env:
           tag_name: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

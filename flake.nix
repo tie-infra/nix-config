@@ -13,7 +13,7 @@
   };
 
   outputs = { self, nixpkgs, deploy-rs, agenix }: {
-    nixosConfigurations.bootstrap = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
@@ -47,6 +47,19 @@
     deploy.sshUser = "nixos";
     deploy.sshOpts = let f = ./known_hosts;
     in [ "-o" "CheckHostIP=no" "-o" "UserKnownHostsFile=${f}" ];
+
+    defaultPackage.x86_64-linux =
+      let pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      in pkgs.linkFarm "infra" [{
+        name = "bootstrap";
+        path = pkgs.symlinkJoin {
+          name = "bootstrap";
+          paths = [
+            # TODO(tie): add arm64 bootstrap image
+            self.nixosConfigurations.bootstrap-amd64.config.system.build.isoImage
+          ];
+        };
+      }];
 
     devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
       buildInputs = [ deploy-rs.defaultPackage.x86_64-linux ];
