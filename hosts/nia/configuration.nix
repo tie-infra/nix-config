@@ -11,6 +11,8 @@
   services.zfs.autoSnapshot.enable = true;
   services.zfs.autoScrub.enable = true;
 
+  networking.firewall.logRefusedConnections = false;
+
   networking.enableIPv6 = true;
   networking.useDHCP = false;
   networking.interfaces.enp3s0.useDHCP = true;
