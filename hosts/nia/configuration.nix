@@ -34,7 +34,7 @@
       PrivateTmp = true;
     };
   };
-  # See http://klub.com.pl/dhcpv6/doc/dibbler-user.pdf
+  # See https://klub.com.pl/dhcpv6/doc/dibbler-user.pdf
   environment.etc."dibbler/client.conf".text = ''
     inactive-mode
     iface enp3s0 {
@@ -68,6 +68,8 @@
 
   security.sudo.wheelNeedsPassword = false;
   nix.trustedUsers = [ "@wheel" ];
+
+  programs.mosh.enable = true;
 
   services.openssh.hostKeys = [{
     path = "/persist/ssh/ssh_host_ed25519_key";
