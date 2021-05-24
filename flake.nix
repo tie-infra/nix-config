@@ -25,22 +25,22 @@
       ];
     };
 
-    nixosConfigurations.nia = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./modules/profiles/nix-flakes.nix
         ./modules/profiles/avahi-mdns.nix
         ./modules/profiles/openssh.nix
-        ./hosts/nia/configuration.nix
+        ./hosts/saitama/configuration.nix
       ];
     };
 
-    deploy.nodes.nia = {
-      hostname = "nia.b1nary.tk";
+    deploy.nodes.saitama = {
+      hostname = "saitama.b1nary.tk";
       profiles.system = {
         user = "root";
         path = deploy-rs.lib.x86_64-linux.activate.nixos
-          self.nixosConfigurations.nia;
+          self.nixosConfigurations.saitama;
       };
     };
 
