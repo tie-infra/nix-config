@@ -48,77 +48,74 @@
     neededForBoot = true;
   };
 
-  networking.hostName = "saitama";
-  networking.hostId = "c2e4086f";
-
   time.timeZone = "Europe/Moscow";
 
-  services.zfs.autoSnapshot.enable = true;
-  services.zfs.autoScrub.enable = true;
+  networking = {
+    hostName = "saitama";
+    hostId = "c2e4086f";
 
-  networking.firewall.logRefusedConnections = false;
+    # Suppress dmesg log spam.
+    firewall.logRefusedConnections = false;
 
-  # We are in native IPv6 dual-stack network!
-  networking.enableIPv6 = true;
+    # We are in native IPv6 dual-stack network!
+    enableIPv6 = true;
 
-  # Disable default DHCP, otherwise NixOS tries to lease DHCP
-  # addresses on all available interfaces. The docs also state
-  # that this behavior will eventually be deprecated and removed.
-  networking.useDHCP = false;
+    # Disable default DHCP, otherwise NixOS tries to lease DHCP
+    # addresses on all available interfaces. The docs also state
+    # that this behavior will eventually be deprecated and removed.
+    useDHCP = false;
 
-  networking.interfaces.enp3s0.useDHCP = true;
-  networking.dhcpcd.extraConfig = "ipv4only";
-  # Both default dhcpcd and systemd-networkd don’t work on this network for some reason.
-  # What’s even more weird is that dhcpcd (though an older version) on Alpine host is working.
-  # To be fair, that was after some non-trivial efforts and at least Nix configuration is
-  # reproducible.
-  systemd.services.dibbler-client = {
-    description = "Portable DHCPv6 client";
-    wantedBy = [ "multi-user.target" "network-online.target" ];
-    wants = [ "network.target" ];
-    before = [ "network-online.target" ];
-    unitConfig.ConditionCapability = "CAP_NET_ADMIN";
-    serviceConfig = {
-      Type = "exec";
-      ExecStart = "${pkgs.dibbler}/bin/dibbler-client run";
-      Restart = "always";
-      PrivateTmp = true;
-    };
+    interfaces.enp3s0.useDHCP = true;
+    dhcpcd.extraConfig = "ipv4only";
+
+    # Both default dhcpcd and systemd-networkd don’t work on this network for some reason.
+    # What’s even more weird is that dhcpcd (though an older version) on Alpine host is working.
+    # To be fair, that was after some non-trivial efforts and at least Nix configuration is
+    # reproducible.
+    dibbler-client.enable = true;
+    dibbler-client.extraConfig = ''
+      iface enp3s0 {
+         rapid-commit yes
+         ia
+         option dns-server
+      }
+    '';
   };
-  # See https://klub.com.pl/dhcpv6/doc/dibbler-user.pdf
-  environment.etc."dibbler/client.conf".text = ''
-    inactive-mode
-    iface enp3s0 {
-       rapid-commit yes
-       ia
-       option dns-server
-    }
-  '';
+
   systemd.tmpfiles.rules = [
     "L /var/db/dhcpcd - - - - /persist/dhcpcd"
     "L /var/lib/dibbler - - - - /persist/dibbler"
   ];
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 14d";
+  nix = {
+    # Trust all admins.
+    trustedUsers = [ "@wheel" ];
+    # Remove generations older than 2 weeks.
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+    };
   };
 
-  users.mutableUsers = false;
-  users.users.nixos = {
-    uid = 1000;
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPSTOhvWnmozjnk82eW9yzb7Flty48PwsNTF+KItdv5w actions-user@github.com"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb tie@xhyve"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOq52CJ77uZJ7lDpRgODDMaO22PeHi1GB+rRyj7j+o1 tie@goro"
-    ];
+  users = {
+    mutableUsers = false;
+    users.nixos = {
+      uid = 1000;
+      isNormalUser = true;
+      extraGroups = [ "wheel" ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPSTOhvWnmozjnk82eW9yzb7Flty48PwsNTF+KItdv5w actions-user@github.com"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb tie@xhyve"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOq52CJ77uZJ7lDpRgODDMaO22PeHi1GB+rRyj7j+o1 tie@goro"
+      ];
+    };
   };
 
   security.sudo.wheelNeedsPassword = false;
-  nix.trustedUsers = [ "@wheel" ];
+
+  services.zfs.autoSnapshot.enable = true;
+  services.zfs.autoScrub.enable = true;
 
   services.openssh.hostKeys = [{
     path = "/persist/ssh/ssh_host_ed25519_key";

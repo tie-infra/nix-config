@@ -13,6 +13,10 @@
   };
 
   outputs = { self, nixpkgs, deploy-rs, agenix }: {
+    nixosModules = {
+      dibbler-client = import ./modules/dibbler-client.nix;
+    };
+
     nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -28,6 +32,7 @@
     nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
+        self.nixosModules.dibbler-client
         ./modules/profiles/nix-flakes.nix
         ./modules/profiles/avahi-mdns.nix
         ./modules/profiles/openssh.nix
