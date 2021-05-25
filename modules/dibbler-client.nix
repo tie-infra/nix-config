@@ -22,7 +22,7 @@ in {
     };
 
     scriptPath = lib.mkOption {
-      type = types.nullOr lib.types.str;
+      type = lib.types.nullOr lib.types.str;
       default = null;
       description = ''
         Takes one string parameter that specifies name of a script that will be
