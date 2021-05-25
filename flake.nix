@@ -18,11 +18,6 @@
     nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-        "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-        ./modules/profiles/nix-flakes.nix
-        ./modules/profiles/avahi-mdns.nix
-        ./modules/profiles/openssh.nix
         ./hosts/bootstrap/configuration.nix
       ];
     };
@@ -31,9 +26,6 @@
       system = "x86_64-linux";
       modules = [
         self.nixosModules.dibbler-client
-        ./modules/profiles/nix-flakes.nix
-        ./modules/profiles/avahi-mdns.nix
-        ./modules/profiles/openssh.nix
         ./hosts/saitama/configuration.nix
       ];
     };

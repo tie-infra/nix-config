@@ -1,5 +1,10 @@
 { config, lib, pkgs, modulesPath, ... }: {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+    ../../profiles/nix-flakes.nix
+    ../../profiles/avahi-mdns.nix
+    ../../profiles/openssh.nix
+  ];
 
   system.stateVersion = "20.09";
 

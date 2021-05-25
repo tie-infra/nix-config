@@ -1,4 +1,12 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, modulesPath, ... }: {
+  imports = [
+    (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
+    (modulesPath + "/installer/cd-dvd/channel.nix")
+    ../../profiles/nix-flakes.nix
+    ../../profiles/avahi-mdns.nix
+    ../../profiles/openssh.nix
+  ];
+
   networking.hostName = "bootstrap";
 
   services.openssh.hostKeys = [{
