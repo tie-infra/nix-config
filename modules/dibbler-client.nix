@@ -22,8 +22,8 @@ in {
     };
 
     scriptPath = lib.mkOption {
-      type = lib.types.str;
-      default = "";
+      type = types.nullOr lib.types.str;
+      default = null;
       description = ''
         Takes one string parameter that specifies name of a script that will be
         called every time something important happens in a system, e.g. when
@@ -57,7 +57,7 @@ in {
 
     environment.etc."dibbler/client.conf".text = ''
       ${lib.optionalString (cfg.inactiveMode) "inactive-mode"}
-      ${lib.optionalString (cfg.scriptPath != "") "script ${cfg.scriptPath}"}
+      ${lib.optionalString (cfg.scriptPath != null) "script ${cfg.scriptPath}"}
       ${cfg.extraConfig}
     '';
   };
