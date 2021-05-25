@@ -41,18 +41,35 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    users.users.dibbler = {
+      isSystemUser = true;
+      description = "Dibbler DHCPv6 privilege separation user";
+      group = "dibbler";
+    };
+    users.groups.dibbler = { };
+
     systemd.services.${name} = {
       description = "Portable DHCPv6 client";
       wantedBy = [ "multi-user.target" "network-online.target" ];
       wants = [ "network.target" ];
       before = [ "network-online.target" ];
-      unitConfig.ConditionCapability = "CAP_NET_ADMIN";
-      serviceConfig = {
-        Type = "exec";
-        ExecStart = "${pkgs.dibbler}/bin/dibbler-client run";
-        Restart = "always";
-        PrivateTmp = true;
-      };
+
+      serviceConfig =
+        let capabilities = [ "CAP_NET_ADMIN" "CAP_NET_BIND_SERVICE" ];
+        in {
+          Type = "exec";
+          ExecStart = "${pkgs.dibbler}/bin/dibbler-client run";
+          Restart = "always";
+
+          User = "dibbler";
+          Group = "dibbler";
+
+          StateDirectory = "dibbler";
+          ConfigurationDirectory = "dibbler";
+
+          CapabilityBoundingSet = capabilities;
+          AmbientCapabilities = capabilities;
+        };
     };
 
     environment.etc."dibbler/client.conf".text = ''

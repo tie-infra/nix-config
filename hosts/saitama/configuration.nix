@@ -77,6 +77,18 @@
     '';
   };
 
+  systemd.mounts = [{
+    type = "none";
+    options = "bind";
+    what = "/persist/dibbler";
+    where = "/var/lib/dibbler";
+    requiredBy = [ "dibbler-client.service" ];
+    unitConfig = {
+      RequiresMountsFor = "/persist";
+      ConditionPathIsDirectory = "/persist/dibbler";
+    };
+  }];
+
   systemd.tmpfiles.rules = [
     # ssh
     "d /persist/ssh - - - - -"
@@ -88,7 +100,6 @@
     # dibbler
     "d /persist/dibbler - - - - -"
     "z /persist/dibbler 0750 - - - -"
-    "L+ /var/lib/dibbler - - - - /persist/dibbler"
   ];
 
   nix = {
