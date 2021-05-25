@@ -64,11 +64,31 @@ in {
           User = "dibbler";
           Group = "dibbler";
 
+          CapabilityBoundingSet = capabilities;
+          AmbientCapabilities = capabilities;
+
+          UMask = "0027";
           StateDirectory = "dibbler";
           ConfigurationDirectory = "dibbler";
 
-          CapabilityBoundingSet = capabilities;
-          AmbientCapabilities = capabilities;
+          # Hardening; see systemd-analyze security dibbler-client.service
+          ProtectSystem = "strict";
+          ProtectHome = true;
+          ProtectClock = true;
+          ProtectControlGroups = true;
+          ProtectKernelLogs = true;
+          ProtectKernelModules = true;
+          ProtectKernelTunables = true;
+          RestrictNamespaces = true;
+          RestrictAddressFamilies = "AF_INET AF_INET6";
+          RestrictSUIDSGID = true;
+          PrivateTmp = true;
+          PrivateDevices = true;
+          NoNewPrivileges = true;
+          LockPersonality = true;
+          MemoryDenyWriteExecute = true;
+          RemoveIPC = true;
+          SystemCallArchitectures = "native";
         };
     };
 
