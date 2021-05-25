@@ -17,9 +17,7 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
   boot.supportedFilesystems = [ "zfs" ];
 
   # See https://grahamc.com/blog/erase-your-darlings
@@ -31,17 +29,14 @@
     device = "rpool/local/root";
     fsType = "zfs";
   };
-
   fileSystems."/boot" = {
     device = "/dev/disk/by-id/ata-WDC_WD1001FALS-00J7B0_WD-WMATV0977093-part1";
     fsType = "vfat";
   };
-
   fileSystems."/nix" = {
     device = "rpool/local/nix";
     fsType = "zfs";
   };
-
   fileSystems."/persist" = {
     device = "rpool/safe/persist";
     fsType = "zfs";
@@ -83,8 +78,17 @@
   };
 
   systemd.tmpfiles.rules = [
-    "L /var/db/dhcpcd - - - - /persist/dhcpcd"
-    "L /var/lib/dibbler - - - - /persist/dibbler"
+    # ssh
+    "d /persist/ssh - - - - -"
+    "z /persist/ssh 0750 - - - -"
+    # dhcpcd
+    "d /persist/dhcpcd - - - - -"
+    "z /persist/dhcpcd 0750 - - - -"
+    "L+ /var/db/dhcpcd - - - - /persist/dhcpcd"
+    # dibbler
+    "d /persist/dibbler - - - - -"
+    "z /persist/dibbler 0750 - - - -"
+    "L+ /var/lib/dibbler - - - - /persist/dibbler"
   ];
 
   nix = {

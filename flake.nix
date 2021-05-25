@@ -13,9 +13,7 @@
   };
 
   outputs = { self, nixpkgs, deploy-rs, agenix }: {
-    nixosModules = {
-      dibbler-client = import ./modules/dibbler-client.nix;
-    };
+    nixosModules = { dibbler-client = import ./modules/dibbler-client.nix; };
 
     nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
