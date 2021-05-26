@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-20.09";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
 
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
@@ -17,17 +17,13 @@
 
     nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
-        ./hosts/bootstrap/configuration.nix
-      ];
+      modules = [ ./hosts/bootstrap/configuration.nix ];
     };
 
     nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
-        self.nixosModules.dibbler-client
-        ./hosts/saitama/configuration.nix
-      ];
+      modules =
+        [ self.nixosModules.dibbler-client ./hosts/saitama/configuration.nix ];
     };
 
     deploy.nodes.saitama = {

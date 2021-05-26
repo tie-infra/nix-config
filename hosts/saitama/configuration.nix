@@ -4,6 +4,7 @@
     ../../profiles/nix-flakes.nix
     ../../profiles/avahi-mdns.nix
     ../../profiles/openssh.nix
+    ../../profiles/networkd-debug.nix
   ];
 
   system.stateVersion = "20.09";
@@ -58,7 +59,7 @@
     # Suppress dmesg log spam.
     firewall.logRefusedConnections = false;
 
-    # We are in native IPv6 dual-stack network!
+    # We are in native IPv6 dual-stack network.
     enableIPv6 = true;
 
     # Disable default DHCP, otherwise NixOS tries to lease DHCP
@@ -66,56 +67,57 @@
     # that this behavior will eventually be deprecated and removed.
     useDHCP = false;
 
-    interfaces.enp3s0.useDHCP = true;
-    dhcpcd.extraConfig = "ipv4only";
-
-    # Both default dhcpcd and systemd-networkd don’t work on this network for some reason.
-    # What’s even more weird is that dhcpcd (though an older version) on Alpine host is working.
-    # To be fair, that was after some non-trivial efforts and at least Nix configuration is
-    # reproducible.
-    dibbler-client.enable = true;
-    dibbler-client.extraConfig = ''
-      iface enp3s0 {
-         rapid-commit yes
-         ia
-         option dns-server
-      }
-    '';
+    # Enable systemd-networkd instead of default networking scripts.
+    useNetworkd = true;
   };
 
-  systemd.mounts = [{
-    type = "none";
-    options = "bind";
-    what = "/persist/dibbler";
-    where = "/var/lib/dibbler";
-    requiredBy = [ "dibbler-client.service" ];
-    unitConfig = {
-      RequiresMountsFor = "/persist";
-      ConditionPathIsDirectory = "/persist/dibbler";
+  # FIXME: systemd discards leases on reboot https://github.com/systemd/systemd/issues/16924
+  # That’s a real issue since network’s DHCP server DOES NOT assign new addresses for the
+  # same MAC address (and DUID?) until the last lease expires. We’d need something like a
+  # patch from https://github.com/systemd/systemd/pull/16920
+  #
+  # And the root cause is that DHCPv6 client apparently does not release addresses on shutdown.
+  # See also https://github.com/systemd/systemd/issues/19728
+  #
+  systemd.network.enable = true;
+  systemd.network.networks.IPv4 = {
+    matchConfig = { Name = "enp2s0"; };
+    networkConfig = {
+      DHCP = "ipv4";
+      IPv6AcceptRA = false;
+      LinkLocalAddressing = "ipv4";
     };
-  }];
+    dhcpV4Config = { ClientIdentifier = "mac"; };
+  };
+  systemd.network.networks.IPv6 = {
+    matchConfig = { Name = "enp3s0"; };
+    networkConfig = {
+      DHCP = "ipv6";
+      IPv6AcceptRA = true;
+      LinkLocalAddressing = "ipv6";
+    };
+    ipv6AcceptRAConfig = { DHCPv6Client = "always"; };
+    # Actually dhcpV6Config. See https://github.com/systemd/systemd/issues/18996
+    # TODO: change on systemd 248 release.
+    dhcpV4Config = { ClientIdentifier = "mac"; };
+  };
 
   systemd.tmpfiles.rules = [
     # ssh
     "d /persist/ssh - - - - -"
     "z /persist/ssh 0750 - - - -"
-    # dhcpcd
-    "d /persist/dhcpcd - - - - -"
-    "z /persist/dhcpcd 0750 - - - -"
-    "L+ /var/db/dhcpcd - - - - /persist/dhcpcd"
-    # dibbler
-    "d /persist/dibbler - - - - -"
-    "z /persist/dibbler 0750 - - - -"
   ];
+  # FIXME: that would fail on reinstall.
+  environment.etc."machine-id".source = "/persist/machine-id";
 
   nix = {
     # Trust all admins.
     trustedUsers = [ "@wheel" ];
-    # Remove generations older than 2 weeks.
+    # Remove generations older than one weeks.
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 14d";
+      options = "--delete-older-than 7d";
     };
   };
 

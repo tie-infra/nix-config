@@ -80,7 +80,7 @@ in {
           ProtectKernelModules = true;
           ProtectKernelTunables = true;
           RestrictNamespaces = true;
-          RestrictAddressFamilies = "AF_INET AF_INET6";
+          RestrictAddressFamilies = "AF_NETLINK AF_INET AF_INET6";
           RestrictSUIDSGID = true;
           PrivateTmp = true;
           PrivateDevices = true;
