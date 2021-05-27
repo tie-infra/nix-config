@@ -22,8 +22,7 @@
 
     nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules =
-        [ self.nixosModules.dibbler-client ./hosts/saitama/configuration.nix ];
+      modules = [ ./hosts/saitama ];
     };
 
     deploy.nodes.saitama = {
