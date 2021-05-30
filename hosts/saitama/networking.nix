@@ -45,11 +45,6 @@
         IPv6AcceptRA = true;
         LinkLocalAddressing = "ipv6";
       };
-      ipv6AcceptRAConfig.DHCPv6Client = "always";
-      # Actually dhcpV6Config. See https://github.com/systemd/systemd/issues/18996
-      # TODO: change on systemd 248 release.
-      dhcpV4Config.ClientIdentifier = "mac";
-      dhcpV6Config.WithoutRA = "solicit";
     };
   };
 
