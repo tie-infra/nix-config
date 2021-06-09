@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [
     ../../profiles/nix-flakes.nix
     ../../profiles/avahi-mdns.nix
@@ -7,6 +7,8 @@
     ./boot.nix
     ./networking.nix
     ./persist-ssh.nix
+    ./tor.nix
+    ./persist-tor.nix
   ];
 
   system.stateVersion = "20.09";
