@@ -1,5 +1,8 @@
 { config, lib, modulesPath, ... }: {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+    ../../profiles/zfs-scheduler-none.nix
+  ];
 
   # Note that it’s a legacy BIOS system that uses CloverEFI.
   boot.loader.systemd-boot.enable = true;
@@ -16,7 +19,6 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.kernelParams = [ "elevator=noop" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.supportedFilesystems = [ "zfs" ];
 
