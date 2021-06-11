@@ -16,6 +16,7 @@
     "usb_storage"
     "sd_mod"
   ];
+  boot.kernelParams = [ "elevator=noop" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.supportedFilesystems = [ "zfs" ];
 
