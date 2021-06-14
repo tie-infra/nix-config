@@ -33,7 +33,10 @@
       # want any IPv4 traffic on main network.
       #
       ORPort = [
-        { port = 9001; }
+        {
+          addr = "0.0.0.0";
+          port = 9001;
+        }
         {
           addr = "[2a02:2168:8fec:f600::39f]";
           port = 9001;
