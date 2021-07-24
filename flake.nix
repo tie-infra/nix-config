@@ -22,7 +22,7 @@
 
     nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [ ./hosts/saitama ];
+      modules = [ ./hosts/saitama agenix.nixosModules.age ];
     };
 
     deploy.nodes.saitama = {
