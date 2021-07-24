@@ -9,6 +9,7 @@
     ./persist-ssh.nix
     ./tor.nix
     ./persist-tor.nix
+    ./factorio.nix
   ];
 
   system.stateVersion = "20.09";
