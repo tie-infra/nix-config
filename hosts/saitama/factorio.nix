@@ -62,7 +62,7 @@ in {
       in lib.mkForce (toString [
         "${cfg.package}/bin/factorio"
         "--config=${cfg.configFile}"
-        "--bind=[::]:${toString cfg.port}"
+        "--port=${toString cfg.port}"
         "--start-server=/var/lib/${cfg.stateDirName}/saves/${cfg.saveName}.zip"
         "--server-settings=${serverSettingsFile}"
       ]);
