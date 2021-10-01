@@ -5,7 +5,6 @@
     nixpkgs.url = "nixpkgs/nixos-21.05";
 
     deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
 
     # See also https://github.com/yaxitech/ragenix
     agenix.url = "github:ryantm/agenix";
