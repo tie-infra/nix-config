@@ -1,10 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }: {
+{ self, nixpkgs, ... }: _:
+{ modulesPath, ... }: {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
     (modulesPath + "/installer/cd-dvd/channel.nix")
-    ../../profiles/nix-flakes.nix
-    ../../profiles/avahi-mdns.nix
-    ../../profiles/openssh.nix
+    self.nixosModules.nix-flakes
+    self.nixosModules.openssh
   ];
 
   networking.hostName = "bootstrap";

@@ -2,60 +2,18 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-21.05";
-
-    deploy-rs.url = "github:serokell/deploy-rs";
-
-    # See also https://github.com/yaxitech/ragenix
+    nixpkgs.url = "nixpkgs/nixos-22.11";
     agenix.url = "github:ryantm/agenix";
-    agenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, deploy-rs, agenix }: {
-    nixosModules = { dibbler-client = import ./modules/dibbler-client.nix; };
-
-    nixosConfigurations.bootstrap-amd64 = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [ ./hosts/bootstrap/configuration.nix ];
+  # TODO nixosConfigurations.${name}.config.system.build.isoImage
+  outputs = inputs:
+    let lib = import ./lib inputs;
+    in {
+      nixosModules = lib.importSubdirs ./modules;
+      nixosConfigurations = lib.import ./systems;
+      packages = lib.forAllSystems (lib.import ./pkgs);
+      devShells = lib.forAllSystems (lib.import ./shell);
+      formatter = lib.forAllSystems (system: inputs.nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
-
-    nixosConfigurations.saitama = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [ ./hosts/saitama agenix.nixosModules.age ];
-    };
-
-    deploy.nodes.saitama = {
-      hostname = "saitama.b1nary.tk";
-      profiles.system = {
-        user = "root";
-        path = deploy-rs.lib.x86_64-linux.activate.nixos
-          self.nixosConfigurations.saitama;
-      };
-    };
-
-    deploy.sshUser = "nixos";
-    deploy.sshOpts = let f = ./known_hosts;
-    in [ "-o" "CheckHostIP=no" "-o" "UserKnownHostsFile=${f}" ];
-
-    defaultPackage.x86_64-linux =
-      let pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      in pkgs.linkFarm "infra" [{
-        name = "bootstrap";
-        path = pkgs.symlinkJoin {
-          name = "bootstrap";
-          paths = [
-            # TODO(tie): add arm64 bootstrap image
-            self.nixosConfigurations.bootstrap-amd64.config.system.build.isoImage
-          ];
-        };
-      }];
-
-    devShell.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.mkShell {
-      buildInputs = [ deploy-rs.defaultPackage.x86_64-linux ];
-    };
-
-    checks =
-      builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy)
-      deploy-rs.lib;
-  };
 }
