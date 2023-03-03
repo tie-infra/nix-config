@@ -38,7 +38,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Switch configuration
-        run: nixos-rebuild switch --target-host "$target" --flake "$installable"
+        run: nix run nixpkgs#nixos-rebuild switch --target-host "$target" --flake "$installable"
         env:
           NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=ssh/known_hosts.txt"
           installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
