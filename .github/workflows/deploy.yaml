@@ -22,20 +22,6 @@ jobs:
     name: Deploy ${{ matrix.system }}
     runs-on: ubuntu-latest
     steps:
-      - name: Set up IPv6
-        run: |
-          curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-          sudo tee /etc/apt/sources.list.d/cloudflare-client.list <<EOF
-          deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main
-          EOF
-          sudo apt-get update
-          sudo apt-get install -y cloudflare-warp
-          warp-cli --accept-tos register
-          warp-cli --accept-tos connect
-          warp-cli --accept-tos enable-always-on
-          sleep 1 && echo
-          curl -i https://cloudflare.com/cdn-cgi/trace
-
       - name: Install nix
         uses: cachix/install-nix-action@v20
         with:
@@ -52,10 +38,39 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Set up known hosts
+        run: |
+          echo "$sshKnownHostKey" >known_hosts
+        env:
+          sshKnownHostKey: ${{ matrix.sshKey }}
+
+      - name: Build configuration
+        run: |
+          nix build "${flake}#nixosConfigurations.${system}.config.system.build.toplevel"
+        env:
+          flake: "github:${{ github.repository }}/${{ github.sha }}"
+          system: ${{ matrix.system }}
+
+      # Yikes, GitHub does not support IPv6 in hosted runners.
+      # See https://github.com/actions/runner-images/issues/668
+      - name: Set up IPv6
+        run: |
+          curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          sudo tee /etc/apt/sources.list.d/cloudflare-client.list <<EOF
+          deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main
+          EOF
+          sudo apt-get update
+          sudo apt-get install -y cloudflare-warp
+          warp-cli --accept-tos register
+          warp-cli --accept-tos connect
+          warp-cli --accept-tos enable-always-on
+          sleep 1 && echo
+          curl -i https://cloudflare.com/cdn-cgi/trace
+
       - name: Switch configuration
-        run: echo "$sshKnownHostKey" >known_hosts && nix run nixpkgs#nixos-rebuild -- switch --target-host "$target" --flake "$installable"
+        run: |
+          nix run nixpkgs#nixos-rebuild -- switch --fast --use-remote-sudo --target-host "$target" --flake "$installable"
         env:
           NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=known_hosts"
-          sshKnownHostKey: ${{ matrix.sshKey }}
           installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
           target: ${{ matrix.server }}
