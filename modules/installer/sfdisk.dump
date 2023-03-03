@@ -1,0 +1,3 @@
+label: gpt
+size=1GiB,name=efi,type=uefi,bootable
+name=nix,type=linux

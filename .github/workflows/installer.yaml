@@ -1,4 +1,4 @@
-name: Bootstrap ISO
+name: Installer ISO
 on:
   release:
     types:
@@ -23,7 +23,7 @@ jobs:
       - name: Build image
         run: nix build "${installable}"
         env:
-          installable: "github:${{ github.repository }}/${{ github.sha }}#bootstrap-amd64"
+          installable: "github:${{ github.repository }}/${{ github.sha }}#installer-amd64"
 
       - name: Release image
         run: gh release upload --clobber -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/*.iso

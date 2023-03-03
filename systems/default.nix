@@ -11,9 +11,11 @@ let
         modules = [{ nixpkgs.hostPlatform = platform; }] ++ modules;
       };
       cross = nixpkgs.lib.mapAttrs' (system: nixpkgs.lib.nameValuePair "${name}/${system}")
-        (nixpkgs.lib.genAttrs buildSystems (system: base.extendModules {
-          modules = [{ nixpkgs.buildPlatform.system = system; }];
-        }));
+        (nixpkgs.lib.genAttrs
+          (nixpkgs.lib.remove platform.system buildSystems)
+          (system: base.extendModules {
+            modules = [{ nixpkgs.buildPlatform.system = system; }];
+          }));
     in
     { ${name} = base; } // cross;
 in
