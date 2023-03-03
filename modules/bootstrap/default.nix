@@ -2,7 +2,6 @@
 { modulesPath, ... }: {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
-    (modulesPath + "/installer/cd-dvd/channel.nix")
     self.nixosModules.nix-flakes
     self.nixosModules.openssh
   ];
@@ -16,6 +15,14 @@
 
   users.users.nixos.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb tie@xhyve"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOq52CJ77uZJ7lDpRgODDMaO22PeHi1GB+rRyj7j+o1 tie@goro"
   ];
+
+  # NixOS uses syslinux for legacy BIOS boot, and syslinux currently cannot be
+  # cross-compiled from non-x86 platforms. As a workaround, we disable legacy
+  # BIOS boot (note that USB boot is subset of BIOS boot).
+  isoImage = {
+    makeBiosBootable = nixpkgs.lib.mkForce false;
+    makeUsbBootable = nixpkgs.lib.mkForce false;
+    makeEfiBootable = nixpkgs.lib.mkForce true;
+  };
 }

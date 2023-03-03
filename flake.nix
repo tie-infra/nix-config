@@ -2,11 +2,12 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-22.11";
+    # Currently using fork with https://github.com/NixOS/nixpkgs/pull/219351
+    #nixpkgs.url = "nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:tie-infra/nixpkgs/nixos-22.11";
     agenix.url = "github:ryantm/agenix";
   };
 
-  # TODO nixosConfigurations.${name}.config.system.build.isoImage
   outputs = inputs:
     let lib = import ./lib inputs;
     in {
