@@ -18,9 +18,24 @@ jobs:
         include:
           - server: nixos@kazuma.tie.rip
             system: kazuma
+            sshKey: "kazuma.tie.rip ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDiWJmsj22woegXiWRA7GJ7guA/RHdksA1yBDpkgJ+dp"
     name: Deploy ${{ matrix.system }}
     runs-on: ubuntu-latest
     steps:
+      - name: Set up IPv6
+        run: |
+          curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          sudo tee /etc/apt/sources.list.d/cloudflare-client.list <<EOF
+          deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main
+          EOF
+          sudo apt-get update
+          sudo apt-get install -y cloudflare-warp
+          warp-cli --accept-tos register
+          warp-cli --accept-tos connect
+          warp-cli --accept-tos enable-always-on
+          sleep 1 && echo
+          curl -i https://cloudflare.com/cdn-cgi/trace
+
       - name: Install nix
         uses: cachix/install-nix-action@v20
         with:
@@ -38,8 +53,9 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Switch configuration
-        run: nix run nixpkgs#nixos-rebuild -- switch --target-host "$target" --flake "$installable"
+        run: echo "$sshKnownHostKey" >known_hosts && nix run nixpkgs#nixos-rebuild -- switch --target-host "$target" --flake "$installable"
         env:
-          NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=ssh/known_hosts.txt"
+          NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=known_hosts"
+          sshKnownHostKey: ${{ matrix.sshKey }}
           installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
           target: ${{ matrix.server }}

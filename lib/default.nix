@@ -17,7 +17,7 @@ let
        Type:
          sshAuthorizedKeys :: List
     */
-    sshAuthorizedKeys = import ../ssh/authorized-keys.nix;
+    sshAuthorizedKeys = import ./authorized-keys.nix;
 
     /* Generates attribute set by calling f for each exposed system.
 
