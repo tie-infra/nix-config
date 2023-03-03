@@ -12,6 +12,13 @@ let
       "aarch64-linux"
     ];
 
+    /* A list of SSH authorized keys for system configurations.
+
+       Type:
+         sshAuthorizedKeys :: List
+    */
+    sshAuthorizedKeys = import ../ssh/authorized-keys.nix;
+
     /* Generates attribute set by calling f for each exposed system.
 
        Type:

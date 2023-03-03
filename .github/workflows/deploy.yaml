@@ -13,7 +13,12 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy
+    strategy:
+      matrix:
+        include:
+          - server: nixos@kazuma.tie.rip
+            system: kazuma
+    name: Deploy ${{ matrix.system }}
     runs-on: ubuntu-latest
     steps:
       - name: Install nix
@@ -32,5 +37,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # TODO: set up deploys using nixos-rebuild.
-      # See https://www.haskellforall.com/2023/01/announcing-nixos-rebuild-new-deployment.html
+      - name: Switch configuration
+        run: nixos-rebuild switch --target-host "$target" --flake "$installable"
+        env:
+          NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=ssh/known_hosts.txt"
+          installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
+          target: ${{ matrix.server }}

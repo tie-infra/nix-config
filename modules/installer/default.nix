@@ -1,4 +1,4 @@
-{ self, nixpkgs, ... }: _:
+{ self, nixpkgs, ... }: lib:
 { pkgs, modulesPath, ... }: {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
@@ -13,9 +13,7 @@
     type = "ed25519";
   }];
 
-  users.users.nixos.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb tie@xhyve"
-  ];
+  users.users.nixos.openssh.authorizedKeys.keys = lib.sshAuthorizedKeys;
 
   isoImage = {
     # NixOS uses syslinux for legacy BIOS boot, and syslinux currently cannot be
@@ -25,6 +23,7 @@
     makeUsbBootable = nixpkgs.lib.mkForce false;
     makeEfiBootable = nixpkgs.lib.mkForce true;
 
+    # TODO: move to system packages.
     contents = [
       {
         source = ./bootstrap.sh;

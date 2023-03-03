@@ -72,7 +72,9 @@ cp -a /etc/machine-id /mnt/persist/machine-id
 mkdir /mnt/persist/ssh && chmod u=rwx,g=rx,o= /mnt/persist/ssh
 cp -a /etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ed25519_key /mnt/persist/ssh/
 
+# TODO: detect current system and suggest appropriate bootstrap configuration.
+echo
 echo "Success! To install NixOS, run"
-echo "  nixos-install --no-root-password --flake github:tie-infra/nix-config#bootstrap-amd64"
+echo "  sudo nixos-install --no-root-password --flake github:tie-infra/nix-config#bootstrap-amd64"
 echo "and reboot"
 exit 0
