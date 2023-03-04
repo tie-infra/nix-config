@@ -21,7 +21,7 @@
   time.timeZone = "Europe/Moscow";
 
   services.netdata.enable = true;
-  networking.firewall.allowedTCPPorts = [ 19999 ];
+  networking.firewall.allowedTCPPorts = [ 19999 25565 25569 ];
   networking.firewall.logRefusedConnections = false;
 
   users = {
