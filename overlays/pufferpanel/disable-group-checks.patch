@@ -1,0 +1,40 @@
+diff --git a/cmd/main.go b/cmd/main.go
+index f9af7038..099ff2e2 100644
+--- a/cmd/main.go
++++ b/cmd/main.go
+@@ -24,11 +24,6 @@ import (
+ )
+ 
+ func main() {
+-	if !pufferpanel.UserInGroup("pufferpanel") {
+-		fmt.Println("You do not have permission to use this command")
+-		return
+-	}
+-
+ 	defer logging.Close()
+ 
+ 	defer func() {
+diff --git a/cmd/user.go b/cmd/user.go
+index d4a27aaf..d633694b 100644
+--- a/cmd/user.go
++++ b/cmd/user.go
+@@ -17,7 +17,6 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"github.com/AlecAivazis/survey/v2"
+-	"github.com/pufferpanel/pufferpanel/v2"
+ 	"github.com/pufferpanel/pufferpanel/v2/database"
+ 	"github.com/pufferpanel/pufferpanel/v2/models"
+ 	"github.com/pufferpanel/pufferpanel/v2/services"
+@@ -218,11 +217,6 @@ type userCreate struct {
+ }
+ 
+ func editUser(cmd *cobra.Command, args []string) {
+-	if !pufferpanel.UserInGroup() {
+-		fmt.Printf("You do not have permission to use this command")
+-		return
+-	}
+-
+ 	db, err := database.GetConnection()
+ 	if err != nil {
+ 		fmt.Printf("Error connecting to database: %s", err.Error())

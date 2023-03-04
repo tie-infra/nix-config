@@ -1,16 +1,28 @@
-{ self, nixpkgs, ... }: lib:
+{ self, nixpkgs, agenix, ... }: lib:
 { modulesPath, ... }: {
   imports = with self.nixosModules; [
     (lib.import ./boot.nix)
-    (lib.import ./ssh.nix)
+    (lib.import ./pufferpanel.nix)
+    erase-your-darlings-btrfs
+    systemd-boot
     nix-flakes
     persist-machineid
+    openssh
+    persist-ssh
     trust-admins
+    pufferpanel
+    agenix.nixosModules.default
   ];
+
+  hardware.enableRedistributableFirmware = true;
 
   system.stateVersion = "22.11";
   networking.hostName = "kazuma";
   time.timeZone = "Europe/Moscow";
+
+  services.netdata.enable = true;
+  networking.firewall.allowedTCPPorts = [ 19999 ];
+  networking.firewall.logRefusedConnections = false;
 
   users = {
     mutableUsers = false;
@@ -18,6 +30,8 @@
       uid = 1000;
       isNormalUser = true;
       extraGroups = [ "wheel" ];
+
+      openssh.authorizedKeys.keys = lib.sshAuthorizedKeys;
     };
   };
 }

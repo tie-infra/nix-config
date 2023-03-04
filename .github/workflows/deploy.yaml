@@ -46,10 +46,9 @@ jobs:
 
       - name: Build configuration
         run: |
-          nix build "${flake}#nixosConfigurations.${system}.config.system.build.toplevel"
+          nix run nixpkgs#nixos-rebuild -- build --fast --flake "$installable"
         env:
-          flake: "github:${{ github.repository }}/${{ github.sha }}"
-          system: ${{ matrix.system }}
+          installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
 
       # Yikes, GitHub does not support IPv6 in hosted runners.
       # See https://github.com/actions/runner-images/issues/668
@@ -69,7 +68,7 @@ jobs:
 
       - name: Switch configuration
         run: |
-          nix run nixpkgs#nixos-rebuild -- switch --fast --use-remote-sudo --target-host "$target" --flake "$installable"
+          nix run nixpkgs#nixos-rebuild -- switch --fast --flake "$installable" --target-host "$target" --use-remote-sudo 
         env:
           NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=known_hosts"
           installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"

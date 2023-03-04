@@ -1,9 +1,4 @@
-{ self, ... }: _: {
-  imports = with self.nixosModules; [
-    erase-your-darlings-btrfs
-    systemd-boot
-  ];
-
+_: _: {
   boot.initrd.availableKernelModules = [ "nvme" ];
 
   eraseYourDarlingsBtrfs =
