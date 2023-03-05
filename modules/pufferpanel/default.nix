@@ -351,6 +351,7 @@ with nixpkgs.lib; {
             ExecStart = pkgs.writeShellScript "pufferpanel.sh" ''
               ${concatMapStrings (s: s + "\n") (map (secret: ''
                 read -r ${secret.env} <"$CREDENTIALS_DIRECTORY"/${secret.id}
+                export ${secret.env}
               '') secrets)}
               exec ${pkgs.pufferpanel}/bin/pufferpanel run --workDir ${escapeShellArg workDir}
             '';
