@@ -4,7 +4,7 @@
     (modulesPath + "/profiles/all-hardware.nix")
     self.nixosModules.nix-flakes
     self.nixosModules.openssh
-    self.nixosModules.erase-your-darlings-btrfs
+    self.nixosModules.erase-your-darlings
     self.nixosModules.persist-ssh
     self.nixosModules.persist-machineid
     self.nixosModules.trust-admins
@@ -25,7 +25,7 @@
     };
   };
 
-  eraseYourDarlingsBtrfs = {
+  eraseYourDarlings = {
     bootDisk = "/dev/disk/by-partlabel/efi";
     rootDisk = "/dev/disk/by-partlabel/nix";
   };

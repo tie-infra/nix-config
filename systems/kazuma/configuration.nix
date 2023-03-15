@@ -3,7 +3,7 @@
   imports = with self.nixosModules; [
     (lib.import ./boot.nix)
     (lib.import ./pufferpanel.nix)
-    erase-your-darlings-btrfs
+    erase-your-darlings
     systemd-boot
     nix-flakes
     persist-machineid
