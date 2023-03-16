@@ -1,6 +1,8 @@
 _: _: {
   boot.initrd.availableKernelModules = [ "nvme" ];
 
+  services.fstrim.enable = true;
+
   eraseYourDarlings =
     let disk = "SPCC_M.2_PCIe_SSD_27FF070C189700120672";
     in {
