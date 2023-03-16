@@ -8,6 +8,10 @@
 
   networking.hostName = "installer";
 
+  environment.systemPackages = [
+    self.packages.${pkgs.buildPlatform.system}."format-disk/${pkgs.hostPlatform.system}"
+  ];
+
   services.openssh.hostKeys = [{
     path = "/etc/ssh/ssh_host_ed25519_key";
     type = "ed25519";
@@ -22,17 +26,5 @@
     makeBiosBootable = nixpkgs.lib.mkForce false;
     makeUsbBootable = nixpkgs.lib.mkForce false;
     makeEfiBootable = nixpkgs.lib.mkForce true;
-
-    # TODO: move to system packages.
-    contents = [
-      {
-        source = ./bootstrap.sh;
-        target = "bootstrap.sh";
-      }
-      {
-        source = ./sfdisk.dump;
-        target = "sfdisk.dump";
-      }
-    ];
   };
 }

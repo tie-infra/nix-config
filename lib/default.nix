@@ -66,6 +66,31 @@ let
     */
     mkMinimalShell = system: self.import ./minimal-shell system;
 
+    /* Generate an attribute set by mapping a function that returns a derivation
+       over a list of systems. If cross system matches local system, it creates
+       an attribute named "default" for the local system.
+
+       Type:
+         crossDerivation :: String -> List -> (String -> Derivation) -> AttrSet
+
+       Example:
+         system = "aarch64-linux";
+         crossSystems = ["aarch64-linux" "x86_64-linux"];
+         crossDerivation system crossSystems (crossSystem:
+           builtins.derivation ({ inherit system; } // buildArgs)
+         )
+         => {
+           default = «derivation 1»;
+           "aarch64-linux" = «derivation 1»;
+           "x86_64-linux" = «derivation 2»;
+         }
+    */
+    crossDerivation = localSystem: crossSystems: fdrv:
+      let attrs = lib.genAttrs crossSystems (crossSystem: fdrv crossSystem); in
+      if attrs ? ${localSystem}
+      then attrs // { default = attrs.${localSystem}; }
+      else attrs;
+
     /* Merge an attribute set where values are either derivations or attribute
        sets of cross-derivations (see crossDerivation).
 
@@ -92,6 +117,21 @@ let
             (lib.nameValuePair accName value);
       in
       lib.foldl merge { } (lib.attrNames attrs);
+
+    nixpkgsCross = localSystem: crossSystem:
+      let
+        systems = {
+          "x86_64-linux" = "gnu64";
+          "aarch64-linux" = "aarch64-multiplatform";
+        };
+        pkgs = nixpkgs.legacyPackages.${localSystem};
+      in
+      if localSystem != crossSystem then
+        lib.throwIfNot (systems ? ${crossSystem})
+          "Unsupported system: ${crossSystem}"
+          pkgs.pkgsCross.${systems.${crossSystem}}
+      else
+        pkgs;
   };
 in
 self
