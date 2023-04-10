@@ -10,7 +10,7 @@
     openssh
     persist-ssh
     trust-admins
-    pufferpanel
+    pufferpanel-deprecated
     agenix.nixosModules.default
   ];
 

@@ -1,7 +1,7 @@
 { self, nixpkgs, ... }: _:
 { pkgs, config, ... }:
 with nixpkgs.lib; {
-  options.services.pufferpanel = {
+  options.services.pufferpanel-deprecated = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -272,15 +272,13 @@ with nixpkgs.lib; {
 
   config =
     let
-      cfg = config.services.pufferpanel;
+      cfg = config.services.pufferpanel-deprecated;
       workDir =
         if cfg.workDir != null
         then cfg.workDir
         else "/var/lib/pufferpanel";
     in
     mkIf cfg.enable {
-      nixpkgs.overlays = [ self.overlays.pufferpanel ];
-
       systemd.services.pufferpanel = {
         description = "PufferPanel game management panel and daemon.";
         wantedBy = [ "multi-user.target" ];

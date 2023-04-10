@@ -1,7 +1,7 @@
 _: _:
 let clientSecretFile = "/run/secrets/pufferpanel-client-secret";
 in { pkgs, ... }: {
-  services.pufferpanel = {
+  services.pufferpanel-deprecated = {
     enable = true;
     packages = [ pkgs.jre8 ];
     panel.enable = false;

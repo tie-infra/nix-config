@@ -2,7 +2,11 @@
   description = "NixOS configuration";
 
   inputs = {
-    # Currently using fork with https://github.com/NixOS/nixpkgs/pull/219351
+    # Currently using fork with
+    # - https://github.com/NixOS/nixpkgs/pull/219351 (disable BIOS boot for ISO)
+    # - https://github.com/NixOS/nixpkgs/pull/220506 (update pufferpanel)
+    # - https://github.com/NixOS/nixpkgs/pull/225379 (add myself pufferpanel maintainers)
+    # - https://github.com/NixOS/nixpkgs/pull/225274 (pufferpanel module)
     #nixpkgs.url = "nixpkgs/nixos-22.11";
     nixpkgs.url = "github:tie-infra/nixpkgs/nixos-22.11";
     agenix.url = "github:ryantm/agenix";
@@ -13,7 +17,6 @@
     in {
       apps = lib.forAllSystems (lib.import ./apps);
       packages = lib.forAllSystems (lib.import ./pkgs);
-      overlays = lib.importSubdirs ./overlays;
       devShells = lib.forAllSystems (lib.import ./shell);
       formatter = lib.forAllSystems (system: inputs.nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
 
