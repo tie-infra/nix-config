@@ -69,6 +69,11 @@ in with lib; {
           fsType = "btrfs";
           options = [ "subvol=nix" "compress-force=zstd" "noatime" ];
         };
+        "/var" = {
+          device = cfg.rootDisk;
+          fsType = "btrfs";
+          options = [ "subvol=var" "compress=zstd" ];
+        };
         "/persist" = {
           device = cfg.rootDisk;
           fsType = "btrfs";

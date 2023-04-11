@@ -35,7 +35,7 @@ if [ $# != 1 ]; then
 fi
 
 disk=$1
-subvolumes="persist nix"
+subvolumes="persist nix var"
 
 boot=/dev/disk/by-partlabel/efi
 root=/dev/disk/by-partlabel/nix
