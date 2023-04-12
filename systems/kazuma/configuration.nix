@@ -1,5 +1,5 @@
 { self, nixpkgs, agenix, ... }: lib:
-{ modulesPath, ... }: {
+{ modulesPath, pkgs, ... }: {
   imports = with self.nixosModules; [
     (lib.import ./boot.nix)
     (lib.import ./pufferpanel.nix)
