@@ -21,8 +21,11 @@
   time.timeZone = "Europe/Moscow";
 
   services.netdata.enable = true;
-  networking.firewall.allowedTCPPorts = [ 19999 25565 25569 ];
+  networking.firewall.allowedUDPPorts = [ 3000 ];
+  networking.firewall.allowedTCPPorts = [ 3001 19999 25565 25569 ];
   networking.firewall.logRefusedConnections = false;
+
+  environment.systemPackages = [ pkgs.htop pkgs.btop pkgs.file ];
 
   users = {
     mutableUsers = false;
