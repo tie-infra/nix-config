@@ -1,14 +1,14 @@
 _: _:
 { pkgs, config, ... }: {
-  #virtualisation.podman.enable = true;
-  #virtualisation.podman.dockerSocket.enable = true;
-  #virtualisation.podman.dockerCompat = true;
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerSocket.enable = true;
+  virtualisation.podman.dockerCompat = true;
 
   services.pufferpanel = {
     enable = true;
     openFirewall = true;
     extraPackages = [ pkgs.jre8 ];
-    #extraGroups = [ "podman" ];
+    extraGroups = [ "podman" ];
     panel.enable = false;
     daemon.auth = {
       url = "https://panel.brim.ml/oauth2/token";
