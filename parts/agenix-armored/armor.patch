@@ -1,0 +1,7 @@
+--- a/bin/agenix
++++ b/bin/agenix
+@@ -179,3 +179,3 @@
+ 
+-    ENCRYPT+=(-o "$REENCRYPTED_FILE")
++    ENCRYPT+=(-a -o "$REENCRYPTED_FILE")
+ 

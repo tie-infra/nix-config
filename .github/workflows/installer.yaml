@@ -23,7 +23,7 @@ jobs:
       - name: Build image
         run: nix build "${installable}"
         env:
-          installable: "github:${{ github.repository }}/${{ github.sha }}#installer-amd64"
+          installable: "github:${{ github.repository }}/${{ github.sha }}#installer-x86-64-iso"
 
       - name: Release image
         run: gh release upload --clobber -R="${GITHUB_REPOSITORY}" "${tag_name}" result/iso/*.iso

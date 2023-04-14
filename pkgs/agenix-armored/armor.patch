@@ -1,7 +1,0 @@
---- a/agenix.sh
-+++ b/agenix.sh
-@@ -179,3 +179,3 @@
- 
--    ENCRYPT+=(-o "$REENCRYPTED_FILE")
-+    ENCRYPT+=(-a -o "$REENCRYPTED_FILE")
- 

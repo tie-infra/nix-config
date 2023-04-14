@@ -10,18 +10,35 @@
     # - https://github.com/NixOS/nixpkgs/pull/205557 (concatLines for pufferpanel module)
     #nixpkgs.url = "nixpkgs/nixos-22.11";
     nixpkgs.url = "github:tie-infra/nixpkgs/nixos-22.11";
+    flake-parts.url = "github:hercules-ci/flake-parts";
     agenix.url = "github:ryantm/agenix";
   };
 
-  outputs = inputs:
-    let lib = import ./lib inputs;
-    in {
-      apps = lib.forAllSystems (lib.import ./apps);
-      packages = lib.forAllSystems (lib.import ./pkgs);
-      devShells = lib.forAllSystems (lib.import ./shell);
-      formatter = lib.forAllSystems (system: inputs.nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
 
-      nixosModules = lib.importSubdirs ./modules;
-      nixosConfigurations = lib.import ./systems;
+    imports = [
+      ./hosts/bootstrap
+      ./hosts/kazuma
+      ./parts/agenix-armored
+      ./parts/erase-your-darlings
+      ./parts/installer
+      ./parts/minimal-shell
+      ./parts/nix-flakes
+      ./parts/ssh-keys
+      ./parts/trust-admins
+    ];
+
+    perSystem = { self', pkgs, ... }: {
+      formatter = pkgs.nixpkgs-fmt;
+
+      minimalShells.direnv = [
+        pkgs.nixpkgs-fmt
+        self'.packages.agenix-armored
+      ];
     };
+  };
 }
