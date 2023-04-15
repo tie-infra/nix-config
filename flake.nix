@@ -10,8 +10,11 @@
     # - https://github.com/NixOS/nixpkgs/pull/205557 (concatLines for pufferpanel module)
     #nixpkgs.url = "nixpkgs/nixos-22.11";
     nixpkgs.url = "github:tie-infra/nixpkgs/nixos-22.11";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
-    agenix.url = "github:ryantm/agenix";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -23,7 +26,6 @@
     imports = [
       ./hosts/bootstrap
       ./hosts/kazuma
-      ./parts/agenix-armored
       ./parts/erase-your-darlings
       ./parts/installer
       ./parts/minimal-shell
@@ -32,12 +34,13 @@
       ./parts/trust-admins
     ];
 
-    perSystem = { self', pkgs, ... }: {
+    perSystem = { self', inputs', pkgs, ... }: {
       formatter = pkgs.nixpkgs-fmt;
 
-      minimalShells.direnv = [
-        pkgs.nixpkgs-fmt
-        self'.packages.agenix-armored
+      minimalShells.direnv = with pkgs; [
+        nixpkgs-fmt
+        sops
+        ssh-to-age
       ];
     };
   };

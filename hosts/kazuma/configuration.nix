@@ -4,7 +4,7 @@
     self.nixosModules.erase-your-darlings
     self.nixosModules.nix-flakes
     self.nixosModules.trust-admins
-    inputs.agenix.nixosModules.default
+    inputs.sops-nix.nixosModules.default
   ];
 
   nixpkgs.hostPlatform.system = "x86_64-linux";
@@ -55,15 +55,17 @@
       extraPackages = [ pkgs.jre8 ];
       extraGroups = [ "podman" ];
       panel.enable = false;
-      daemon.auth = {
-        url = "https://panel.brim.ml/oauth2/token";
-        clientId = ".node_2";
-        clientSecretFile = config.age.secrets.pufferpanel-client-secret.path;
-      };
       environment = {
-        PUFFER_TOKEN_PUBLIC = "https://panel.brim.ml/auth/publickey";
+        PUFFER_WEB_HOST = ":8080";
+        PUFFER_DAEMON_SFTP_HOST = ":5657";
+        PUFFER_PANEL_ENABLE = "false";
+        PUFFER_TOKEN_PUBLIC = "https://panel.brim.ml/auth/publickey"; # deprecated in v3
+        PUFFER_DAEMON_AUTH_URL = "https://panel.brim.ml/oauth2/token";
+        PUFFER_DAEMON_AUTH_CLIENTID = ".node_2";
+        # PUFFER_DAEMON_AUTH_CLIENTSECRET is set via environmentFile
         PUFFER_DAEMON_CONSOLE_BUFFER = "1000";
       };
+      environmentFiles = [ config.sops.secrets."pufferpanel/env".path ];
     };
   };
 
@@ -72,7 +74,7 @@
     users.nixos = {
       uid = 1000;
       isNormalUser = true;
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" config.users.groups.keys.name ];
       openssh.authorizedKeys.keys = with self.lib.sshKeys;
         github-actions ++ tie;
     };
@@ -84,7 +86,10 @@
     logRefusedConnections = false;
   };
 
-  age.secrets.pufferpanel-client-secret = {
-    file = ./pufferpanel-client-secret.age;
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets = {
+      "pufferpanel/env" = { };
+    };
   };
 }
