@@ -51,10 +51,8 @@
     netdata.enable = true;
     pufferpanel = {
       enable = true;
-      openFirewall = true;
       extraPackages = [ pkgs.jre8 ];
       extraGroups = [ "podman" ];
-      panel.enable = false;
       environment = {
         PUFFER_WEB_HOST = ":8080";
         PUFFER_DAEMON_SFTP_HOST = ":5657";
@@ -65,7 +63,7 @@
         # PUFFER_DAEMON_AUTH_CLIENTSECRET is set via environmentFile
         PUFFER_DAEMON_CONSOLE_BUFFER = "1000";
       };
-      environmentFiles = [ config.sops.secrets."pufferpanel/env".path ];
+      environmentFile = config.sops.secrets."pufferpanel/env".path;
     };
   };
 
@@ -82,14 +80,16 @@
 
   networking.firewall = {
     allowedUDPPorts = [ 3000 ];
-    allowedTCPPorts = [ 3001 19999 25565 25569 ];
+    allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
     logRefusedConnections = false;
   };
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets = {
-      "pufferpanel/env" = { };
+      "pufferpanel/env" = {
+        restartUnits = [ "pufferpanel.service" ];
+      };
     };
   };
 }
