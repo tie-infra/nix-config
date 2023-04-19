@@ -30,12 +30,6 @@
     btop
   ];
 
-  virtualisation.podman = {
-    enable = true;
-    dockerSocket.enable = true;
-    dockerCompat = true;
-  };
-
   services = {
     openssh = {
       enable = true;
@@ -51,8 +45,7 @@
     netdata.enable = true;
     pufferpanel = {
       enable = true;
-      extraPackages = [ pkgs.jre8 ];
-      extraGroups = [ "podman" ];
+      extraPackages = [ pkgs.jre8 pkgs.eco-server ];
       environment = {
         PUFFER_WEB_HOST = ":8080";
         PUFFER_DAEMON_SFTP_HOST = ":5657";
