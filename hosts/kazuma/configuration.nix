@@ -1,11 +1,16 @@
 { self, inputs, ... }:
-{ config, pkgs, ... }: {
+{ lib, pkgs, config, ... }: {
   imports = [
     self.nixosModules.erase-your-darlings
     self.nixosModules.nix-flakes
     self.nixosModules.trust-admins
     inputs.sops-nix.nixosModules.default
   ];
+
+  nixpkgs.config.allowUnfreePredicate =
+    pkg: builtins.elem (lib.getName pkg) [
+      "eco-server"
+    ];
 
   nixpkgs.hostPlatform.system = "x86_64-linux";
   system.stateVersion = "22.11";
