@@ -33,6 +33,7 @@
     file
     htop
     btop
+    rcon
   ];
 
   services = {
