@@ -40,15 +40,24 @@
     openssh = {
       enable = true;
       startWhenNeeded = true;
-      passwordAuthentication = false;
-      kbdInteractiveAuthentication = false;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+      };
       extraConfig = ''
         LoginGraceTime 15s
         RekeyLimit default 30m
       '';
     };
+
     fstrim.enable = true;
+    btrfs.autoScrub = {
+      enable = true;
+      fileSystems = [ "/" ];
+    };
+
     netdata.enable = true;
+
     pufferpanel = {
       enable = true;
       extraPackages = [ pkgs.jre8 pkgs.eco-server ];

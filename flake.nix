@@ -3,14 +3,9 @@
 
   inputs = {
     # Currently using fork with
-    # - https://github.com/NixOS/nixpkgs/pull/219351 (disable BIOS boot for ISO)
-    # - https://github.com/NixOS/nixpkgs/pull/220506 (update pufferpanel)
-    # - https://github.com/NixOS/nixpkgs/pull/225379 (add myself pufferpanel maintainers)
-    # - https://github.com/NixOS/nixpkgs/pull/225274 (pufferpanel module)
-    # - https://github.com/NixOS/nixpkgs/pull/205557 (concatLines for pufferpanel module)
     # - no PR yet (eco-server package)
-    #nixpkgs.url = "nixpkgs/nixos-22.11";
-    nixpkgs.url = "github:tie-infra/nixpkgs/nixos-22.11";
+    #nixpkgs.url = "nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:tie-infra/nixpkgs/nixos-23.05";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 

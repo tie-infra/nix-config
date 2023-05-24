@@ -17,8 +17,10 @@
   services.openssh = {
     enable = true;
     startWhenNeeded = true;
-    passwordAuthentication = false;
-    kbdInteractiveAuthentication = false;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
     extraConfig = ''
       LoginGraceTime 15s
       RekeyLimit default 30m
