@@ -36,7 +36,7 @@ in
   isoImage = {
     # NixOS uses syslinux for legacy BIOS boot, and syslinux currently cannot be
     # cross-compiled from non-x86 platforms. As a workaround, we disable legacy
-    # BIOS boot (note that USB boot is subset of BIOS boot).
+    # BIOS boot (note that USB boot is a subset of BIOS boot).
     makeBiosBootable = lib.mkForce false;
     makeUsbBootable = lib.mkForce false;
     makeEfiBootable = lib.mkForce true;
