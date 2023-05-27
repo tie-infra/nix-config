@@ -13,8 +13,22 @@
         "type": "github"
       },
       "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
+        "id": "flake-parts",
+        "type": "indirect"
+      }
+    },
+    "minimal-shell": {
+      "locked": {
+        "lastModified": 1685167083,
+        "narHash": "sha256-yEPiP3kg/bJwyXpUn/47O/dS0fyZQF2HGnyVxpdc/Ws=",
+        "owner": "tie-infra",
+        "repo": "minimal-shell",
+        "rev": "0333af566ab29bfc44e3ee3cf806a6658ee5dbdf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tie-infra",
+        "repo": "minimal-shell",
         "type": "github"
       }
     },
@@ -71,8 +85,10 @@
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "minimal-shell": "minimal-shell",
         "nixpkgs": "nixpkgs",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "systems": "systems"
       }
     },
     "sops-nix": {
@@ -91,9 +107,22 @@
         "type": "github"
       },
       "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
+        "id": "sops-nix",
+        "type": "indirect"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
         "type": "github"
+      },
+      "original": {
+        "id": "systems",
+        "type": "indirect"
       }
     }
   },

@@ -7,24 +7,25 @@
     #nixpkgs.url = "nixpkgs/nixos-23.05";
     nixpkgs.url = "github:tie-infra/nixpkgs/nixos-23.05";
 
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "systems";
 
-    sops-nix.url = "github:Mic92/sops-nix";
+    flake-parts.url = "flake-parts";
+
+    sops-nix.url = "sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    minimal-shell.url = "github:tie-infra/minimal-shell";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-    systems = [
-      "x86_64-linux"
-      "aarch64-linux"
-    ];
+    systems = import inputs.systems;
 
     imports = [
+      inputs.minimal-shell.flakeModule
       ./hosts/bootstrap
       ./hosts/kazuma
       ./parts/erase-your-darlings
       ./parts/installer
-      ./parts/minimal-shell
       ./parts/nix-flakes
       ./parts/ssh-keys
       ./parts/trust-admins

@@ -1,5 +1,10 @@
-{ inputs, ... }@args:
+{ inputs, lib, ... }@args:
 let
+  # Some packages cannot be cross-compiled from macOS.
+  mkIfSupported = system:
+    let platform = lib.systems.elaborate system;
+    in lib.mkIf (!platform.isDarwin);
+
   installer = inputs.nixpkgs.lib.nixosSystem {
     modules = [ (import ./installer.nix args) ];
   };
@@ -16,7 +21,7 @@ let
     };
 in
 {
-  perSystem = { system, ... }: {
+  perSystem = { system, ... }: mkIfSupported system {
     packages.installer-x86-64-iso =
       let cfg = systemFor { host = "x86_64-linux"; build = system; };
       in cfg.config.system.build.isoImage;
