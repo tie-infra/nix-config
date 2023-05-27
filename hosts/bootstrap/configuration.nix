@@ -36,7 +36,7 @@
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = with self.lib.sshKeys;
-        github-actions ++ tie;
+        github-actions ++ tie ++ brim;
     };
   };
 

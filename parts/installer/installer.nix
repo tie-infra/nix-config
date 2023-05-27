@@ -31,5 +31,6 @@ in
     '';
   };
 
-  users.users.nixos.openssh.authorizedKeys.keys = self.lib.sshKeys.tie;
+  users.users.nixos.openssh.authorizedKeys.keys = with self.lib.sshKeys;
+    tie ++ brim;
 }

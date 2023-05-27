@@ -6,5 +6,8 @@
     tie = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb mr.trubach@icloud.com"
     ];
+    brim = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG3MFVFbEvoiXBpqPavtwDIQtgY1hLXNvJgTY7/nasG/ dev@brim.ml"
+    ];
   };
 }

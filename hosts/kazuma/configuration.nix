@@ -87,7 +87,7 @@
       isNormalUser = true;
       extraGroups = [ "wheel" config.users.groups.keys.name ];
       openssh.authorizedKeys.keys = with self.lib.sshKeys;
-        github-actions ++ tie;
+        github-actions ++ tie ++ brim;
     };
   };
 
