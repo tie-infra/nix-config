@@ -30,7 +30,10 @@
     };
 
   environment.systemPackages = with pkgs; [
+    ripgrep
+    fd
     file
+    tree
     htop
     btop
     rcon
