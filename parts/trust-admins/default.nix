@@ -1,6 +1,3 @@
 {
-  flake.nixosModules.trust-admins = {
-    nix.settings.trusted-users = [ "@wheel" ];
-    security.sudo.wheelNeedsPassword = false;
-  };
+  flake.nixosModules.trust-admins = import ./trust-admins.nix;
 }

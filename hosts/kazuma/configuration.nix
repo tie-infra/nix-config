@@ -36,6 +36,8 @@
     rcon
   ];
 
+  security.polkit.enable = true;
+
   services = {
     openssh = {
       enable = true;
