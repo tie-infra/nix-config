@@ -20,7 +20,9 @@ in
 
   services.openssh = {
     enable = true;
-    startWhenNeeded = true;
+    # NB do not set startWhenNeeded, otherwise the hostKeys are not generated on
+    # system startup. This breaks the manual setup procedure when connected to
+    # monitor and keyboard without SSH and/or network access.
     hostKeys = [{
       path = "/etc/ssh/ssh_host_ed25519_key";
       type = "ed25519";
