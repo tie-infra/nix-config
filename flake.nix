@@ -31,7 +31,7 @@
       ./parts/trust-admins
     ];
 
-    perSystem = { self', inputs', pkgs, ... }: {
+    perSystem = { pkgs, ... }: {
       formatter = pkgs.nixpkgs-fmt;
 
       minimalShells.direnv = with pkgs; [
