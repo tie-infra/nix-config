@@ -12,7 +12,11 @@ in
 
   networking.hostName = "installer";
 
-  environment.systemPackages = [ setup-disk ];
+  environment.systemPackages = [ setup-disk ] ++ (with pkgs; [
+    # Useful for verifying that ECC is working.
+    edac-utils
+    dmidecode
+  ]);
 
   services.openssh = {
     enable = true;
