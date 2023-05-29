@@ -1,5 +1,9 @@
-{ lib, ... }: {
-  nix.settings.trusted-users = [ "@wheel" ];
+{ config, ... }:
+let
+  wheel = config.users.groups.wheel.name;
+in
+{
+  nix.settings.trusted-users = [ ("@" + wheel) ];
 
   security.sudo = {
     wheelNeedsPassword = false;
@@ -14,7 +18,8 @@
      * without password authentication, similar to "sudo NOPASSWD:"
      */
     polkit.addRule(function(action, subject) {
-        if (subject.isInGroup("wheel")) {
+        const wheel = ${builtins.toJSON wheel};
+        if (subject.isInGroup(wheel)) {
             return polkit.Result.YES;
         }
     });

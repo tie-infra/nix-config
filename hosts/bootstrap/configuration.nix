@@ -1,9 +1,10 @@
 { self, ... }:
-{ lib, modulesPath, ... }: {
+{ lib, config, modulesPath, ... }: {
   imports = [
     (modulesPath + "/profiles/all-hardware.nix")
     self.nixosModules.nix-flakes
     self.nixosModules.erase-your-darlings
+    self.nixosModules.nixos-user
     self.nixosModules.trust-admins
   ];
 
@@ -29,16 +30,7 @@
     '';
   };
 
-  users = {
-    mutableUsers = false;
-    users.nixos = {
-      uid = 1000;
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = with self.lib.sshKeys;
-        github-actions ++ tie ++ brim;
-    };
-  };
+  users.mutableUsers = false;
 
   eraseYourDarlings = {
     bootDisk = "/dev/disk/by-partlabel/efi";

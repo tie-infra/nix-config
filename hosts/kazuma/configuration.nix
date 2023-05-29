@@ -4,6 +4,7 @@
     self.nixosModules.erase-your-darlings
     self.nixosModules.nix-flakes
     self.nixosModules.trust-admins
+    self.nixosModules.nixos-user
     inputs.sops-nix.nixosModules.default
   ];
 
@@ -80,16 +81,7 @@
     };
   };
 
-  users = {
-    mutableUsers = false;
-    users.nixos = {
-      uid = 1000;
-      isNormalUser = true;
-      extraGroups = [ "wheel" config.users.groups.keys.name ];
-      openssh.authorizedKeys.keys = with self.lib.sshKeys;
-        github-actions ++ tie ++ brim;
-    };
-  };
+  users.mutableUsers = false;
 
   networking.firewall = {
     allowedUDPPorts = [ 3000 ];
