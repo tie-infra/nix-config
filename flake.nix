@@ -26,6 +26,7 @@
       inputs.minimal-shell.flakeModule
       ./hosts/bootstrap
       ./hosts/kazuma
+      ./hosts/saitama
       ./parts/base-system
       ./parts/erase-your-darlings
       ./parts/installer
