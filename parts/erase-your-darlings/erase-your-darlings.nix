@@ -1,6 +1,10 @@
-{ lib, config, ... }:
+# See https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
+
+{ lib, pkgs, config, ... }:
 let
   cfg = config.eraseYourDarlings;
+
+  restoreBtrfs = pkgs.callPackage ./restore-btrfs { };
 in
 {
   options.eraseYourDarlings = {
@@ -47,20 +51,9 @@ in
   };
 
   config = {
-    # See https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
-    boot.initrd.postDeviceCommands = lib.mkBefore ''
-      mkdir -p /mnt
-      mount -t btrfs -o subvol=/ ${lib.escapeShellArg cfg.rootDisk} /mnt
-      btrfs subvolume list -o /mnt/root |
-      cut -f9 -d' ' | while read subvolume; do
-        echo "deleting /$subvolume subvolume..."
-        btrfs subvolume delete "/mnt/$subvolume"
-      done &&
-      echo "deleting /root subvolume..." &&
-      btrfs subvolume delete /mnt/root
-      echo "restoring blank /root subvolume..."
-      btrfs subvolume snapshot /mnt/root-blank /mnt/root
-      umount /mnt
+    boot.initrd.postDeviceCommands = lib.mkAfter ''
+      echo 'restoring root filesystem from blank snapshot...'
+      ${lib.getExe restoreBtrfs} --device-path ${lib.escapeShellArg cfg.rootDisk}
     '';
 
     fileSystems =
