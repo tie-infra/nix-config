@@ -25,6 +25,7 @@
     imports = [
       inputs.minimal-shell.flakeModule
       ./hosts/bootstrap
+      ./hosts/brim
       ./hosts/kazuma
       ./hosts/saitama
       ./parts/base-system

@@ -6,20 +6,18 @@
     self.nixosModules.trust-admins
   ];
 
-  nixpkgs.hostPlatform.system = "x86_64-linux";
-
   system.stateVersion = "23.05";
-  networking.hostName = "saitama";
+
   time.timeZone = "Europe/Moscow";
 
-  hardware.enableRedistributableFirmware = true;
+  boot = {
+    loader.systemd-boot = {
+      enable = true;
+      configurationLimit = 10;
+    };
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 10;
-
-  boot.initrd.availableKernelModules = [ "ahci" "amd64_edac" ];
-
-  zramSwap.enable = true;
+    initrd.availableKernelModules = [ "ahci" "amd64_edac" ];
+  };
 
   eraseYourDarlings =
     let disk = "WDC_WD10EALX-009BA0_WD-WCATR5170643";
@@ -27,6 +25,13 @@
       bootDisk = "/dev/disk/by-id/ata-${disk}-part1";
       rootDisk = "/dev/disk/by-id/ata-${disk}-part2";
     };
+
+  networking = {
+    hostName = "saitama";
+    firewall = {
+      allowedTCPPorts = [ 19999 ];
+    };
+  };
 
   services = {
     netdata.enable = true;
@@ -50,9 +55,5 @@
         render.name
       ];
     };
-  };
-
-  networking.firewall = {
-    allowedTCPPorts = [ 19999 ];
   };
 }

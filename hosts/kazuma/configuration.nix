@@ -12,17 +12,19 @@
       "eco-server"
     ];
 
-  nixpkgs.hostPlatform.system = "x86_64-linux";
-
   system.stateVersion = "22.11";
-  networking.hostName = "kazuma";
+
   time.timeZone = "Europe/Moscow";
 
-  hardware.enableRedistributableFirmware = true;
-  boot.initrd.availableKernelModules = [ "nvme" ];
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 10;
-  zramSwap.enable = true;
+  boot = {
+    loader.systemd-boot = {
+      enable = true;
+      configurationLimit = 10;
+    };
+
+    initrd.availableKernelModules = [ "nvme" ];
+  };
+
   eraseYourDarlings =
     let disk = "SPCC_M.2_PCIe_SSD_27FF070C189700120672";
     in {
@@ -30,7 +32,13 @@
       rootDisk = "/dev/disk/by-id/nvme-${disk}-part2";
     };
 
-  environment.systemPackages = [ pkgs.rcon ];
+  networking = {
+    hostName = "kazuma";
+    firewall = {
+      allowedUDPPorts = [ 3000 ];
+      allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
+    };
+  };
 
   services = {
     fstrim.enable = true;
@@ -57,11 +65,6 @@
       };
       environmentFile = config.sops.secrets."pufferpanel/env".path;
     };
-  };
-
-  networking.firewall = {
-    allowedUDPPorts = [ 3000 ];
-    allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
   };
 
   sops = {

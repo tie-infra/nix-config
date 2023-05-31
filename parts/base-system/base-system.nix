@@ -13,7 +13,13 @@
     htop
     btop
     vim
+    rcon
+    mc
   ];
+
+  hardware.enableRedistributableFirmware = true;
+
+  zramSwap.enable = true;
 
   networking.firewall.logRefusedConnections = false;
 
