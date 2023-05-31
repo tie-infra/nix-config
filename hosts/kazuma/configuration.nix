@@ -3,7 +3,6 @@
   imports = [
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
-    self.nixosModules.nix-flakes
     self.nixosModules.trust-admins
     inputs.sops-nix.nixosModules.default
   ];

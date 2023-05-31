@@ -8,7 +8,6 @@ in
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
     self.nixosModules.base-system
-    self.nixosModules.nix-flakes
   ];
 
   networking.hostName = "installer";

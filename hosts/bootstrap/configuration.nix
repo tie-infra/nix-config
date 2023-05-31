@@ -3,7 +3,6 @@
   imports = [
     (modulesPath + "/profiles/all-hardware.nix")
     self.nixosModules.base-system
-    self.nixosModules.nix-flakes
     self.nixosModules.erase-your-darlings
     self.nixosModules.trust-admins
   ];

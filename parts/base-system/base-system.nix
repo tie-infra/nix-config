@@ -1,5 +1,10 @@
 { self, ... }:
 { pkgs, config, ... }: {
+  imports = [
+    self.nixosModules.nix-flakes
+    self.nixosModules.jellyfin-ipv6
+  ];
+
   environment.systemPackages = with pkgs; [
     ripgrep
     fd
@@ -7,6 +12,7 @@
     tree
     htop
     btop
+    vim
   ];
 
   networking.firewall.logRefusedConnections = false;
