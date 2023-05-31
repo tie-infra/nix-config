@@ -7,6 +7,7 @@ in
 {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
+    self.nixosModules.base-system
     self.nixosModules.nix-flakes
   ];
 
@@ -19,24 +20,20 @@ in
   ]);
 
   services.openssh = {
-    enable = true;
-    # NB do not set startWhenNeeded, otherwise the hostKeys are not generated on
-    # system startup. This breaks the manual setup procedure when connected to
-    # monitor and keyboard without SSH and/or network access.
+    # Always start SSH to generate host keys that are used by the setup-disk script.
+    # FIXME: generate keys if the file does not exist instead.
+    startWhenNeeded = lib.mkForce false;
     hostKeys = [{
       path = "/etc/ssh/ssh_host_ed25519_key";
       type = "ed25519";
     }];
-    settings = {
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-    };
-    extraConfig = ''
-      LoginGraceTime 15s
-      RekeyLimit default 30m
-    '';
   };
 
-  users.users.nixos.openssh.authorizedKeys.keys = with self.lib.sshKeys;
-    tie ++ brim;
+  # See https://github.com/NixOS/nixpkgs/blob/9cfaa8a1a00830d17487cb60a19bb86f96f09b27/nixos/modules/profiles/installation-device.nix#LL52C1-L67C1
+  services.getty.helpLine = lib.mkForce ''
+    The "nixos" and "root" accounts have empty passwords.
+
+    To set up the disk for installation, type `sudo setup-disk /dev/sda` where
+    `/dev/sda` is the target disk. Further instructions are printed on success.
+  '';
 }

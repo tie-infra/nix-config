@@ -26,10 +26,10 @@
       inputs.minimal-shell.flakeModule
       ./hosts/bootstrap
       ./hosts/kazuma
+      ./parts/base-system
       ./parts/erase-your-darlings
       ./parts/installer
       ./parts/nix-flakes
-      ./parts/nixos-user
       ./parts/ssh-keys
       ./parts/trust-admins
     ];

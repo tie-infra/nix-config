@@ -1,10 +1,10 @@
 { self, inputs, ... }:
 { lib, pkgs, config, ... }: {
   imports = [
+    self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
     self.nixosModules.nix-flakes
     self.nixosModules.trust-admins
-    self.nixosModules.nixos-user
     inputs.sops-nix.nixosModules.default
   ];
 
@@ -14,6 +14,7 @@
     ];
 
   nixpkgs.hostPlatform.system = "x86_64-linux";
+
   system.stateVersion = "22.11";
   networking.hostName = "kazuma";
   time.timeZone = "Europe/Moscow";
@@ -30,33 +31,11 @@
       rootDisk = "/dev/disk/by-id/nvme-${disk}-part2";
     };
 
-  environment.systemPackages = with pkgs; [
-    ripgrep
-    fd
-    file
-    tree
-    htop
-    btop
-    rcon
-  ];
-
-  security.polkit.enable = true;
+  environment.systemPackages = [ pkgs.rcon ];
 
   services = {
-    openssh = {
-      enable = true;
-      startWhenNeeded = true;
-      settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-      };
-      extraConfig = ''
-        LoginGraceTime 15s
-        RekeyLimit default 30m
-      '';
-    };
-
     fstrim.enable = true;
+
     btrfs.autoScrub = {
       enable = true;
       fileSystems = [ "/" ];
@@ -81,12 +60,9 @@
     };
   };
 
-  users.mutableUsers = false;
-
   networking.firewall = {
     allowedUDPPorts = [ 3000 ];
     allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
-    logRefusedConnections = false;
   };
 
   sops = {
