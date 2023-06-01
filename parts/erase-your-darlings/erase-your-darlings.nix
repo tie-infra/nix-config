@@ -51,9 +51,18 @@ in
   };
 
   config = {
+    boot.initrd.extraUtilsCommands = ''
+      copy_bin_and_libs ${restoreBtrfs}/bin/restore-btrfs
+    '';
+
+    boot.initrd.extraUtilsCommandsTest = ''
+      $out/bin/restore-btrfs --help
+    '';
+
+    # NB we want to run after btrfs device scan.
     boot.initrd.postDeviceCommands = lib.mkAfter ''
       echo 'restoring root filesystem from blank snapshot...'
-      ${lib.getExe restoreBtrfs} --device-path ${lib.escapeShellArg cfg.rootDisk}
+      restore-btrfs --device-path ${lib.escapeShellArg cfg.rootDisk}
     '';
 
     fileSystems =
