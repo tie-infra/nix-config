@@ -31,7 +31,7 @@
       ./parts/base-system
       ./parts/erase-your-darlings
       ./parts/installer
-      ./parts/jellyfin-ipv6
+      ./parts/jellyfin
       ./parts/nix-flakes
       ./parts/ssh-keys
       ./parts/trust-admins

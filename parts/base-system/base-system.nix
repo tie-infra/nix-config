@@ -3,6 +3,7 @@
   imports = [
     self.nixosModules.nix-flakes
     self.nixosModules.jellyfin-ipv6
+    self.nixosModules.jellyfin-dynamic-user
   ];
 
   environment.systemPackages = with pkgs; [
