@@ -2,8 +2,6 @@
 { pkgs, config, ... }: {
   imports = [
     self.nixosModules.nix-flakes
-    self.nixosModules.jellyfin-ipv6
-    self.nixosModules.jellyfin-dynamic-user
   ];
 
   environment.systemPackages = with pkgs; [
@@ -40,6 +38,8 @@
 
   services = {
     getty.autologinUser = config.users.users.nixos.name;
+
+    resolved.enable = true;
 
     openssh = {
       enable = true;

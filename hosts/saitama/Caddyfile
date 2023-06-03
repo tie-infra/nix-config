@@ -1,0 +1,14 @@
+https://tie.rip {
+	redir /transmission /transmission/web
+	reverse_proxy /transmission/* localhost:9091
+	reverse_proxy /jackett/* localhost:9117
+	#respond "Hello, world!"
+}
+
+https://jellyfin.tie.rip {
+	reverse_proxy localhost:8096
+}
+
+https://sonarr.tie.rip {
+	reverse_proxy localhost:8989
+}
