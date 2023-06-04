@@ -107,7 +107,11 @@
       settings = {
         port-forwarding-enabled = false;
 
+        rpc-enabled = true;
+        rpc-whitelist-enabled = false;
         rpc-authentication-required = true;
+        rpc-bind-address = "::";
+        rpc-port = 9091;
 
         download-queue-enabled = true;
         download-queue-size = 10;
