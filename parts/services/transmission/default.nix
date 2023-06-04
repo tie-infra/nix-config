@@ -63,6 +63,7 @@ in
       example = "/run/secrets/transmission/settings.json";
       description = lib.mdDoc ''
         Path to a JSON file to be merged with the settings.
+
         Useful to merge a file which is better kept out of the Nix store
         to set secret config parameters like `rpc-password`.
       '';
@@ -84,39 +85,43 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      script = ''
-        pushd "$STATE_DIRECTORY" >/dev/null
-        mkdir -p config download
-        chmod u=rwx,g=,o= config
-
-        configState=config/settings.json
-        if ! [ -e $configState ]; then
-          configState=
-        fi
-
-        ${pkgs.jq}/bin/jq --slurp add \
-          $configState ${settingsFile} \
-          ${lib.optionalString (cfg.settingsFile != null) "\"$CREDENTIALS_DIRECTORY\"/settings.json"} \
-          >config/settings.json
-        chmod u=rw,g=,o= config/settings.json
-        popd >/dev/null
-
-        export CURL_CA_BUNDLE=${
-          if cfg.cacertBundle != null
-          then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt"
-          else systemCerts
-        }
-
-        exec ${cfg.package}/bin/transmission-daemon --foreground \
-          --config-dir "$STATE_DIRECTORY/config" \
-          --download-dir "$STATE_DIRECTORY/download" \
-          ${lib.escapeShellArgs cfg.extraFlags}
-      '';
-
       serviceConfig = {
         Type = "notify";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         Restart = "always";
+
+        LoadCredential =
+          lib.optional (cfg.settingsFile != null) "settings.json:${cfg.settingsFile}" ++
+          lib.optional (cfg.cacertBundle != null) "ca-bundle.crt:${cfg.cacertBundle}";
+
+        ExecStartPre = pkgs.writeShellScript "transmission-setup" ''
+          set -eu
+
+          cd "$STATE_DIRECTORY"
+          mkdir -p config download
+          chmod u=rwx,g=,o= config
+
+          configState=config/settings.json
+          if ! [ -e $configState ]; then
+            configState=
+          fi
+
+          cat >config/settings.json <<<"$(${pkgs.jq}/bin/jq --slurp add $configState ${settingsFile} \
+            ${lib.optionalString (cfg.settingsFile != null) "\"$CREDENTIALS_DIRECTORY\"/settings.json"})"
+          chmod u=rw,g=,o= config/settings.json
+        '';
+
+        ExecStart = pkgs.writeShellScript "transmission-start" ''
+          export CURL_CA_BUNDLE=${
+            if cfg.cacertBundle != null
+            then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt"
+            else systemCerts
+          }
+          exec ${cfg.package}/bin/transmission-daemon --foreground \
+            --config-dir "$STATE_DIRECTORY/config" \
+            --download-dir "$STATE_DIRECTORY/download" \
+            ${lib.escapeShellArgs cfg.extraFlags}
+        '';
 
         User =
           if cfg.user != null then cfg.user
@@ -129,10 +134,6 @@ in
 
         StateDirectory = "transmission";
         StateDirectoryMode = "0750"; # u=rwx,g=rx,o=
-
-        LoadCredential =
-          lib.optional (cfg.settingsFile != null) "settings.json:${cfg.settingsFile}" ++
-          lib.optional (cfg.cacertBundle != null) "ca-bundle.crt:${cfg.cacertBundle}";
 
         UMask = "0027"; # u=rwx,g=rx,o=
         AmbientCapabilities = "";

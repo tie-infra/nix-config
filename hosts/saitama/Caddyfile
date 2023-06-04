@@ -1,5 +1,5 @@
 https://tie.rip {
-	redir /transmission /transmission/web
+	redir /transmission /transmission/web/
 	reverse_proxy /transmission/* localhost:9091
 	reverse_proxy /jackett/* localhost:9117
 	#respond "Hello, world!"

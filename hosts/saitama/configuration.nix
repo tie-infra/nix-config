@@ -94,6 +94,12 @@
 
     jackett = {
       enable = true;
+      settings = {
+        BasePathOverride = "/jackett";
+        CacheEnabled = true;
+        CacheTtl = 86400;
+        CacheMaxResultsPerIndexer = 100000;
+      };
     };
 
     transmission = {
@@ -110,17 +116,45 @@
         ratio-limit = 4.0;
 
         speed-limit-down-enabled = true;
-        speed-limit-down = 65536; # KB/s
+        speed-limit-down = 65536; # KB/s | ~50MB
 
         speed-limit-up-enabled = true;
-        speed-limit-up = 65536; # KB/s
+        speed-limit-up = 65536; # KB/s | ~50MB
 
         alt-speed-enabled = false;
-        alt-speed-up = 1024; # KB/s
-        alt-speed-down = 1024; # KB/s
+        alt-speed-up = 1024; # KB/s | ~1MB
+        alt-speed-down = 1024; # KB/s | ~1MB
       };
       settingsFile = config.sops.secrets."transmission/settings.json".path;
     };
+  };
+
+  # .NET lacks Happy Eyeballs support and some requests are routed over bogus
+  # ISPs with broken or slow IPv6 connectivity.
+  # See https://github.com/dotnet/runtime/issues/26177
+  # See https://learn.microsoft.com/en-us/dotnet/core/runtime-config/networking
+  #
+  # Unfortunately, DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER doesn’t fix the
+  # issue for some reason. As a workaround, we set up a local HTTP proxy.
+  #
+  services._3proxy = {
+    enable = true;
+    services = [{
+      type = "proxy";
+      auth = [ "none" ];
+      bindAddress = "::1";
+      bindPort = 3128;
+    }];
+  };
+  services.jackett.settings = {
+    # Jackett doesn’t respect HTTP_PROXY and HTTPS_PROXY environment variables
+    # for some reason.
+    ProxyType = 0; # HTTP
+    ProxyUrl = "http://[::1]:3128";
+  };
+  systemd.services.jellyfin.environment = {
+    HTTP_PROXY = "http://[::1]:3128";
+    HTTPS_PROXY = "http://[::1]:3128";
   };
 
   sops = {
