@@ -9,7 +9,7 @@ let
     CF_SERVER_BRIMWORLD_RU_KEY_PATH = "brimworld-ru-key.pem";
   };
 in
-{ lib, config, ... }: {
+{ lib, pkgs, config, ... }: {
   imports = [
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
@@ -44,7 +44,7 @@ in
     useNetworkd = true;
     useDHCP = false;
     firewall = {
-      allowedTCPPorts = [ 443 ];
+      allowedTCPPorts = [ 443 25565 25566 ];
       allowedUDPPorts = [ 443 ];
     };
   };
@@ -88,10 +88,37 @@ in
 
   services = {
     netdata.enable = true;
+
     caddy = {
       enable = true;
       adapter = "caddyfile";
       configFile = ./Caddyfile;
+    };
+
+    pufferpanel = {
+      enable = true;
+      extraPackages = [
+        (pkgs.writeShellScriptBin "openjdk-java8" ''
+          set -eu
+          exec ${lib.getExe pkgs.jre8} "$@"
+        '')
+        (pkgs.writeShellScriptBin "graalvm-java17" ''
+          set -eu
+          exec ${lib.getExe pkgs.graalvm17-ce} "$@"
+        '')
+      ];
+      environment = {
+        PUFFER_WEB_HOST = ":8080";
+        PUFFER_PANEL_REGISTRATIONENABLED = "false";
+        PUFFER_DAEMON_SFTP_HOST = ":5657";
+        PUFFER_DAEMON_CONSOLE_BUFFER = "1000";
+      };
+    };
+
+    minio = {
+      enable = true;
+      environment.MINIO_SERVER_URL = "https://s3.brim.ml";
+      environmentFile = config.sops.secrets."minio/env".path;
     };
   };
 
@@ -106,7 +133,11 @@ in
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
-    secrets = lib.mapAttrs'
+    secrets = {
+      "minio/env" = {
+        restartUnits = [ "minio.service" ];
+      };
+    } // lib.mapAttrs'
       (_: value: lib.nameValuePair "caddy/${value}" {
         restartUnits = [ "caddy.service" ];
       })

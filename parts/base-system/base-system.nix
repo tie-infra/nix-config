@@ -2,6 +2,7 @@
 { pkgs, config, ... }: {
   imports = [
     self.nixosModules.nix-flakes
+    self.nixosModules.services
   ];
 
   environment.systemPackages = with pkgs; [

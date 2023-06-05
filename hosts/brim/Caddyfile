@@ -30,7 +30,6 @@
 	}
 }
 
-
 (tls-brim) {
 	tls {$CF_SERVER_BRIM_CERT_PATH} {$CF_SERVER_BRIM_KEY_PATH}
 }
@@ -43,15 +42,18 @@
 	tls {$CF_SERVER_BRIMWORLD_RU_CERT_PATH} {$CF_SERVER_BRIMWORLD_RU_KEY_PATH}
 }
 
-#brim.ml {
-#	root * /var/www/html
-#	file_server
-#}
-#
-#assets.brim.ml {
-#	root * /var/www/html/assets
-#	file_server
-#}
+brim.ml {
+	import tls-brim
+	@document `{uri}.endsWith("/")`
+	rewrite @document /brim-website{uri}index.html
+	rewrite * /brim-website{uri}
+	reverse_proxy localhost:9000
+}
+
+assets.brim.ml {
+	import tls-brim
+	redir https://brim.ml/assets/ permanent
+}
 
 ip.brim.ml {
 	import tls-brim
@@ -69,15 +71,25 @@ ip.brim.ml {
 	`
 }
 
+storage.brim.ml {
+	import tls-brim
+	reverse_proxy localhost:9001
+}
+
+s3.brim.ml {
+	import tls-brim
+	reverse_proxy localhost:9000
+}
+
 netdata.brim.ml {
 	import tls-brim
 	reverse_proxy localhost:19999
 }
 
-#panel.brim.ml {
-#	reverse_proxy localhost:8080
-#}
-#
+panel.brim.ml {
+	reverse_proxy localhost:8080
+}
+
 #tgbot.brim.ml {
 #	reverse_proxy localhost:5000
 #}

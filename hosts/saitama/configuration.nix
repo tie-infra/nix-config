@@ -4,7 +4,6 @@
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
     self.nixosModules.trust-admins
-    self.nixosModules.services
     inputs.sops-nix.nixosModules.default
     inputs.nixos-hardware.nixosModules.common-gpu-amd
   ];
