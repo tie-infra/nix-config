@@ -1,9 +1,20 @@
-{ self, ... }:
-{ lib, config, pkgs, modulesPath, ... }: {
+{ self, inputs, ... }:
+let
+  cloudflareCerts = {
+    CF_SERVER_BRIM_CERT_PATH = "brim-cert.pem";
+    CF_SERVER_BRIM_KEY_PATH = "brim-key.pem";
+    CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH = "brimworld-online-cert.pem";
+    CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH = "brimworld-online-key.pem";
+    CF_SERVER_BRIMWORLD_RU_CERT_PATH = "brimworld-ru-cert.pem";
+    CF_SERVER_BRIMWORLD_RU_KEY_PATH = "brimworld-ru-key.pem";
+  };
+in
+{ lib, config, ... }: {
   imports = [
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
     self.nixosModules.trust-admins
+    inputs.sops-nix.nixosModules.default
   ];
 
   system.stateVersion = "23.05";
@@ -33,7 +44,8 @@
     useNetworkd = true;
     useDHCP = false;
     firewall = {
-      allowedTCPPorts = [ 19999 ];
+      allowedTCPPorts = [ 443 ];
+      allowedUDPPorts = [ 443 ];
     };
   };
 
@@ -59,7 +71,6 @@
         "2a00:f440:0:614::1d/64"
         "2a00:f440:0:614::1e/64"
         "2a00:f440:0:614::1f/64"
-        "2a00:f440:0:614::20/64"
       ];
       Gateway = [
         "185.148.38.193"
@@ -75,5 +86,30 @@
     };
   };
 
-  services.netdata.enable = true;
+  services = {
+    netdata.enable = true;
+    caddy = {
+      enable = true;
+      adapter = "caddyfile";
+      configFile = ./Caddyfile;
+    };
+  };
+
+  systemd.services.caddy.serviceConfig = {
+    LoadCredential = lib.mapAttrsToList
+      (_: value: "${value}:${config.sops.secrets."caddy/${value}".path}")
+      cloudflareCerts;
+    Environment = lib.mapAttrsToList
+      (name: value: "${name}=%d/${value}")
+      cloudflareCerts;
+  };
+
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    secrets = lib.mapAttrs'
+      (_: value: lib.nameValuePair "caddy/${value}" {
+        restartUnits = [ "caddy.service" ];
+      })
+      cloudflareCerts;
+  };
 }

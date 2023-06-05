@@ -1,7 +1,9 @@
 keys:
   - &server_saitama age13y59mzrlrlckjls3j3w4avxyrtre6jcnehnszpv2aummj8a0sc0sl43652
   - &server_kazuma age1c6h8l08uyktp45eartmdyy0p0x0w3pnet5dcvy4lg00guxmrq4xqdpcdfe
+  - &server_brim age15c06e7kj3t5vjxp7tjkal2qs655wvzgh7qy8h4rk6hpkrlzvssjqyp84zw
   - &admin_tie age1y20x3mwhjaax0q5zc9mwytuste6r02m2m2ee26sz4595u0yxtp3qpk9z4t
+  - &admin_brim age1vx2a9gx2gw6720xnhk2qm2qhfnrv0jkv3z7w28xa0p8y9453m90qdgk88w
 creation_rules:
   - path_regex: ^hosts/saitama/secrets\.yaml$
     key_groups:
@@ -13,3 +15,9 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_kazuma
+  - path_regex: ^hosts/brim/secrets\.yaml$
+    key_groups:
+      - age:
+        - *admin_tie
+        - *admin_brim
+        - *server_brim

@@ -1,0 +1,132 @@
+{
+	auto_https disable_certs
+
+	servers {
+		# See https://developers.cloudflare.com/fundamentals/get-started/setup/allow-cloudflare-ip-addresses
+		# and https://cloudflare.com/ips
+		trusted_proxies static \
+			173.245.48.0/20 \
+			103.21.244.0/22 \
+			103.22.200.0/22 \
+			103.31.4.0/22 \
+			141.101.64.0/18 \
+			108.162.192.0/18 \
+			190.93.240.0/20 \
+			188.114.96.0/20 \
+			197.234.240.0/22 \
+			198.41.128.0/17 \
+			162.158.0.0/15 \
+			104.16.0.0/13 \
+			104.24.0.0/14 \
+			172.64.0.0/13 \
+			131.0.72.0/22 \
+			2400:cb00::/32 \
+			2606:4700::/32 \
+			2803:f800::/32 \
+			2405:b500::/32 \
+			2405:8100::/32 \
+			2a06:98c0::/29 \
+			2c0f:f248::/32
+	}
+}
+
+
+(tls-brim) {
+	tls {$CF_SERVER_BRIM_CERT_PATH} {$CF_SERVER_BRIM_KEY_PATH}
+}
+
+(tls-brimworld-online) {
+	tls {$CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH} {$CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH}
+}
+
+(tls-brimworld-ru) {
+	tls {$CF_SERVER_BRIMWORLD_RU_CERT_PATH} {$CF_SERVER_BRIMWORLD_RU_KEY_PATH}
+}
+
+#brim.ml {
+#	root * /var/www/html
+#	file_server
+#}
+#
+#assets.brim.ml {
+#	root * /var/www/html/assets
+#	file_server
+#}
+
+ip.brim.ml {
+	import tls-brim
+
+	encode zstd gzip
+	header Content-Type text/plain
+
+	templates
+	respond `
+		{{- with .Req.Header.Get "X-Forwarded-For" -}}
+		{{- . -}}
+		{{- else -}}
+		{{- .RemoteIP -}}
+		{{- end -}}
+	`
+}
+
+netdata.brim.ml {
+	import tls-brim
+	reverse_proxy localhost:19999
+}
+
+#panel.brim.ml {
+#	reverse_proxy localhost:8080
+#}
+#
+#tgbot.brim.ml {
+#	reverse_proxy localhost:5000
+#}
+#
+#sync.brim.ml {
+#	reverse_proxy localhost:8384
+#}
+#
+#chat.brim.ml {
+#	reverse_proxy localhost:8284/api
+#}
+#
+#nakama.brim.ml {
+#	reverse_proxy localhost:7351
+#}
+
+git.brim.ml {
+	import tls-brim
+	redir https://github.com/Whitebrim permanent
+}
+
+tg.brim.ml {
+	import tls-brim
+	redir https://t.me/Whitebrim permanent
+}
+
+vk.brim.ml {
+	import tls-brim
+	redir https://vk.com/Whitebrim permanent
+}
+
+letmein.brim.ml {
+	import tls-brim
+	redir https://vk.com/brimworld?w=app5619682_-209836751%2523592836 permanent
+}
+
+brimworld.ru {
+	import tls-brimworld-ru
+	redir https://vk.com/brimworld permanent
+}
+
+#plan.brim.ml, plan.brimworld.ru {
+#	reverse_proxy localhost:8804
+#}
+#
+#map.brimworld.ru, map.brim.ml, map.vanilla.brim.ml, map.vanilla.brimworld.ru {
+#	reverse_proxy localhost:18080
+#}
+#
+#map.mods.brim.ml, map.mods.brimworld.ru {
+#	reverse_proxy localhost:18081
+#}
