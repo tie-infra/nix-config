@@ -131,14 +131,44 @@ brimworld.ru {
 	redir https://vk.com/brimworld permanent
 }
 
-#plan.brim.ml, plan.brimworld.ru {
-#	reverse_proxy localhost:8804
-#}
-#
-#map.brimworld.ru, map.brim.ml, map.vanilla.brim.ml, map.vanilla.brimworld.ru {
-#	reverse_proxy localhost:18080
-#}
-#
-#map.mods.brim.ml, map.mods.brimworld.ru {
-#	reverse_proxy localhost:18081
-#}
+(reverse-proxy-plan) {
+	reverse_proxy localhost:8804
+}
+
+(reverse-proxy-map-vanilla) {
+	reverse_proxy localhost:18080
+}
+
+(reverse-proxy-map-mods) {
+	reverse_proxy localhost:18081
+}
+
+plan.brim.ml {
+	import tls-brim
+	import reverse-proxy-plan
+}
+
+plan.brimworld.ru {
+	import tls-brimworld-ru
+	import reverse-proxy-plan
+}
+
+map.brim.ml, map-vanilla.brim.ml {
+	import tls-brim
+	import reverse-proxy-map-vanilla
+}
+
+map.brimworld.ru, map-vanilla.brimworld.ru {
+	import tls-brimworld-ru
+	import reverse-proxy-map-vanilla
+}
+
+map-mods.brim.ml {
+	import tls-brim
+	import reverse-proxy-map-mods
+}
+
+map-mods.brimworld.ru {
+	import tls-brimworld-ru
+	import reverse-proxy-map-mods
+}
