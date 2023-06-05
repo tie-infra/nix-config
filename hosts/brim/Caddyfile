@@ -103,11 +103,6 @@ sync.brim.ml {
 #	reverse_proxy localhost:5000
 #}
 #
-#chat.brim.ml {
-#	import tls-brim
-#	reverse_proxy localhost:8284/api
-#}
-#
 #nakama.brim.ml {
 #	import tls-brim
 #	reverse_proxy localhost:7351
