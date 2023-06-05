@@ -42,18 +42,16 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      script = ''
-        pushd "$STATE_DIRECTORY" >/dev/null
-        mkdir -p data media
-        chmod u=rwx,g=,o= data
-        popd >/dev/null
-
-        exec ${cfg.package}/bin/NzbDrone --nobrowser --data="$STATE_DIRECTORY"/data
-      '';
-
       serviceConfig = {
         Type = "simple";
         Restart = "always";
+
+        ExecStartPre = pkgs.writeShellScript "sonarr-setup" ''
+          cd "$STATE_DIRECTORY"
+          mkdir -p data media
+          chmod u=rwx,g=,o= data
+        '';
+        ExecStart = "${cfg.package}/bin/NzbDrone --nobrowser --data=\${STATE_DIRECTORY}/data";
 
         User =
           if cfg.user != null then cfg.user

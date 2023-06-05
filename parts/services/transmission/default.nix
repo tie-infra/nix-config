@@ -106,12 +106,13 @@ in
             configState=
           fi
 
-          cat >config/settings.json <<<"$(${pkgs.jq}/bin/jq --slurp add $configState ${settingsFile} \
+          config="$(${lib.getExe pkgs.jq} --slurp add $configState ${settingsFile} \
             ${lib.optionalString (cfg.settingsFile != null) "\"$CREDENTIALS_DIRECTORY\"/settings.json"})"
+          echo -n "$config" >config/settings.json
           chmod u=rw,g=,o= config/settings.json
         '';
 
-        ExecStart = pkgs.writeShellScript "transmission-start" ''
+        ExecStart = pkgs.writeShellScript "transmission" ''
           export CURL_CA_BUNDLE=${
             if cfg.cacertBundle != null
             then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt"

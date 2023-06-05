@@ -54,8 +54,9 @@ in
             configState=
           fi
 
-          cat >ServerConfig.json <<<"$(${pkgs.jq}/bin/jq --slurp add $configState ${settingsFile} \
-            ${lib.optionalString (cfg.settingsFile != null) "\"$CREDENTIALS_DIRECTORY\"/settings.json"})" \
+          config="$(${lib.getExe pkgs.jq} --slurp add $configState ${settingsFile} \
+            ${lib.optionalString (cfg.settingsFile != null) "\"$CREDENTIALS_DIRECTORY\"/settings.json"})"
+          echo -n "$config" >ServerConfig.json
         '';
 
         ExecStart = "${lib.getExe cfg.package} --NoUpdates --DataFolder \${STATE_DIRECTORY}";

@@ -24,16 +24,16 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      script = ''
-        exec ${lib.getExe cfg.package} \
-          --datadir "$STATE_DIRECTORY" \
-          --cachedir "$CACHE_DIRECTORY" \
-          --logdir "$LOGS_DIRECTORY"
-      '';
-
       serviceConfig = {
         Type = "simple";
         Restart = "always";
+
+        ExecStart = ''
+          ${lib.getExe cfg.package} \
+            --datadir ''${STATE_DIRECTORY} \
+            --cachedir ''${CACHE_DIRECTORY} \
+            --logdir ''${LOGS_DIRECTORY}
+        '';
 
         TimeoutSec = 15;
         SuccessExitStatus = [ "0" "143" ];
