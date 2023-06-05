@@ -89,6 +89,14 @@ in
   services = {
     netdata.enable = true;
 
+    syncthing = {
+      enable = true;
+      guiAddress = ":8384";
+      overrideFolders = false;
+      overrideDevices = false;
+      openDefaultPorts = true;
+    };
+
     mysql = {
       enable = true;
       package = pkgs.mariadb_1011;

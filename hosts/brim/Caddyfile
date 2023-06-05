@@ -87,22 +87,29 @@ netdata.brim.ml {
 }
 
 panel.brim.ml {
+	import tls-brim
 	reverse_proxy localhost:8080
 }
 
+sync.brim.ml {
+	import tls-brim
+	reverse_proxy localhost:8384 {
+		header_up Host {upstream_hostport}
+	}
+}
+
 #tgbot.brim.ml {
+#	import tls-brim
 #	reverse_proxy localhost:5000
 #}
 #
-#sync.brim.ml {
-#	reverse_proxy localhost:8384
-#}
-#
 #chat.brim.ml {
+#	import tls-brim
 #	reverse_proxy localhost:8284/api
 #}
 #
 #nakama.brim.ml {
+#	import tls-brim
 #	reverse_proxy localhost:7351
 #}
 
