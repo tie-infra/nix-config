@@ -89,6 +89,11 @@ in
   services = {
     netdata.enable = true;
 
+    mysql = {
+      enable = true;
+      package = pkgs.mariadb_1011;
+    };
+
     caddy = {
       enable = true;
       adapter = "caddyfile";
