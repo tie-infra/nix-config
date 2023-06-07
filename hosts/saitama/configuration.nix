@@ -88,6 +88,7 @@
 
     sonarr = {
       enable = true;
+      mediaFolders = [ "anime" "tvshows" ];
       # Allow access to the Transmission downloads.
       extraGroups = [ config.users.groups.transmission.name ];
     };

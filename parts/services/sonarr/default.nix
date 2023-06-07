@@ -27,6 +27,14 @@ in
       '';
     };
 
+    mediaFolders = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = lib.mdDoc ''
+        Additional media folders to create under the root folder.
+      '';
+    };
+
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -49,6 +57,9 @@ in
         ExecStartPre = pkgs.writeShellScript "sonarr-setup" ''
           cd "$STATE_DIRECTORY"
           mkdir -p data media
+          ${lib.concatLines (map (folder: ''
+            mkdir -p media/${lib.escapeShellArg folder}
+          '') cfg.mediaFolders)}
           chmod u=rwx,g=,o= data
         '';
         ExecStart = "${cfg.package}/bin/NzbDrone --nobrowser --data=\${STATE_DIRECTORY}/data";
