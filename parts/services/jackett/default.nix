@@ -27,6 +27,20 @@ in
       example = "/run/secrets/jackett/settings.json";
       description = lib.mdDoc ''
         Path to a JSON file to be merged with the settings.
+
+        Note that `AdminPassword` field expects as password hash with `APIKey`
+        as salt. See [password hashing implementation details] for reference.
+
+        [password hashing implementation details]: https://github.com/Jackett/Jackett/blob/c0a5e24186f76574fdf9fe89bd6e25f1a33ba8d0/src/Jackett.Server/Services/SecurityService.cs#L26-L41
+      '';
+    };
+
+    extraFlags = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = [ "--Tracing" ];
+      description = lib.mdDoc ''
+        Extra flags passed to the Jackett command in the service definition.
       '';
     };
   };
@@ -59,12 +73,17 @@ in
           echo -n "$config" >ServerConfig.json
         '';
 
-        ExecStart = "${lib.getExe cfg.package} --NoUpdates --DataFolder \${STATE_DIRECTORY}";
+        ExecStart = ''
+          ${lib.getExe cfg.package} --NoUpdates \
+            --DataFolder ''${STATE_DIRECTORY} \
+            ${lib.escapeShellArgs cfg.extraFlags}
+        '';
 
         StateDirectory = "jackett";
         StateDirectoryMode = "0700";
 
         DynamicUser = true;
+        UMask = "0077";
       };
     };
   };
