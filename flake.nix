@@ -6,7 +6,6 @@
     # - no PR yet (eco-server package)
     # - https://github.com/NixOS/nixpkgs/pull/234603 (edac-utils: fixup edac-ctl perl shebang)
     # - https://github.com/NixOS/nixpkgs/pull/234124 (pufferpanel: build frontend from source)
-    # - https://github.com/NixOS/nixpkgs/pull/235388 (nixos/transmission: fix credentialsFile injection)
     #nixpkgs.url = "nixpkgs/nixos-23.05";
     nixpkgs.url = "github:tie-infra/nixpkgs/nixos-23.05";
 
