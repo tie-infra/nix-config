@@ -3,6 +3,8 @@
 
   inputs = {
     # Currently using fork with
+    # - https://github.com/NixOS/nixpkgs/pull/236930 (update libgdiplus)
+    # - no PR yet (fetchSteamDepot function)
     # - no PR yet (eco-server package)
     # - https://github.com/NixOS/nixpkgs/pull/234603 (edac-utils: fixup edac-ctl perl shebang)
     # - https://github.com/NixOS/nixpkgs/pull/234124 (pufferpanel: build frontend from source)
