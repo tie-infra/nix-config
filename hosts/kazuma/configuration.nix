@@ -37,7 +37,7 @@
   networking = {
     hostName = "kazuma";
     firewall = {
-      allowedUDPPorts = [ 3000 ];
+      allowedUDPPorts = [ 3000 7777 15000 15777 ];
       allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
     };
   };
