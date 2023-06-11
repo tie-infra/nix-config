@@ -10,8 +10,6 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg: builtins.elem (lib.getName pkg) [
       "eco-server"
-      "satisfactory-server"
-      "steamworks-sdk-redist"
     ];
 
   system.stateVersion = "22.11";
@@ -37,7 +35,7 @@
   networking = {
     hostName = "kazuma";
     firewall = {
-      allowedUDPPorts = [ 3000 7777 15000 15777 ];
+      allowedUDPPorts = [ 3000 ];
       allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
     };
   };
@@ -57,7 +55,6 @@
       extraPackages = [
         pkgs.jre8
         pkgs.eco-server
-        pkgs.satisfactory-server
       ];
       environment = {
         PUFFER_WEB_HOST = ":8080";

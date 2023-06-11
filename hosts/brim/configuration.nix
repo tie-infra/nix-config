@@ -17,6 +17,12 @@ in
     inputs.sops-nix.nixosModules.default
   ];
 
+  nixpkgs.config.allowUnfreePredicate =
+    pkg: builtins.elem (lib.getName pkg) [
+      "satisfactory-server"
+      "steamworks-sdk-redist"
+    ];
+
   system.stateVersion = "23.05";
 
   time.timeZone = "Europe/Moscow";
@@ -44,8 +50,21 @@ in
     useNetworkd = true;
     useDHCP = false;
     firewall = {
-      allowedTCPPorts = [ 443 25565 25566 ];
-      allowedUDPPorts = [ 443 ];
+      allowedTCPPorts = [
+        # Caddy HTTP/1 and HTTP/2
+        443
+        # Minecraft
+        25565
+        25566
+      ];
+      allowedUDPPorts = [
+        # Caddy HTTP/3
+        443
+        # Satisfactory
+        7777
+        15000
+        15777
+      ];
     };
   };
 
@@ -111,6 +130,7 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = [
+        pkgs.satisfactory-server
         (pkgs.writeShellScriptBin "openjdk-java8" ''
           set -eu
           exec ${lib.getExe pkgs.jre8} "$@"
