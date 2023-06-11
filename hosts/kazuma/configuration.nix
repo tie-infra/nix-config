@@ -10,6 +10,8 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg: builtins.elem (lib.getName pkg) [
       "eco-server"
+      "satisfactory-server"
+      "steamworks-sdk-redist"
     ];
 
   system.stateVersion = "22.11";
@@ -52,7 +54,11 @@
 
     pufferpanel = {
       enable = true;
-      extraPackages = [ pkgs.jre8 pkgs.eco-server ];
+      extraPackages = [
+        pkgs.jre8
+        pkgs.eco-server
+        pkgs.satisfactory-server
+      ];
       environment = {
         PUFFER_WEB_HOST = ":8080";
         PUFFER_DAEMON_SFTP_HOST = ":5657";
