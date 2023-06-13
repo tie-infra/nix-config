@@ -59,9 +59,10 @@ jobs:
               return
             }
 
-            const summaryOutput = await exec.getExecOutput('git', ['log', '-1', '--pretty=%b'])
+            const gitLog = await exec.getExecOutput('git', ['log', '-1', '--pretty=%b'])
+            const summary = '\t' + gitLog.stdout.replace('\n', '\n\t')
             core.setOutput('subject', subject)
-            core.setOutput('summary', summaryOutput.stdout)
+            core.setOutput('summary', summary)
 
       - name: Create PR
         if: ${{ steps.commit.outputs.prev-head != steps.commit.outputs.next-head }}
