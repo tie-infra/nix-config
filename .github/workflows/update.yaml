@@ -34,12 +34,12 @@ jobs:
         uses: actions/github-script@v6.4.1
         with:
           script: |
-            function getHead() {
+            async function getHead() {
               let out = await exec.getExecOutput('git', ['rev-parse', 'HEAD'])
               return out.stdout
             }
 
-            const prevHead = getHead()
+            const prevHead = await getHead()
 
             const subject = 'feat: run nix flake update'
             await exec.exec('nix', [
@@ -50,7 +50,7 @@ jobs:
               subject,
             ])
 
-            const nextHead = getHead()
+            const nextHead = await getHead()
 
             core.setOutput('prev-head', prevHead)
             core.setOutput('next-head', nextHead)
