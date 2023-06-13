@@ -60,7 +60,10 @@ jobs:
             }
 
             const gitLog = await exec.getExecOutput('git', ['log', '-1', '--pretty=%b'])
-            const summary = '\t' + gitLog.stdout.replace('\n', '\n\t')
+
+            let indent = ' '.repeat(4)
+            const summary = indent + gitLog.stdout.replaceAll('\n', '\n' + indent)
+
             core.setOutput('subject', subject)
             core.setOutput('summary', summary)
 
@@ -71,4 +74,5 @@ jobs:
           branch: feat/run-flake-update
           delete-branch: true
           title: ${{ steps.commit.outputs.subject }}
-          body: ${{ steps.commit.outputs.summary }}
+          body: |
+            ${{ steps.commit.outputs.summary }}
