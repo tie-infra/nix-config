@@ -130,7 +130,15 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = [
-        pkgs.satisfactory-server
+        (pkgs.satisfactory-server.overrideAttrs (_: {
+          version = "0.8.0.0-5.1.1+238433";
+          src = pkgs.fetchSteamDepot {
+            appId = "1690800";
+            depotId = "1690802";
+            manifestId = "4295431299321524928";
+            hash = "sha256-wXmMfAB1HXKjBsBf2RVTQ4fDYP3fX+u1QxXbmJaYLJs=";
+          };
+        }))
         (pkgs.writeShellScriptBin "openjdk-java8" ''
           set -eu
           exec ${lib.getExe pkgs.jre8} "$@"
@@ -140,6 +148,7 @@ in
           exec ${lib.getExe pkgs.graalvm17-ce} "$@"
         '')
       ];
+
       environment = {
         PUFFER_WEB_HOST = ":8080";
         PUFFER_PANEL_REGISTRATIONENABLED = "false";
