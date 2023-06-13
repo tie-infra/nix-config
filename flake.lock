@@ -48,11 +48,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1686500013,
+        "lastModified": 1686501053,
         "narHash": "sha256-koaSegJ4qq1OmFcAgZCFJH74SCmqheiInGoNgLLMmr4=",
         "owner": "tie-infra",
         "repo": "nixpkgs",
-        "rev": "c0df218996d0faed552f808fb08689b159f1b3a4",
+        "rev": "0123a7c7faf3bbecd4a8760b60782519dc54cb6a",
         "type": "github"
       },
       "original": {
