@@ -35,7 +35,7 @@ jobs:
         with:
           script: |
             async function getHead() {
-              let out = await exec.getExecOutput('git', ['rev-parse', 'HEAD'])
+              const out = await exec.getExecOutput('git', ['rev-parse', 'HEAD'])
               return out.stdout
             }
 
@@ -61,8 +61,9 @@ jobs:
 
             const gitLog = await exec.getExecOutput('git', ['log', '-1', '--pretty=%b'])
 
-            let indent = ' '.repeat(4)
-            const summary = indent + gitLog.stdout.replaceAll('\n', '\n' + indent)
+            const indent = ' '.repeat(4)
+            const lines = gitLog.stdout.split('\n')
+            const summary = lines.map(x => x != '' ? indent + x : x).join('\n')
 
             core.setOutput('subject', subject)
             core.setOutput('summary', summary)
