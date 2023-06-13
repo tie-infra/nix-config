@@ -24,15 +24,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3.5.3
 
+      - name: Set up Git
+        run: |
+          git config user.name actions-user
+          git config user.email actions@github.com
+
       - name: Update dependencies
-        run: nix flake update
+        run: |
+          nix flake update --commit-lock-file \
+            --commit-lockfile-summary 'feat: run nix flake update'
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v5.0.1
         with:
-          author: GitHub <actions@github.com>
-          committer: GitHub <actions@github.com>
-          commit-message: 'feat: run flake update'
           branch: feat/run-flake-update
           delete-branch: true
           title: Run flake update
