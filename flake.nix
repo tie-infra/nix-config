@@ -20,6 +20,9 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     minimal-shell.url = "github:tie-infra/minimal-shell";
+
+    btrfs-rollback.url = "github:tie-infra/btrfs-rollback";
+    btrfs-rollback.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {

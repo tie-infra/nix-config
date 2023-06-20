@@ -1,9 +1,11 @@
-{ self, ... }:
+{ self, inputs, ... }:
 { pkgs, config, ... }: {
   imports = [
     self.nixosModules.nix-flakes
     self.nixosModules.services
   ];
+
+  nixpkgs.overlays = [ inputs.btrfs-rollback.overlays.default ];
 
   environment.systemPackages = with pkgs; [
     ripgrep

@@ -3,8 +3,6 @@
 { lib, pkgs, config, ... }:
 let
   cfg = config.eraseYourDarlings;
-
-  restoreBtrfs = pkgs.callPackage ./restore-btrfs { };
 in
 {
   options.eraseYourDarlings = {
@@ -52,17 +50,21 @@ in
 
   config = {
     boot.initrd.extraUtilsCommands = ''
-      copy_bin_and_libs ${restoreBtrfs}/bin/restore-btrfs
+      copy_bin_and_libs ${lib.getExe pkgs.btrfs-rollback}
     '';
 
     boot.initrd.extraUtilsCommandsTest = ''
-      $out/bin/restore-btrfs --help
+      $out/bin/btrfs-rollback --help
     '';
 
-    # NB we want to run after btrfs device scan.
+    # NB we want to run after btrfs device scan, hence lib.mkAfter.
     boot.initrd.postDeviceCommands = lib.mkAfter ''
       echo 'restoring root filesystem from blank snapshot...'
-      restore-btrfs --device-path ${lib.escapeShellArg cfg.rootDisk}
+      btrfs-rollback \
+        --device-path ${lib.escapeShellArg cfg.rootDisk} \
+        --mountpoint /mnt \
+        --subvolume root \
+        --snapshot root-blank
     '';
 
     fileSystems =
