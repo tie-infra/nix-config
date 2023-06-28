@@ -51,7 +51,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        Type = "simple";
+        Type = "exec";
         Restart = "always";
 
         ExecStartPre = pkgs.writeShellScript "sonarr-setup" ''

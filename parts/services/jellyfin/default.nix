@@ -25,7 +25,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        Type = "simple";
+        Type = "exec";
         Restart = "always";
 
         ExecStart = ''
