@@ -54,6 +54,8 @@ in
         # Caddy HTTP/1 and HTTP/2
         443
         # Minecraft
+        25511
+        25521
         25565
         25566
       ];
