@@ -150,6 +150,11 @@ api.brimworld.online {
 	reverse_proxy localhost:9000
 }
 
+automodpack.brimworld.online {
+	import tls-brimworld-online
+	reverse_proxy localhost:30037
+}
+
 (reverse-proxy-plan) {
 	reverse_proxy localhost:8804
 }
