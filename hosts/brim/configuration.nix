@@ -56,9 +56,6 @@ in
         # Minecraft
         25511
         25521
-        #25565
-        #25566
-        30037 # AutoModpack
       ];
       allowedUDPPorts = [
         # Caddy HTTP/3
