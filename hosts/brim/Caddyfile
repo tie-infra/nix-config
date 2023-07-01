@@ -155,7 +155,7 @@ automodpack.brimworld.online {
 	reverse_proxy localhost:30037
 }
 
-voice1.brimworld.online{
+voice1.brimworld.online {
 	import tls-brimworld-online
 	reverse_proxy localhost:24454
 }
