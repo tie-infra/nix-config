@@ -56,6 +56,7 @@ in
         # Minecraft
         25511
         25521
+        24454 # SimpleVoiceChat
       ];
       allowedUDPPorts = [
         # Caddy HTTP/3
