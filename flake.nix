@@ -30,6 +30,7 @@
 
     imports = [
       inputs.minimal-shell.flakeModule
+      ./hosts/akane
       ./hosts/bootstrap
       ./hosts/brim
       ./hosts/kazuma
