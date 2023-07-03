@@ -1,4 +1,4 @@
-{
+{ lib, ... }: {
   # .NET lacks Happy Eyeballs support and some requests are routed over bogus
   # ISPs with broken or slow IPv6 connectivity.
   # See https://github.com/dotnet/runtime/issues/26177
@@ -22,8 +22,10 @@
     ProxyType = 0; # HTTP
     ProxyUrl = "http://[::1]:3128";
   };
-  systemd.services.jellyfin.environment = {
-    HTTP_PROXY = "http://[::1]:3128";
-    HTTPS_PROXY = "http://[::1]:3128";
-  };
+  systemd.services = lib.genAttrs [ "sonarr" "jellyfin" ] (_: {
+    environment = {
+      HTTP_PROXY = "http://[::1]:3128";
+      HTTPS_PROXY = "http://[::1]:3128";
+    };
+  });
 }
