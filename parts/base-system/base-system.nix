@@ -1,5 +1,5 @@
 { self, inputs, ... }:
-{ pkgs, config, ... }: {
+{ lib, pkgs, config, ... }: {
   imports = [
     self.nixosModules.nix-flakes
     self.nixosModules.services
@@ -23,7 +23,14 @@
 
   zramSwap.enable = true;
 
-  networking.firewall.logRefusedConnections = false;
+  networking = {
+    useNetworkd = true;
+    # Enables DHCP on `en*` and `eth*` interfaces.
+    # See https://github.com/NixOS/nixpkgs/blob/2920b6fc16a9ed5d51429e94238b28306ceda79e/nixos/modules/tasks/network-interfaces-systemd.nix#L49-L56
+    useDHCP = lib.mkDefault true;
+
+    firewall.logRefusedConnections = false;
+  };
 
   security.polkit.enable = true;
 

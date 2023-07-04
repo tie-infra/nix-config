@@ -47,7 +47,6 @@ in
 
   networking = {
     hostName = "brim";
-    useNetworkd = true;
     useDHCP = false;
     firewall = {
       allowedTCPPorts = [
