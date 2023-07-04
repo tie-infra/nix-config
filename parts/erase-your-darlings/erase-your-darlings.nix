@@ -109,9 +109,16 @@ in
       "machine-id".source = "/persist/machine-id";
     };
 
-    services.openssh.hostKeys = lib.mkIf cfg.persist.openssh [{
-      path = "/persist/ssh/ssh_host_ed25519_key";
-      type = "ed25519";
-    }];
+    services = {
+      openssh.hostKeys = lib.mkIf cfg.persist.openssh [{
+        path = "/persist/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }];
+
+      btrfs.autoScrub = {
+        enable = true;
+        fileSystems = [ "/" ];
+      };
+    };
   };
 }
