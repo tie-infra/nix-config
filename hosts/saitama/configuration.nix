@@ -119,7 +119,7 @@
         download-queue-size = 10;
 
         ratio-limit-enabled = true;
-        ratio-limit = 4.0;
+        ratio-limit = 10.0;
 
         speed-limit-down-enabled = true;
         speed-limit-down = 65536; # KB/s | ~50MB
