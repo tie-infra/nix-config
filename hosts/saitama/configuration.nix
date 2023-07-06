@@ -42,7 +42,14 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.radeontop ];
+  environment = {
+    systemPackages = [ pkgs.radeontop ];
+
+    machineInfo = {
+      chassis = "server";
+      location = "Ivan’s homelab";
+    };
+  };
 
   eraseYourDarlings =
     let disk = "WDC_WD10EALX-009BA0_WD-WCATR5170643";
@@ -71,6 +78,22 @@
     };
   };
 
+  systemd.network.networks."10-wan" = {
+    matchConfig = {
+      Name = "enp6s0";
+    };
+    networkConfig = {
+      DHCP = "yes";
+      IPv6PrivacyExtensions = "kernel";
+    };
+    dhcpV6Config = {
+      UseDelegatedPrefix = false;
+    };
+    linkConfig = {
+      RequiredForOnline = "routable";
+    };
+  };
+
   services = {
     netdata.enable = true;
 
@@ -88,7 +111,7 @@
 
     sonarr = {
       enable = true;
-      mediaFolders = [ "anime" "tvshows" ];
+      mediaFolders = [ "anime" "tvshows" "onepiece" ];
       # Allow access to the Transmission downloads.
       extraGroups = [ config.users.groups.transmission.name ];
     };

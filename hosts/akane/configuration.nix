@@ -19,6 +19,13 @@
     initrd.availableKernelModules = [ "ahci" ];
   };
 
+  environment.machineInfo = {
+    chassis = "server";
+    location = "Ivan’s homelab";
+    hardwareVendor = "Qotom";
+    hardwareModel = "Q1076GE";
+  };
+
   eraseYourDarlings =
     let disk = "HP_SSD_S750_512GB_HASA33140201321";
     in {
@@ -33,6 +40,22 @@
         # Netdata
         19999
       ];
+    };
+  };
+
+  systemd.network.networks."10-wan" = {
+    matchConfig = {
+      Name = "enp2s0";
+    };
+    networkConfig = {
+      DHCP = "yes";
+      IPv6PrivacyExtensions = "kernel";
+    };
+    dhcpV6Config = {
+      UseDelegatedPrefix = false;
+    };
+    linkConfig = {
+      RequiredForOnline = "routable";
     };
   };
 

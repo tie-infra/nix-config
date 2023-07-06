@@ -38,6 +38,7 @@
       ./parts/base-system
       ./parts/erase-your-darlings
       ./parts/installer
+      ./parts/machine-info
       ./parts/nix-flakes
       ./parts/services
       ./parts/ssh-keys

@@ -8,7 +8,7 @@
   ];
 
   system.stateVersion = lib.trivial.release;
-  networking.hostName = "bootstrap";
+
   time.timeZone = "Europe/Moscow";
 
   boot.loader.systemd-boot.enable = true;
@@ -17,5 +17,10 @@
   eraseYourDarlings = {
     bootDisk = "/dev/disk/by-partlabel/efi";
     rootDisk = "/dev/disk/by-partlabel/nix";
+  };
+
+  networking = {
+    hostName = "bootstrap";
+    useDHCP = true;
   };
 }

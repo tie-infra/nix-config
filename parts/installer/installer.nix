@@ -10,7 +10,10 @@ in
     self.nixosModules.base-system
   ];
 
-  networking.hostName = "installer";
+  networking = {
+    hostName = "installer";
+    useDHCP = true;
+  };
 
   environment.systemPackages = [ setup-disk ] ++ (with pkgs; [
     # Useful for verifying that ECC is working.

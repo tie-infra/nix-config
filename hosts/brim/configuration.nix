@@ -38,6 +38,11 @@ in
     initrd.availableKernelModules = [ "mpt3sas" "i7core_edac" ];
   };
 
+  environment.machineInfo = {
+    chassis = "server";
+    location = "mtw.ru colocation";
+  };
+
   eraseYourDarlings =
     let disk = "0x5000c50047d27eab";
     in {
@@ -47,7 +52,6 @@ in
 
   networking = {
     hostName = "brim";
-    useDHCP = false;
     firewall = {
       allowedTCPPorts = [
         # Caddy HTTP/1 and HTTP/2
@@ -64,7 +68,7 @@ in
         15000
         15777
         # Minecraft SimpleVoiceChat
-        24454 
+        24454
       ];
     };
   };

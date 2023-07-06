@@ -25,6 +25,11 @@
     initrd.availableKernelModules = [ "nvme" ];
   };
 
+  environment.machineInfo = {
+    chassis = "server";
+    location = "Ivan’s homelab";
+  };
+
   eraseYourDarlings =
     let disk = "SPCC_M.2_PCIe_SSD_27FF070C189700120672";
     in {
@@ -37,6 +42,22 @@
     firewall = {
       allowedUDPPorts = [ 3000 ];
       allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
+    };
+  };
+
+  systemd.network.networks."10-wan" = {
+    matchConfig = {
+      Name = "enp34s0";
+    };
+    networkConfig = {
+      DHCP = "yes";
+      IPv6PrivacyExtensions = "kernel";
+    };
+    dhcpV6Config = {
+      UseDelegatedPrefix = false;
+    };
+    linkConfig = {
+      RequiredForOnline = "routable";
     };
   };
 
