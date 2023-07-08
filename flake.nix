@@ -3,6 +3,7 @@
 
   inputs = {
     # Currently using fork with
+    # - https://github.com/NixOS/nixpkgs/pull/242191 (nixos/networkd: allow state ranges in RequiredForOnline)
     # - https://github.com/NixOS/nixpkgs/pull/236930 (update libgdiplus)
     # - no PR yet (fetchSteamDepot function)
     # - no PR yet (eco-server package)
