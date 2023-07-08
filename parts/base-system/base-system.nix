@@ -37,6 +37,14 @@
     firewall.logRefusedConnections = lib.mkDefault false;
   };
 
+  systemd.network.config = {
+    # Enable traffic meters on all interfaces.
+    # https://www.freedesktop.org/software/systemd/man/networkd.conf.html#SpeedMeter=
+    networkConfig = {
+      SpeedMeter = true;
+    };
+  };
+
   security.polkit.enable = true;
 
   users = {

@@ -1,5 +1,5 @@
 { self, ... }:
-{
+{ lib, ... }: {
   imports = [
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
@@ -43,21 +43,69 @@
     };
   };
 
-  systemd.network.networks."10-wan" = {
-    matchConfig = {
-      Name = "enp2s0";
+  systemd.network =
+    let
+      wanInterfaces = "enp2s0";
+      lanInterfaces = map (i: "enp${toString i}s0") (lib.range 3 9);
+      bridgeInterface = "br0";
+    in
+    {
+      networks = {
+        "10-wan" = {
+          matchConfig = {
+            Name = wanInterfaces;
+          };
+          networkConfig = {
+            DHCP = "yes";
+            IPv6PrivacyExtensions = "kernel";
+          };
+          dhcpV6Config = {
+            UseDelegatedPrefix = false;
+          };
+          linkConfig = {
+            RequiredForOnline = "routable";
+          };
+        };
+
+        "20-lan" = {
+          matchConfig = {
+            Name = bridgeInterface;
+          };
+          networkConfig = {
+            # This is just a dummy non-global address to test configuration.
+            Address = "192.168.10.1/24";
+            ConfigureWithoutCarrier = true;
+
+            # We are the main router on the local network. Do not accept RAs
+            # from other routers.
+            IPv6AcceptRA = false;
+          };
+          linkConfig = {
+            RequiredForOnline = "no-carrier:routable";
+          };
+        };
+
+        "30-lan" = {
+          matchConfig = {
+            Name = lanInterfaces;
+          };
+          networkConfig = {
+            Bridge = bridgeInterface;
+            ConfigureWithoutCarrier = true;
+          };
+          linkConfig = {
+            RequiredForOnline = "no-carrier:enslaved";
+          };
+        };
+      };
+
+      netdevs."20-lan" = {
+        netdevConfig = {
+          Name = bridgeInterface;
+          Kind = "bridge";
+        };
+      };
     };
-    networkConfig = {
-      DHCP = "yes";
-      IPv6PrivacyExtensions = "kernel";
-    };
-    dhcpV6Config = {
-      UseDelegatedPrefix = false;
-    };
-    linkConfig = {
-      RequiredForOnline = "routable";
-    };
-  };
 
   services = {
     fstrim.enable = true;
