@@ -42,6 +42,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
+  switch:helsing:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: helsing # TODO
+          TARGET_HOST: helsing # TODO
+          FLAKE_URI: .#helsing
 
   boot:saitama:
     cmds:
@@ -75,6 +83,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
+  boot:helsing:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: boot
+          BUILD_HOST: helsing # TODO
+          TARGET_HOST: helsing # TODO
+          FLAKE_URI: .#helsing
 
   check:saitama:
     cmds:
@@ -108,6 +124,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
+  check:helsing:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: helsing # TODO
+          TARGET_HOST: helsing # TODO
+          FLAKE_URI: .#helsing
 
   build:saitama:
     cmds:
@@ -141,3 +165,11 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
+  build:helsing:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: build
+          BUILD_HOST: helsing # TODO
+          TARGET_HOST: helsing # TODO
+          FLAKE_URI: .#helsing
