@@ -119,12 +119,17 @@
     jackett = {
       enable = true;
       settings = {
-        BasePathOverride = "/jackett";
         CacheEnabled = true;
         CacheTtl = 86400;
         CacheMaxResultsPerIndexer = 100000;
       };
       settingsFile = config.sops.secrets."jackett/settings.json".path;
+    };
+
+    flood = {
+      enable = true;
+      extraFlags = [ "--host=::" "--port=9092" ];
+      extraGroups = [ config.users.groups.transmission.name ];
     };
 
     transmission = {
@@ -145,14 +150,14 @@
         ratio-limit = 10.0;
 
         speed-limit-down-enabled = true;
-        speed-limit-down = 65536; # KB/s | ~50MB
+        speed-limit-down = 65536; # KB/s
 
         speed-limit-up-enabled = true;
-        speed-limit-up = 65536; # KB/s | ~50MB
+        speed-limit-up = 65536; # KB/s
 
         alt-speed-enabled = false;
-        alt-speed-up = 1024; # KB/s | ~1MB
-        alt-speed-down = 1024; # KB/s | ~1MB
+        alt-speed-up = 1024; # KB/s
+        alt-speed-down = 1024; # KB/s
       };
       settingsFile = config.sops.secrets."transmission/settings.json".path;
     };

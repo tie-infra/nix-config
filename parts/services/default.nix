@@ -1,6 +1,7 @@
 {
   flake.nixosModules.services = {
     imports = [
+      ./flood
       ./jackett
       ./jellyfin
       ./minio
