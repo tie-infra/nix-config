@@ -31,6 +31,9 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
+      # For media info detection functionality.
+      path = [ pkgs.mediainfo ];
+
       serviceConfig = {
         Type = "exec";
         Restart = "always";
