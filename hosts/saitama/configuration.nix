@@ -128,6 +128,17 @@
 
     flood = {
       enable = true;
+      package = with pkgs; buildNpmPackage {
+        pname = "flood";
+        version = "unstable-2023-08-04";
+        src = fetchFromGitHub {
+          owner = "jesec";
+          repo = "flood";
+          rev = "2b652f8148dab7134eeeb201b9d81dd6b8bda074";
+          hash = "sha256-wI6URPGUZUbydSgNaHN2C5IA2x/HHjBWIRT6H6iZU/0=";
+        };
+        npmDepsHash = "sha256-XmDnvq+ni5TOf3UQFc4JvGI3LiGpjbrLAocRvrW8qgk=";
+      };
       extraFlags = [ "--host=::" "--port=9092" ];
       extraGroups = [ config.users.groups.transmission.name ];
     };
