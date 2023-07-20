@@ -174,6 +174,14 @@
     };
   };
 
+  # Getting an error when trying to download metadata.
+  # 
+  # System.IO.PathTooLongException: Path is too long. Path: /var/lib/sonarr/media/anime/KamiKatsu - Working for God in a Godless World (2023) [tvdb-419126]/Season 01/KamiKatsu - Working for God in a Godless World (2023) - S01E01 - 001 - We know we are not worthy O great Lord Mitama Please purify us Please cleanse us Lord Mitama We beg for you to hear our prayer [HDTV-1080p][8bit][x264][AAC 2.0][JA]-SubsPlease-thumb.jpg.part
+  #
+  # https://github.com/Sonarr/Sonarr/blob/dee8820b1f31e9180c55c6d29b950ff6cfe0205f/src/NzbDrone.Common/Disk/LongPathSupport.cs#L47
+  # https://github.com/Sonarr/Sonarr/blob/dee8820b1f31e9180c55c6d29b950ff6cfe0205f/src/NzbDrone.Common/Http/HttpClient.cs#L251
+  systemd.services.sonarr.environment.MAX_NAME = "225";
+
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets = {
