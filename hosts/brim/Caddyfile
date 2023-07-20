@@ -91,6 +91,11 @@ panel.brim.ml {
 	reverse_proxy localhost:8080
 }
 
+panel.brimworld.online {
+	import tls-brimworld-online
+	reverse_proxy localhost:8080
+}
+
 sync.brim.ml {
 	import tls-brim
 	reverse_proxy localhost:8384 {
