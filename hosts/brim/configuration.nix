@@ -164,7 +164,7 @@ in
 
     minio = {
       enable = true;
-      environment.MINIO_SERVER_URL = "https://s3.brim.ml";
+      environment.MINIO_SERVER_URL = "https://s3.brim.su";
       environmentFile = config.sops.secrets."minio/env".path;
     };
   };
