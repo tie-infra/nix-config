@@ -130,17 +130,17 @@ vk.brim.su {
 
 letmein.brim.su {
 	import tls-brim
-	redir https://vk.com/brimworld?w=app5619682_-209836751%2523592836 permanent
+	redir https://vk.com/brimworld?w=app5619682_-209836751%2523592836 temporary
 }
 
 brimworld.ru {
 	import tls-brimworld-ru
-	redir https://vk.com/brimworld permanent
+	redir https://vk.com/brimworld temporary
 }
 
 brimworld.online {
 	import tls-brimworld-online
-	redir https://vk.com/brimworld permanent
+	redir https://vk.com/brimworld temporary
 }
 
 api.brimworld.ru {
