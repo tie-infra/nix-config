@@ -154,6 +154,9 @@
         rpc-bind-address = "::";
         rpc-port = 9091;
 
+        peer-limit-global = 1000; # default is 240
+        peer-limit-per-torrent = 100; # default is 60
+
         download-queue-enabled = true;
         download-queue-size = 10;
 
