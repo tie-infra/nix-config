@@ -74,8 +74,8 @@
         PUFFER_WEB_HOST = ":8080";
         PUFFER_DAEMON_SFTP_HOST = ":5657";
         PUFFER_PANEL_ENABLE = "false";
-        PUFFER_TOKEN_PUBLIC = "https://panel.brim.ml/auth/publickey"; # deprecated in v3
-        PUFFER_DAEMON_AUTH_URL = "https://panel.brim.ml/oauth2/token";
+        PUFFER_TOKEN_PUBLIC = "https://panel.brim.su/auth/publickey"; # deprecated in v3
+        PUFFER_DAEMON_AUTH_URL = "https://panel.brim.su/oauth2/token";
         PUFFER_DAEMON_AUTH_CLIENTID = ".node_2";
         # PUFFER_DAEMON_AUTH_CLIENTSECRET is set via environmentFile
         PUFFER_DAEMON_CONSOLE_BUFFER = "1000";
