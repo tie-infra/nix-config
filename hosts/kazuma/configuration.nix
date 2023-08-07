@@ -30,12 +30,10 @@
     location = "Ivan’s homelab";
   };
 
-  eraseYourDarlings =
-    let disk = "SPCC_M.2_PCIe_SSD_27FF070C189700120672";
-    in {
-      bootDisk = "/dev/disk/by-id/nvme-${disk}-part1";
-      rootDisk = "/dev/disk/by-id/nvme-${disk}-part2";
-    };
+  eraseYourDarlings = {
+    bootDisk = "/dev/disk/by-uuid/1628-65F3";
+    rootDisk = "/dev/disk/by-uuid/5104f49c-ff08-49dc-96e4-8fbe00702f0a";
+  };
 
   networking = {
     hostName = "kazuma";

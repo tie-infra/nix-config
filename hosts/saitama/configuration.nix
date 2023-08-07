@@ -51,12 +51,10 @@
     };
   };
 
-  eraseYourDarlings =
-    let disk = "WDC_WD10EALX-009BA0_WD-WCATR5170643";
-    in {
-      bootDisk = "/dev/disk/by-id/ata-${disk}-part1";
-      rootDisk = "/dev/disk/by-id/ata-${disk}-part2";
-    };
+  eraseYourDarlings = {
+    bootDisk = "/dev/disk/by-uuid/6846-A71E";
+    rootDisk = "/dev/disk/by-uuid/e461062c-c7cf-449e-b661-97d84d07f596";
+  };
 
   networking = {
     hostName = "saitama";

@@ -43,12 +43,10 @@ in
     location = "mtw.ru colocation";
   };
 
-  eraseYourDarlings =
-    let disk = "0x5000c50047d27eab";
-    in {
-      bootDisk = "/dev/disk/by-id/wwn-${disk}-part1";
-      rootDisk = "/dev/disk/by-id/wwn-${disk}-part2";
-    };
+  eraseYourDarlings = {
+    bootDisk = "/dev/disk/by-uuid/2FAC-A633";
+    rootDisk = "/dev/disk/by-uuid/96448376-c96b-4fa0-adcb-65dee46427c0";
+  };
 
   networking = {
     hostName = "brim";

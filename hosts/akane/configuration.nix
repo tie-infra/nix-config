@@ -26,12 +26,10 @@
     hardwareModel = "Q1076GE";
   };
 
-  eraseYourDarlings =
-    let disk = "HP_SSD_S750_512GB_HASA33140201321";
-    in {
-      bootDisk = "/dev/disk/by-id/ata-${disk}-part1";
-      rootDisk = "/dev/disk/by-id/ata-${disk}-part2";
-    };
+  eraseYourDarlings = {
+    bootDisk = "/dev/disk/by-uuid/7F67-589D";
+    rootDisk = "/dev/disk/by-uuid/5b169687-13c2-4357-9cfc-d7ecba357db0";
+  };
 
   networking = {
     hostName = "akane";
