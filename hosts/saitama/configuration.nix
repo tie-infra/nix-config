@@ -19,7 +19,7 @@
       configurationLimit = 10;
     };
 
-    initrd.availableKernelModules = [ "ahci" "amd64_edac" ];
+    initrd.availableKernelModules = [ "ahci" "nvme" "amd64_edac" ];
 
     kernel.sysctl = {
       # Transmission uses a single UDP socket in order to implement multiple uTP sockets,
