@@ -1,0 +1,44 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - nix flake check --all-systems
+
+  nixos-rebuild:
+    internal: true
+    cmds:
+      - nixos-rebuild {{.ACTION}} --fast --use-remote-sudo --build-host {{.BUILD_HOST}} --target-host {{.TARGET_HOST}} --flake {{.FLAKE_URI}}
+
+  switch:saitama:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: nixos@saitama.tie.rip
+          TARGET_HOST: nixos@saitama.tie.rip
+          FLAKE_URI: .#saitama
+  switch:brim:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: nixos@brim.tie.rip
+          TARGET_HOST: nixos@brim.tie.rip
+          FLAKE_URI: .#brim
+  switch:kazuma:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: nixos@kazuma.tie.rip
+          TARGET_HOST: nixos@kazuma.tie.rip
+          FLAKE_URI: .#kazuma
+  switch:akane:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: nixos@akane.tie.rip
+          TARGET_HOST: nixos@akane.tie.rip
+          FLAKE_URI: .#akane

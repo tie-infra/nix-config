@@ -37,6 +37,7 @@
       ./hosts/kazuma
       ./hosts/saitama
       ./parts/base-system
+      ./parts/btrfs-on-bcache
       ./parts/erase-your-darlings
       ./parts/installer
       ./parts/machine-info
@@ -53,6 +54,7 @@
         nixpkgs-fmt
         sops
         ssh-to-age
+        go-task
       ];
     };
   };

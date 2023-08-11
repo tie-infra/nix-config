@@ -4,6 +4,7 @@
     self.nixosModules.base-system
     self.nixosModules.erase-your-darlings
     self.nixosModules.trust-admins
+    self.nixosModules.btrfs-on-bcache
     inputs.sops-nix.nixosModules.default
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     ./proxy.nix
@@ -19,7 +20,12 @@
       configurationLimit = 10;
     };
 
-    initrd.availableKernelModules = [ "ahci" "nvme" "amd64_edac" ];
+    initrd.availableKernelModules = [
+      "amd64_edac"
+      "nvme"
+      "ahci"
+      "bcache"
+    ];
 
     kernel.sysctl = {
       # Transmission uses a single UDP socket in order to implement multiple uTP sockets,
@@ -55,6 +61,8 @@
     bootDisk = "/dev/disk/by-uuid/6846-A71E";
     rootDisk = "/dev/disk/by-uuid/e461062c-c7cf-449e-b661-97d84d07f596";
   };
+
+  btrfsOnBcache.enable = true;
 
   networking = {
     hostName = "saitama";
