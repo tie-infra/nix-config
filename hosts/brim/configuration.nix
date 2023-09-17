@@ -138,8 +138,8 @@ in
           src = pkgs.fetchSteamDepot {
             appId = "1690800";
             depotId = "1690802";
-            manifestId = "1098339913535327930";
-            hash = "sha256-7/grHMLLMibwUErqetSvYDbzLTCSccl0ybA9OZQGFXo=";
+            manifestId = "4427727108828296404";
+            hash = "sha256-hJhBOAxL7z83IXb9+u/syO9yz6yO4Qb0BqmO4Egnsls=";
           };
         }))
         (pkgs.writeShellScriptBin "openjdk-java8" ''
