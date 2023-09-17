@@ -117,7 +117,12 @@
 
     sonarr = {
       enable = true;
-      mediaFolders = [ "anime" "tvshows" "onepiece" ];
+      mediaFolders = [
+        "anime"
+        "tvshows"
+        "onepiece"
+        "trash"
+      ];
       # Allow access to the Transmission downloads.
       extraGroups = [ config.users.groups.transmission.name ];
     };
