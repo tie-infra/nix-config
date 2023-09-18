@@ -15,6 +15,8 @@
     tree
     htop
     btop
+    duf
+    dstat
     vim
     rcon
     mc
