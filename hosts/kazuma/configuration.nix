@@ -67,8 +67,15 @@
     pufferpanel = {
       enable = true;
       extraPackages = [
-        pkgs.jre8
         pkgs.eco-server
+        (pkgs.writeShellScriptBin "openjdk-java8" ''
+          set -eu
+          exec ${lib.getExe pkgs.jre8} "$@"
+        '')
+        (pkgs.writeShellScriptBin "graalvm-java17" ''
+          set -eu
+          exec ${lib.getExe pkgs.graalvm17-ce} "$@"
+        '')
       ];
       environment = {
         PUFFER_WEB_HOST = ":8080";
