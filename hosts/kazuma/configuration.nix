@@ -1,17 +1,4 @@
-{ self, inputs, ... }:
 { lib, pkgs, config, ... }: {
-  imports = [
-    self.nixosModules.base-system
-    self.nixosModules.erase-your-darlings
-    self.nixosModules.trust-admins
-    inputs.sops-nix.nixosModules.default
-  ];
-
-  nixpkgs.config.allowUnfreePredicate =
-    pkg: builtins.elem (lib.getName pkg) [
-      "eco-server"
-    ];
-
   system.stateVersion = "22.11";
 
   time.timeZone = "Europe/Moscow";

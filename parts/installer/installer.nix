@@ -1,4 +1,3 @@
-{ self, ... }:
 { lib, pkgs, modulesPath, ... }:
 let
   # NB we do not use writeShellApplication since shellcheck fails to cross-compile.
@@ -7,7 +6,6 @@ in
 {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
-    self.nixosModules.base-system
   ];
 
   networking = {

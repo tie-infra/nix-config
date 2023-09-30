@@ -1,3 +1,3 @@
 {
-  flake.nixosModules.trust-admins = import ./trust-admins.nix;
+  flake.nixosModules.trust-admins = ./module.nix;
 }

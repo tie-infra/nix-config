@@ -1,3 +1,3 @@
 {
-  flake.nixosModules.btrfs-on-bcache = import ./btrfs-on-bcache.nix;
+  flake.nixosModules.btrfs-on-bcache = ./module.nix;
 }

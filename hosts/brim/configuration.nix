@@ -1,4 +1,3 @@
-{ self, inputs, ... }:
 let
   cloudflareCerts = {
     CF_SERVER_BRIM_CERT_PATH = "brim-cert.pem";
@@ -10,19 +9,6 @@ let
   };
 in
 { lib, pkgs, config, ... }: {
-  imports = [
-    self.nixosModules.base-system
-    self.nixosModules.erase-your-darlings
-    self.nixosModules.trust-admins
-    inputs.sops-nix.nixosModules.default
-  ];
-
-  nixpkgs.config.allowUnfreePredicate =
-    pkg: builtins.elem (lib.getName pkg) [
-      "satisfactory-server"
-      "steamworks-sdk-redist"
-    ];
-
   system.stateVersion = "23.05";
 
   time.timeZone = "Europe/Moscow";

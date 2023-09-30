@@ -1,29 +1,29 @@
-{ inputs, lib, ... }@args:
+{ self, inputs, lib, package-sets-lib, ... }:
 let
-  # Some packages cannot be cross-compiled from macOS.
-  mkIfSupported = system:
-    let platform = lib.systems.elaborate system;
-    in lib.mkIf (!platform.isDarwin);
+  inherit (package-sets-lib)
+    concatFilteredPackages
+    availableOnHostPlatform;
 
   installer = inputs.nixpkgs.lib.nixosSystem {
-    modules = [ (import ./installer.nix args) ];
+    modules = [
+      self.nixosModules.base-system
+      inputs.nixpkgs.nixosModules.readOnlyPkgs
+      ./installer.nix
+    ];
   };
-  systemFor = { host, build ? host }:
-    installer.extendModules {
-      modules = [
-        ({ lib, ... }: {
-          nixpkgs.hostPlatform.system = host;
-          nixpkgs.buildPlatform = lib.mkIf (host != build) {
-            system = build;
-          };
-        })
-      ];
-    };
+
+  # Some packages cannot be cross-compiled from macOS.
+  buildPlatformIsNotDarwin =
+    { pkgs, ... }: _: !pkgs.stdenv.buildPlatform.isDarwin;
 in
 {
-  perSystem = { system, ... }: mkIfSupported system {
-    packages.installer-x86-64-iso =
-      let cfg = systemFor { host = "x86_64-linux"; build = system; };
-      in cfg.config.system.build.isoImage;
+  perSystem = { config, ... }: {
+    packages = concatFilteredPackages buildPlatformIsNotDarwin
+      ({ name, pkgs, ... }: {
+        "installer-iso-${name}" =
+          let cfg = installer.extendModules { modules = [{ nixpkgs.pkgs = pkgs; }]; }; in
+          cfg.config.system.build.isoImage;
+      })
+      { inherit (config.packageSets) x86_64-linux; };
   };
 }

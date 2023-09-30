@@ -1,13 +1,4 @@
-{ self, inputs, ... }:
 { lib, pkgs, config, ... }: {
-  imports = [
-    self.nixosModules.nix-flakes
-    self.nixosModules.services
-    self.nixosModules.machine-info
-  ];
-
-  nixpkgs.overlays = [ inputs.btrfs-rollback.overlays.default ];
-
   environment.systemPackages = with pkgs; [
     ripgrep
     fd
@@ -56,8 +47,11 @@
       isNormalUser = true;
       extraGroups = with config.users.groups;
         [ wheel.name disk.name ];
-      openssh.authorizedKeys.keys = with self.lib.sshKeys;
-        github-actions ++ tie ++ brim;
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIPgvPYPtXXqGGerR7k+tbrIG2fCzp3R8ox7mkKRIdEu actions@github.com"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb mr.trubach@icloud.com"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG3MFVFbEvoiXBpqPavtwDIQtgY1hLXNvJgTY7/nasG/ dev@brim.su"
+      ];
     };
   };
 

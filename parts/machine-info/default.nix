@@ -1,3 +1,3 @@
 {
-  flake.nixosModules.machine-info = import ./machine-info.nix;
+  flake.nixosModules.machine-info = ./module.nix;
 }

@@ -1,10 +1,6 @@
-{ self, ... }:
 { lib, modulesPath, ... }: {
   imports = [
     (modulesPath + "/profiles/all-hardware.nix")
-    self.nixosModules.base-system
-    self.nixosModules.erase-your-darlings
-    self.nixosModules.trust-admins
   ];
 
   system.stateVersion = lib.trivial.release;

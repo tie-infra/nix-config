@@ -1,14 +1,5 @@
-{ self, inputs, ... }:
 { lib, config, pkgs, ... }: {
-  imports = [
-    self.nixosModules.base-system
-    self.nixosModules.erase-your-darlings
-    self.nixosModules.trust-admins
-    self.nixosModules.btrfs-on-bcache
-    inputs.sops-nix.nixosModules.default
-    inputs.nixos-hardware.nixosModules.common-gpu-amd
-    ./proxy.nix
-  ];
+  imports = [ ./proxy.nix ];
 
   system.stateVersion = "23.05";
 

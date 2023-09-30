@@ -1,11 +1,4 @@
-{ self, ... }:
 { lib, ... }: {
-  imports = [
-    self.nixosModules.base-system
-    self.nixosModules.erase-your-darlings
-    self.nixosModules.trust-admins
-  ];
-
   system.stateVersion = "23.05";
 
   time.timeZone = "Europe/Moscow";
