@@ -121,7 +121,7 @@ in
       extraPackages = [
         (pkgs.satisfactory-server.overrideAttrs (_: {
           version = "0.8.1.2-5.1.1+247884";
-          src = pkgs.fetchSteamDepot {
+          src = pkgs.fetchSteam {
             appId = "1690800";
             depotId = "1690802";
             manifestId = "4427727108828296404";

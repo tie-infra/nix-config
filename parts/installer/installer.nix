@@ -8,6 +8,10 @@ in
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
   ];
 
+  # Cross-compilation is broken. Seems to be fixed in 23.11? Will have to check
+  # once it is released.
+  documentation.nixos.enable = lib.mkForce false;
+
   networking = {
     hostName = "installer";
     useDHCP = true;

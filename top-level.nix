@@ -6,6 +6,7 @@
     ./hosts/kazuma
     ./hosts/saitama
 
+    ./parts/backports
     ./parts/base-system
     ./parts/btrfs-on-bcache
     ./parts/erase-your-darlings

@@ -60,8 +60,6 @@
 
     resolved.enable = true;
 
-    fwupd.enable = true;
-
     openssh = {
       enable = true;
       startWhenNeeded = true;

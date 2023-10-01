@@ -43,6 +43,39 @@ tasks:
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
 
+  check:saitama:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: nixos@saitama.tie.rip
+          TARGET_HOST: nixos@saitama.tie.rip
+          FLAKE_URI: .#saitama
+  check:brim:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: nixos@brim.tie.rip
+          TARGET_HOST: nixos@brim.tie.rip
+          FLAKE_URI: .#brim
+  check:kazuma:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: nixos@kazuma.tie.rip
+          TARGET_HOST: nixos@kazuma.tie.rip
+          FLAKE_URI: .#kazuma
+  check:akane:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: nixos@akane.tie.rip
+          TARGET_HOST: nixos@akane.tie.rip
+          FLAKE_URI: .#akane
+
   build:saitama:
     cmds:
       - task: nixos-rebuild

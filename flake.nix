@@ -2,13 +2,14 @@
   description = "NixOS configuration";
 
   inputs = {
-    # Currently using fork with
-    # - https://github.com/NixOS/nixpkgs/pull/242191 (nixos/networkd: allow state ranges in RequiredForOnline)
-    # - https://github.com/NixOS/nixpkgs/pull/236930 (update libgdiplus)
-    # - https://github.com/NixOS/nixpkgs/pull/234603 (edac-utils: fixup edac-ctl perl shebang)
-    # - https://github.com/NixOS/nixpkgs/pull/234124 (pufferpanel: build frontend from source)
-    #nixpkgs.url = "nixpkgs/nixos-23.05";
-    nixpkgs.url = "github:tie-infra/nixpkgs/nixos-23.05";
+    nixpkgs.url = "nixpkgs/nixos-23.05";
+
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-unstable.flake = false;
+
+    # Waiting for backport in https://github.com/NixOS/nixpkgs/pull/258111
+    nixpkgs-backport-242191.url = "nixpkgs/backport-242191-to-release-23.05";
+    nixpkgs-backport-242191.flake = false;
 
     systems.url = "systems";
 

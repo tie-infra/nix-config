@@ -5,6 +5,7 @@
         localSystem = { inherit system; };
 
         overlays = [
+          self.overlays.backports
           inputs.steam-games.overlays.default
           inputs.btrfs-rollback.overlays.default
         ];
