@@ -120,12 +120,12 @@ in
       enable = true;
       extraPackages = [
         (pkgs.satisfactory-server.overrideAttrs (_: {
-          version = "0.8.1.2-5.1.1+247884";
+          version = "0.8.2.1-5.2.1+259808";
           src = pkgs.fetchSteam {
             appId = "1690800";
             depotId = "1690802";
-            manifestId = "4427727108828296404";
-            hash = "sha256-hJhBOAxL7z83IXb9+u/syO9yz6yO4Qb0BqmO4Egnsls=";
+            manifestId = "6049335616683476102";
+            hash = "sha256-mJ7MD5+2rUKTVjHe0FKGkS9/wqIICW/t9f+QZ5gybrQ=";
           };
         }))
         (pkgs.writeShellScriptBin "openjdk-java8" ''
