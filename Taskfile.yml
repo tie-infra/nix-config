@@ -8,7 +8,7 @@ tasks:
   nixos-rebuild:
     internal: true
     cmds:
-      - nixos-rebuild {{.ACTION}} --fast --use-remote-sudo --build-host {{.BUILD_HOST}} --target-host {{.TARGET_HOST}} --flake {{.FLAKE_URI}}
+      - nixos-rebuild {{.ACTION}} --verbose --fast --use-remote-sudo --build-host {{.BUILD_HOST}} --target-host {{.TARGET_HOST}} --flake {{.FLAKE_URI}}
 
   switch:saitama:
     cmds:
