@@ -48,6 +48,10 @@ in
         LogsDirectory = "jellyfin";
         LogsDirectoryMode = "0700";
 
+        Environment = [
+          "XDG_CACHE_HOME=%C/jellyfin/xdg" # for ffmpeg
+        ];
+
         UMask = "0077"; # u=rwx,g=,o=
 
         NoNewPrivileges = true;
