@@ -13,6 +13,7 @@
 
     initrd.availableKernelModules = [
       "amd64_edac"
+      "mpt3sas"
       "nvme"
       "ahci"
       "bcache"
@@ -77,7 +78,7 @@
 
   systemd.network.networks."10-wan" = {
     matchConfig = {
-      Name = "enp6s0";
+      Name = "enp7s0";
     };
     networkConfig = {
       DHCP = "yes";

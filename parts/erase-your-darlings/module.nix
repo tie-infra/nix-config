@@ -67,6 +67,12 @@ in
         --snapshot root-blank
     '';
 
+    # FIXME: turns out this code wrongly assumed that compression can be enable
+    # per subvolume or mountpoint. This is not true, see
+    # https://btrfs.readthedocs.io/en/latest/btrfs-man5.html#btrfs-specific-mount-options
+    # Also consider enabling user_subvol_rm_allowed. And enable block-group-tree
+    # with btrfstune (or rebuild filesystem with block_group_tree feature). See
+    # https://btrfs.readthedocs.io/en/latest/mkfs.btrfs.html#man-mkfs-filesystem-features
     fileSystems =
       let
         subvolumeFileSystems = lib.mapAttrs' (name: lib.nameValuePair "/${name}")
