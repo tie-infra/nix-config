@@ -1,5 +1,5 @@
 final: prev: {
-  # Enable WAL journald mode for SQLite.
+  # Enable WAL journal mode for SQLite.
   # See https://github.com/jellyfin/jellyfin/issues/10314
   jellyfin = prev.jellyfin.overrideAttrs ({ patches ? [ ], ... }: {
     patches = patches ++ [

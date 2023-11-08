@@ -1,17 +1,22 @@
 { lib, pkgs, config, ... }: {
-  environment.systemPackages = with pkgs; [
-    ripgrep
-    fd
-    file
-    tree
-    htop
-    btop
-    duf
-    dstat
-    vim
-    rcon
-    mc
-  ];
+  environment = {
+    systemPackages = with pkgs; [
+      ripgrep
+      fd
+      file
+      tree
+      htop
+      btop
+      duf
+      dstat
+      vim
+      rcon
+      mc
+    ];
+    shellAliases = {
+      lsd = "lsblk --nodeps --output=MODEL,SERIAL,SIZE,NAME,TYPE,TRAN,FSTYPE --sort=NAME";
+    };
+  };
 
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
