@@ -26,7 +26,11 @@
     hostName = "kazuma";
     firewall = {
       allowedUDPPorts = [ 3000 ];
-      allowedTCPPorts = [ 3001 8080 5657 19999 25565 25569 ];
+      allowedTCPPorts = [ 3001 8080 5657 19999 ];
+      allowedTCPPortRanges = [
+        # Minecraft
+        { from = 25500; to = 25599; }
+      ];
     };
   };
 

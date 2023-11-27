@@ -38,9 +38,10 @@ in
       allowedTCPPorts = [
         # Caddy HTTP/1 and HTTP/2
         443
+      ];
+      allowedTCPPortRanges = [
         # Minecraft
-        25511
-        25521
+        { from = 25500; to = 25599; }
       ];
       allowedUDPPorts = [
         # Caddy HTTP/3
