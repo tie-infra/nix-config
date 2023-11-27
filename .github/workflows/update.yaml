@@ -13,7 +13,7 @@ jobs:
       - name: Install nix
         uses: cachix/install-nix-action@v23
         with:
-          extra_nix_config: "extra-experimental-features = nix-command flakes ca-derivations"
+          extra_nix_config: "extra-experimental-features = nix-command flakes"
 
       - name: Set up cachix
         uses: cachix/cachix-action@v12
