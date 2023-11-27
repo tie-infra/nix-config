@@ -133,20 +133,9 @@ letmein.brim.su {
 	redir https://vk.com/brimworld?w=app5619682_-209836751%2523592836 temporary
 }
 
-brimworld.ru {
-	import tls-brimworld-ru
-	redir https://vk.com/brimworld temporary
-}
-
 brimworld.online {
 	import tls-brimworld-online
 	redir https://vk.com/brimworld temporary
-}
-
-api.brimworld.ru {
-	import tls-brimworld-ru
-	rewrite * /brimworld-api{uri}
-	reverse_proxy localhost:9000
 }
 
 api.brimworld.online {
@@ -177,11 +166,6 @@ plan.brim.su {
 	import reverse-proxy-plan
 }
 
-plan.brimworld.ru {
-	import tls-brimworld-ru
-	import reverse-proxy-plan
-}
-
 plan.brimworld.online {
 	import tls-brimworld-online
 	import reverse-proxy-plan
@@ -192,11 +176,6 @@ map.brim.su, map-vanilla.brim.su {
 	import reverse-proxy-map-vanilla
 }
 
-map.brimworld.ru, map-vanilla.brimworld.ru {
-	import tls-brimworld-ru
-	import reverse-proxy-map-vanilla
-}
-
 map.brimworld.online, map-vanilla.brimworld.online {
 	import tls-brimworld-online
 	import reverse-proxy-map-vanilla
@@ -204,11 +183,6 @@ map.brimworld.online, map-vanilla.brimworld.online {
 
 map-mods.brim.su {
 	import tls-brim
-	import reverse-proxy-map-mods
-}
-
-map-mods.brimworld.ru {
-	import tls-brimworld-ru
 	import reverse-proxy-map-mods
 }
 
