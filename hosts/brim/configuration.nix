@@ -4,8 +4,6 @@ let
     CF_SERVER_BRIM_KEY_PATH = "brim-key.pem";
     CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH = "brimworld-online-cert.pem";
     CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH = "brimworld-online-key.pem";
-    CF_SERVER_BRIMWORLD_RU_CERT_PATH = "brimworld-ru-cert.pem";
-    CF_SERVER_BRIMWORLD_RU_KEY_PATH = "brimworld-ru-key.pem";
   };
 in
 { lib, pkgs, config, ... }: {

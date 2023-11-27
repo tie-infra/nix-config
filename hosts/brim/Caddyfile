@@ -38,10 +38,6 @@
 	tls {$CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH} {$CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH}
 }
 
-(tls-brimworld-ru) {
-	tls {$CF_SERVER_BRIMWORLD_RU_CERT_PATH} {$CF_SERVER_BRIMWORLD_RU_KEY_PATH}
-}
-
 brim.su {
 	import tls-brim
 	@document `{uri}.endsWith("/")`
