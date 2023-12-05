@@ -109,6 +109,6 @@ cp -a /etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ed25519_key /mnt/persi
 # TODO: detect current system and suggest appropriate bootstrap configuration.
 echo
 echo "Success! To install NixOS, run"
-echo "  sudo nixos-install --no-root-password --flake github:tie-infra/nix-config#bootstrap-x86-64"
+echo "  sudo nixos-install --no-channel-copy --no-root-password --flake github:tie-infra/nix-config#bootstrap-x86-64"
 echo "and reboot"
 exit 0
