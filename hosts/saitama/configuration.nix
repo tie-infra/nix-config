@@ -1,7 +1,7 @@
 { lib, config, pkgs, ... }: {
   imports = [ ./proxy.nix ];
 
-  system.stateVersion = "23.05";
+  system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
 

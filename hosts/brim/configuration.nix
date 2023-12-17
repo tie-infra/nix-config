@@ -7,7 +7,7 @@ let
   };
 in
 { lib, pkgs, config, ... }: {
-  system.stateVersion = "23.05";
+  system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
 
@@ -127,14 +127,8 @@ in
             hash = "sha256-mJ7MD5+2rUKTVjHe0FKGkS9/wqIICW/t9f+QZ5gybrQ=";
           };
         }))
-        (pkgs.writeShellScriptBin "openjdk-java8" ''
-          set -eu
-          exec ${lib.getExe pkgs.jre8} "$@"
-        '')
-        (pkgs.writeShellScriptBin "graalvm-java17" ''
-          set -eu
-          exec ${lib.getExe pkgs.graalvm17-ce} "$@"
-        '')
+        pkgs.javaWrappers.java8
+        pkgs.javaWrappers.java17
       ];
 
       environment = {

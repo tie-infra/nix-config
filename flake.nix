@@ -2,14 +2,10 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.05";
+    nixpkgs.url = "nixpkgs/nixos-23.11";
 
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.flake = false;
-
-    # Waiting for backport in https://github.com/NixOS/nixpkgs/pull/258111
-    nixpkgs-backport-242191.url = "nixpkgs/backport-242191-to-release-23.05";
-    nixpkgs-backport-242191.flake = false;
 
     systems.url = "systems";
 

@@ -8,9 +8,13 @@ in
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
   ];
 
-  # Cross-compilation is broken. Seems to be fixed in 23.11? Will have to check
-  # once it is released.
-  documentation.nixos.enable = lib.mkForce false;
+  # Fails with the following error unless we disable mdadm:
+  #
+  #  trace: warning: mdadm: Neither MAILADDR nor PROGRAM has been set. This will cause the `mdmon` service to crash.
+  #
+  # Perhaps that would be fixed in future NixOS versions, but for now we don’t
+  # need software RAID.
+  boot.swraid.enable = lib.mkForce false;
 
   networking = {
     hostName = "installer";

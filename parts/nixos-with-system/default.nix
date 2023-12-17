@@ -8,7 +8,6 @@
         { nixpkgs.pkgs = pkgs; }
       ] ++ (with self.nixosModules; [
         base-system
-        backports
         btrfs-on-bcache
         erase-your-darlings
         machine-info

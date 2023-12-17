@@ -74,7 +74,7 @@ in
         '';
 
         ExecStart = ''
-          ${lib.getExe cfg.package} --NoUpdates \
+          ${lib.getExe' cfg.package "jackett"} --NoUpdates \
             --DataFolder ''${STATE_DIRECTORY} \
             ${lib.escapeShellArgs cfg.extraFlags}
         '';

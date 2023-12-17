@@ -62,7 +62,7 @@ in
           '') cfg.mediaFolders)}
           chmod u=rwx,g=,o= data
         '';
-        ExecStart = "${cfg.package}/bin/NzbDrone --nobrowser --data=\${STATE_DIRECTORY}/data";
+        ExecStart = "${lib.getExe' cfg.package "NzbDrone"} --nobrowser --data=\${STATE_DIRECTORY}/data";
 
         User =
           if cfg.user != null then cfg.user

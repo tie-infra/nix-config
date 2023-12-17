@@ -29,7 +29,7 @@ in
         Restart = "always";
 
         ExecStart = ''
-          ${lib.getExe cfg.package} \
+          ${lib.getExe' cfg.package "jellyfin"} \
             --datadir ''${STATE_DIRECTORY} \
             --cachedir ''${CACHE_DIRECTORY} \
             --logdir ''${LOGS_DIRECTORY}

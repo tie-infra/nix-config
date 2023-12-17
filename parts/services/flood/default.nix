@@ -39,7 +39,7 @@ in
         Restart = "always";
 
         ExecStart = ''
-          ${lib.getExe cfg.package} \
+          ${lib.getExe' cfg.package "flood"} \
             --rundir ''${STATE_DIRECTORY} \
             ${lib.escapeShellArgs cfg.extraFlags}
         '';

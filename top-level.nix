@@ -11,6 +11,7 @@
     ./parts/btrfs-on-bcache
     ./parts/erase-your-darlings
     ./parts/installer
+    ./parts/java-wrappers
     ./parts/jellyfin-wal-backport
     ./parts/machine-info
     ./parts/nix-flakes

@@ -6,6 +6,7 @@
 
         overlays = [
           self.overlays.backports
+          self.overlays.java-wrappers
           self.overlays.jellyfin-wal-backport
           inputs.steam-games.overlays.default
           inputs.btrfs-rollback.overlays.default

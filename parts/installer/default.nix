@@ -7,7 +7,6 @@ let
   installer = inputs.nixpkgs.lib.nixosSystem {
     modules = [
       self.nixosModules.base-system
-      self.nixosModules.backports
       inputs.nixpkgs.nixosModules.readOnlyPkgs
       ./installer.nix
     ];

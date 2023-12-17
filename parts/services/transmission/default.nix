@@ -118,7 +118,7 @@ in
             then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt"
             else systemCerts
           }
-          exec ${cfg.package}/bin/transmission-daemon --foreground \
+          exec ${lib.getExe' cfg.package "transmission-daemon"} --foreground \
             --config-dir "$STATE_DIRECTORY/config" \
             --download-dir "$STATE_DIRECTORY/download" \
             ${lib.escapeShellArgs cfg.extraFlags}

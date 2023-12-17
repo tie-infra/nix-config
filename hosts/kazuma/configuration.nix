@@ -1,5 +1,5 @@
 { lib, pkgs, config, ... }: {
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
 
@@ -59,14 +59,8 @@
       enable = true;
       extraPackages = [
         pkgs.eco-server
-        (pkgs.writeShellScriptBin "openjdk-java8" ''
-          set -eu
-          exec ${lib.getExe pkgs.jre8} "$@"
-        '')
-        (pkgs.writeShellScriptBin "graalvm-java17" ''
-          set -eu
-          exec ${lib.getExe pkgs.graalvm17-ce} "$@"
-        '')
+        pkgs.javaWrappers.java8
+        pkgs.javaWrappers.java17
       ];
       environment = {
         PUFFER_WEB_HOST = ":8080";
