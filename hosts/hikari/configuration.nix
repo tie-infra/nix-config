@@ -7,23 +7,19 @@
 
   time.timeZone = "Europe/Moscow";
 
-  boot = {
-    loader.grub = {
-      enable = true;
-      configurationLimit = 10;
-      device = "/dev/vda";
-    };
+  boot.loader.grub = {
+    enable = true;
+    configurationLimit = 10;
+    device = "/dev/disk/by-path/virtio-pci-0000:00:07.0";
   };
 
   eraseYourDarlings = {
-    bootDisk = "/dev/vda1";
-    rootDisk = "/dev/vda2";
+    bootDisk = "/dev/disk/by-uuid/9801-81CB";
+    rootDisk = "/dev/disk/by-uuid/e031ec9b-cb31-408b-beee-2ef772c62de0";
   };
 
-  environment = {
-    machineInfo = {
-      location = "Amsterdam VPS from 4vps.su";
-    };
+  environment.machineInfo = {
+    location = "Amsterdam VPS from 4vps.su";
   };
 
   networking = {
@@ -33,12 +29,11 @@
 
   systemd.network =
     let
-      address4 = "62.133.61.102";
-      prefix6 = "2a00:b703:fff1:88"; # /64
+      prefix64 = "2a00:b703:fff1:88"; # /64 subnet
 
       addresses = [
-        "${prefix6}::1/48" # /64 subnet
-        "${address4}/32"
+        "${prefix64}::1/48"
+        "62.133.61.102/32"
       ];
 
       gateways = [
@@ -53,12 +48,12 @@
         "1.0.0.1"
       ];
 
-      gatewayToRouteConfig = (address: {
+      gatewayToRouteConfig = address: {
         routeConfig = {
           Gateway = address;
           GatewayOnLink = true;
         };
-      });
+      };
     in
     {
       networks = {
