@@ -1,5 +1,7 @@
 {
   imports = [
+    ./secrets
+
     ./hosts/akane
     ./hosts/bootstrap
     ./hosts/brim

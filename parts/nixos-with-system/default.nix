@@ -12,6 +12,7 @@
         erase-your-darlings
         machine-info
         nix-flakes
+        secrets
         services
         trust-admins
       ]);

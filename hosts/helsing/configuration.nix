@@ -141,12 +141,12 @@
   };
 
   sops = {
-    defaultSopsFile = ./secrets.yaml;
     secrets = {
       "wireguard/pk.txt" = {
         mode = "0440";
         group = config.users.groups.systemd-network.name;
         reloadUnits = [ "systemd-networkd.service" ];
+        sopsFile = ./secrets.yaml;
       };
       "wireguard/psk.txt" = {
         mode = "0440";

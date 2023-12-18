@@ -76,12 +76,10 @@
     };
   };
 
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets = {
-      "pufferpanel/env" = {
-        restartUnits = [ "pufferpanel.service" ];
-      };
+  sops.secrets = {
+    "pufferpanel/env" = {
+      restartUnits = [ "pufferpanel.service" ];
+      sopsFile = ./secrets.yaml;
     };
   };
 }
