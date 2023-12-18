@@ -1,11 +1,3 @@
-let
-  cloudflareCerts = {
-    CF_SERVER_BRIM_CERT_PATH = "brim-cert.pem";
-    CF_SERVER_BRIM_KEY_PATH = "brim-key.pem";
-    CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH = "brimworld-online-cert.pem";
-    CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH = "brimworld-online-key.pem";
-  };
-in
 { lib, pkgs, config, ... }: {
   system.stateVersion = "23.11";
 
@@ -141,30 +133,22 @@ in
 
     minio = {
       enable = true;
-      environment.MINIO_SERVER_URL = "https://s3.brim.su";
-      environmentFile = config.sops.secrets."minio/env".path;
+      environment = {
+        MINIO_SERVER_URL = "https://s3.brim.su";
+        MINIO_ROOT_USER = "minio";
+      };
+      environmentFile = config.sops.templates."minio.env".path;
     };
   };
 
-  systemd.services.caddy.serviceConfig = {
-    LoadCredential = lib.mapAttrsToList
-      (_: value: "${value}:${config.sops.secrets."caddy/${value}".path}")
-      cloudflareCerts;
-    Environment = lib.mapAttrsToList
-      (name: value: "${name}=%d/${value}")
-      cloudflareCerts;
-  };
-
-  sops = {
-    defaultSopsFile = ./secrets.yaml;
-    secrets = {
-      "minio/env" = {
-        restartUnits = [ "minio.service" ];
-      };
-    } // lib.mapAttrs'
-      (_: value: lib.nameValuePair "caddy/${value}" {
-        restartUnits = [ "caddy.service" ];
-      })
-      cloudflareCerts;
+  systemd.services.caddy = {
+    environment = {
+      TLS_CERTIFICATE_PATH_FOR_BRIM_SU = ./certs/brim-su.pem;
+      TLS_CERTIFICATE_PATH_FOR_BRIMWORLD_ONLINE = ./certs/brimworld-online.pem;
+    };
+    serviceConfig.LoadCredential =
+      map
+        (name: name + ":" + config.sops.secrets."caddy/${name}".path)
+        config.passthru.caddySecrets;
   };
 }

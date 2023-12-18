@@ -30,16 +30,16 @@
 	}
 }
 
-(tls-brim) {
-	tls {$CF_SERVER_BRIM_CERT_PATH} {$CF_SERVER_BRIM_KEY_PATH}
+(tls-brim-su) {
+	tls "{env.TLS_CERTIFICATE_PATH_FOR_BRIM_SU}" "{env.CREDENTIALS_DIRECTORY}/brim-su-key.pem"
 }
 
 (tls-brimworld-online) {
-	tls {$CF_SERVER_BRIMWORLD_ONLINE_CERT_PATH} {$CF_SERVER_BRIMWORLD_ONLINE_KEY_PATH}
+	tls "{env.TLS_CERTIFICATE_PATH_FOR_BRIMWORLD_ONLINE}" "{env.CREDENTIALS_DIRECTORY}/brimworld-online-key.pem"
 }
 
 brim.su {
-	import tls-brim
+	import tls-brim-su
 	@document `{uri}.endsWith("/")`
 	rewrite @document /brim-website{uri}index.html
 	rewrite * /brim-website{uri}
@@ -47,12 +47,12 @@ brim.su {
 }
 
 assets.brim.su {
-	import tls-brim
+	import tls-brim-su
 	redir https://brim.su/assets/ permanent
 }
 
 ip.brim.su {
-	import tls-brim
+	import tls-brim-su
 
 	encode zstd gzip
 	header Content-Type text/plain
@@ -68,22 +68,22 @@ ip.brim.su {
 }
 
 storage.brim.su {
-	import tls-brim
+	import tls-brim-su
 	reverse_proxy localhost:9001
 }
 
 s3.brim.su {
-	import tls-brim
+	import tls-brim-su
 	reverse_proxy localhost:9000
 }
 
 netdata.brim.su {
-	import tls-brim
+	import tls-brim-su
 	reverse_proxy localhost:19999
 }
 
 panel.brim.su {
-	import tls-brim
+	import tls-brim-su
 	reverse_proxy localhost:8080
 }
 
@@ -93,39 +93,39 @@ panel.brimworld.online {
 }
 
 sync.brim.su {
-	import tls-brim
+	import tls-brim-su
 	reverse_proxy localhost:8384 {
 		header_up Host {upstream_hostport}
 	}
 }
 
 #tgbot.brim.su {
-#	import tls-brim
+#	import tls-brim-su
 #	reverse_proxy localhost:5000
 #}
 #
 #nakama.brim.su {
-#	import tls-brim
+#	import tls-brim-su
 #	reverse_proxy localhost:7351
 #}
 
 git.brim.su {
-	import tls-brim
+	import tls-brim-su
 	redir https://github.com/Whitebrim permanent
 }
 
 tg.brim.su {
-	import tls-brim
+	import tls-brim-su
 	redir https://t.me/Whitebrim permanent
 }
 
 vk.brim.su {
-	import tls-brim
+	import tls-brim-su
 	redir https://vk.com/Whitebrim permanent
 }
 
 letmein.brim.su {
-	import tls-brim
+	import tls-brim-su
 	redir https://vk.com/brimworld?w=app5619682_-209836751%2523592836 temporary
 }
 
@@ -158,7 +158,7 @@ automodpack.brimworld.online {
 }
 
 plan.brim.su {
-	import tls-brim
+	import tls-brim-su
 	import reverse-proxy-plan
 }
 
@@ -168,7 +168,7 @@ plan.brimworld.online {
 }
 
 map.brim.su, map-vanilla.brim.su {
-	import tls-brim
+	import tls-brim-su
 	import reverse-proxy-map-vanilla
 }
 
@@ -178,7 +178,7 @@ map.brimworld.online, map-vanilla.brimworld.online {
 }
 
 map-mods.brim.su {
-	import tls-brim
+	import tls-brim-su
 	import reverse-proxy-map-mods
 }
 
