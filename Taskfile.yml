@@ -50,6 +50,14 @@ tasks:
           BUILD_HOST: helsing # TODO
           TARGET_HOST: helsing # TODO
           FLAKE_URI: .#helsing
+  switch:hikari:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: switch
+          BUILD_HOST: hikari # TODO
+          TARGET_HOST: hikari # TODO
+          FLAKE_URI: .#hikari
 
   boot:saitama:
     cmds:
@@ -91,6 +99,14 @@ tasks:
           BUILD_HOST: helsing # TODO
           TARGET_HOST: helsing # TODO
           FLAKE_URI: .#helsing
+  boot:hikari:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: boot
+          BUILD_HOST: hikari # TODO
+          TARGET_HOST: hikari # TODO
+          FLAKE_URI: .#hikari
 
   check:saitama:
     cmds:
@@ -132,6 +148,14 @@ tasks:
           BUILD_HOST: helsing # TODO
           TARGET_HOST: helsing # TODO
           FLAKE_URI: .#helsing
+  check:hikari:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: dry-activate
+          BUILD_HOST: hikari # TODO
+          TARGET_HOST: hikari # TODO
+          FLAKE_URI: .#hikari
 
   build:saitama:
     cmds:
@@ -173,3 +197,11 @@ tasks:
           BUILD_HOST: helsing # TODO
           TARGET_HOST: helsing # TODO
           FLAKE_URI: .#helsing
+  build:hikari:
+    cmds:
+      - task: nixos-rebuild
+        vars:
+          ACTION: build
+          BUILD_HOST: hikari # TODO
+          TARGET_HOST: hikari # TODO
+          FLAKE_URI: .#hikari
