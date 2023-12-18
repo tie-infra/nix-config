@@ -189,13 +189,14 @@
   systemd.services.sonarr.environment.MAX_NAME = "225";
 
   sops = {
-    defaultSopsFile = ./secrets.yaml;
     secrets = {
       "jackett/settings.json" = {
         restartUnits = [ "jackett.service" ];
+        sopsFile = ./secrets.yaml;
       };
       "transmission/settings.json" = {
         restartUnits = [ "transmission.service" ];
+        sopsFile = ./secrets.yaml;
       };
     };
   };
