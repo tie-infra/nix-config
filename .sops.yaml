@@ -24,6 +24,11 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_helsing
+  - path_regex: ^hosts/akane/secrets\.yaml$
+    key_groups:
+      - age:
+        - *admin_tie
+        - *server_akane
   - path_regex: ^hosts/saitama/secrets\.yaml$
     key_groups:
       - age:
