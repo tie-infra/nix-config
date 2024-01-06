@@ -1,9 +1,10 @@
 {
   imports = [
     ./flood
-    ./jackett
     ./jellyfin
     ./minio
+    ./prowlarr
+    ./radarr
     ./sonarr
     ./transmission
   ];

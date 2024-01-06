@@ -1,6 +1,4 @@
 { lib, config, pkgs, ... }: {
-  imports = [ ./proxy.nix ];
-
   system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
@@ -103,8 +101,22 @@
 
     jellyfin = {
       enable = true;
-      # Allow access to the Sonarr media library.
-      extraGroups = [ config.users.groups.sonarr.name ];
+      extraGroups = [
+        config.users.groups.sonarr.name
+        config.users.groups.radarr.name
+      ];
+    };
+
+    radarr = {
+      enable = true;
+      mediaFolders = [
+        "anime"
+        "movies"
+        "trash"
+      ];
+      extraGroups = [
+        config.users.groups.transmission.name
+      ];
     };
 
     sonarr = {
@@ -115,18 +127,13 @@
         "onepiece"
         "trash"
       ];
-      # Allow access to the Transmission downloads.
-      extraGroups = [ config.users.groups.transmission.name ];
+      extraGroups = [
+        config.users.groups.transmission.name
+      ];
     };
 
-    jackett = {
+    prowlarr = {
       enable = true;
-      settings = {
-        CacheEnabled = true;
-        CacheTtl = 86400;
-        CacheMaxResultsPerIndexer = 100000;
-      };
-      settingsFile = config.sops.secrets."jackett/settings.json".path;
     };
 
     flood = {
@@ -190,10 +197,6 @@
 
   sops = {
     secrets = {
-      "jackett/settings.json" = {
-        restartUnits = [ "jackett.service" ];
-        sopsFile = ./secrets.yaml;
-      };
       "transmission/settings.json" = {
         restartUnits = [ "transmission.service" ];
         sopsFile = ./secrets.yaml;

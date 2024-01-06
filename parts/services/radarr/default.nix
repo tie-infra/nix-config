@@ -1,20 +1,20 @@
-{ lib, pkgs, config, ... }:
+{ config, lib, pkgs, ... }:
 let
-  cfg = config.services.sonarr;
+  cfg = config.services.radarr;
 in
 {
-  disabledModules = [ "services/misc/sonarr.nix" ];
+  disabledModules = [ "services/misc/radarr.nix" ];
 
-  options.services.sonarr = {
-    enable = lib.mkEnableOption (lib.mdDoc "Sonarr");
-    package = lib.mkPackageOptionMD pkgs "sonarr" { };
+  options.services.radarr = {
+    enable = lib.mkEnableOption (lib.mdDoc "Radarr");
+    package = lib.mkPackageOptionMD pkgs "radarr" { };
 
     user = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
       description = lib.mdDoc ''
-        User account under which Sonarr runs. If set to `null`,
-        `sonarr` user is set up.
+        User account under which Radarr runs. If set to `null`,
+        `radarr` user is set up.
       '';
     };
 
@@ -22,8 +22,8 @@ in
       type = lib.types.nullOr lib.types.str;
       default = null;
       description = lib.mdDoc ''
-        Group account under which Sonarr runs. If set to `null`,
-        `sonarr` group is set up.
+        Group account under which Radarr runs. If set to `null`,
+        `radarr` group is set up.
       '';
     };
 
@@ -39,14 +39,14 @@ in
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = lib.mdDoc ''
-        Additional groups under which Sonarr runs.
+        Additional groups under which Radarr runs.
       '';
     };
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.services.sonarr = {
-      description = "Sonarr";
+    systemd.services.radarr = {
+      description = "Radarr";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
@@ -54,7 +54,7 @@ in
         Type = "exec";
         Restart = "always";
 
-        ExecStartPre = pkgs.writeShellScript "sonarr-setup" ''
+        ExecStartPre = pkgs.writeShellScript "radarr-setup" ''
           cd "$STATE_DIRECTORY"
           mkdir -p data media
           ${lib.concatLines (map (folder: ''
@@ -63,18 +63,18 @@ in
           chmod u=rwx,g=,o= data
         '';
 
-        ExecStart = "${lib.getExe' cfg.package "NzbDrone"} --nobrowser --data=\${STATE_DIRECTORY}/data";
+        ExecStart = "${lib.getExe' cfg.package "Radarr"} --nobrowser --data=\${STATE_DIRECTORY}/data";
 
         User =
           if cfg.user != null then cfg.user
-          else config.users.users.sonarr.name;
+          else config.users.users.radarr.name;
         Group =
           if cfg.group != null then cfg.group
-          else config.users.groups.sonarr.name;
+          else config.users.groups.radarr.name;
 
         SupplementaryGroups = cfg.extraGroups;
 
-        StateDirectory = "sonarr";
+        StateDirectory = "radarr";
         StateDirectoryMode = "0750"; # u=rwx,g=rx,o=
 
         UMask = "0027"; # u=rwx,g=rx,o=
@@ -82,16 +82,16 @@ in
     };
 
     users = {
-      users.sonarr = lib.mkIf (cfg.user == null) {
+      users.radarr = lib.mkIf (cfg.user == null) {
         isSystemUser = true;
         group =
           if cfg.group != null then cfg.group
-          else config.users.groups.sonarr.name;
+          else config.users.groups.radarr.name;
       };
-      groups.sonarr = lib.mkIf (cfg.group == null) {
+      groups.radarr = lib.mkIf (cfg.group == null) {
         members = lib.singleton
           (if cfg.user != null then cfg.user
-          else config.users.users.sonarr.name);
+          else config.users.users.radarr.name);
       };
     };
   };
