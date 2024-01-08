@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , fetchFromGitHub
 , substituteAll
 , buildDotnetModule
@@ -81,7 +82,10 @@ buildDotnetModule rec {
   dotnet-sdk = dotnet-sdk_6;
   dotnet-runtime = dotnet-aspnetcore_6;
 
-  doCheck = true;
+  # Nixpkgs .NET build infrastructure uses globalization-invariant mode that
+  # breaks a lot of tests when run on Darwin. Instead of trying to disable them,
+  # just do not run tests. See also https://github.com/NixOS/nixpkgs/pull/217587
+  doCheck = !stdenv.hostPlatform.isDarwin;
 
   executables = [ "Sonarr" ];
 
