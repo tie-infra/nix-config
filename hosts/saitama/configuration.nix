@@ -121,6 +121,7 @@
 
     sonarr = {
       enable = true;
+      package = pkgs.sonarr_4;
       mediaFolders = [
         "anime"
         "tvshows"

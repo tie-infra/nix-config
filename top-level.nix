@@ -21,6 +21,7 @@
     ./parts/nix-flakes
     ./parts/nixos-with-system
     ./parts/services
+    ./parts/sonarr-v4
     ./parts/trust-admins
   ];
 
