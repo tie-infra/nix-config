@@ -1,5 +1,3 @@
 {
-  flake.overlays.sonarr-v4 = final: prev: {
-    sonarr_4 = final.callPackage ./package.nix { };
-  };
+  flake.overlays.sonarr-v4 = import ./overlay.nix;
 }
