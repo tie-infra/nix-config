@@ -38,6 +38,8 @@
       allowedUDPPorts = [
         # Caddy HTTP/3
         443
+        # Palworld
+        8211
         # Satisfactory
         7777
         15000
@@ -109,18 +111,11 @@
 
     pufferpanel = {
       enable = true;
-      extraPackages = [
-        (pkgs.satisfactory-server.overrideAttrs (_: {
-          version = "0.8.2.1-5.2.1+259808";
-          src = pkgs.fetchSteam {
-            appId = "1690800";
-            depotId = "1690802";
-            manifestId = "6049335616683476102";
-            hash = "sha256-mJ7MD5+2rUKTVjHe0FKGkS9/wqIICW/t9f+QZ5gybrQ=";
-          };
-        }))
-        pkgs.javaWrappers.java8
-        pkgs.javaWrappers.java17
+      extraPackages = with pkgs; [
+        satisfactory-server
+        palworld-server
+        javaWrappers.java8
+        javaWrappers.java17
       ];
 
       environment = {

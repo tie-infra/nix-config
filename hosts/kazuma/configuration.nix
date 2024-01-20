@@ -59,7 +59,6 @@
       enable = true;
       extraPackages = with pkgs; [
         eco-server
-        palworld-server
         javaWrappers.java8
         javaWrappers.java17
       ];
