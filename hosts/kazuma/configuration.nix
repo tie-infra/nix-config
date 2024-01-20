@@ -57,10 +57,11 @@
 
     pufferpanel = {
       enable = true;
-      extraPackages = [
-        pkgs.eco-server
-        pkgs.javaWrappers.java8
-        pkgs.javaWrappers.java17
+      extraPackages = with pkgs; [
+        eco-server
+        palworld-server
+        javaWrappers.java8
+        javaWrappers.java17
       ];
       environment = {
         PUFFER_WEB_HOST = ":8080";

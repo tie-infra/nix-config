@@ -121,11 +121,11 @@
     },
     "nixpkgs-unstable_2": {
       "locked": {
-        "lastModified": 1695830400,
-        "narHash": "sha256-gToZXQVr0G/1WriO83olnqrLSHF2Jb8BPcmCt497ro0=",
+        "lastModified": 1705496572,
+        "narHash": "sha256-rPIe9G5EBLXdBdn9ilGc0nq082lzQd0xGGe092R/5QE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "8a86b98f0ba1c405358f1b71ff8b5e1d317f5db2",
+        "rev": "842d9d80cfd4560648c785f8a4e6f3b096790e19",
         "type": "github"
       },
       "original": {
@@ -213,11 +213,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1696051858,
-        "narHash": "sha256-CcjxdHzrK/ueM5EPO1f8C1/Gntobs0Z6Clhwi9pvIZM=",
+        "lastModified": 1705777615,
+        "narHash": "sha256-BK290g2ICfjjw//kzBtMYcoTnvpRsjX4LiGE+iUJcnU=",
         "owner": "tie-infra",
         "repo": "steam-games",
-        "rev": "e1603b0f1e096ebe3e755aa65352a3cea750c25e",
+        "rev": "a980d7d0c14e00c8b70c3d9dcb3041dcf301a2d6",
         "type": "github"
       },
       "original": {
