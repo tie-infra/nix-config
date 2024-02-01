@@ -125,7 +125,6 @@
       mediaFolders = [
         "anime"
         "tvshows"
-        "onepiece"
         "trash"
       ];
       extraGroups = [
