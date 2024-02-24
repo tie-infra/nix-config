@@ -13,13 +13,13 @@
 }:
 buildDotnetModule rec {
   pname = "sonarr";
-  version = "4.0.0.748";
+  version = "4.0.1.929";
 
   src = fetchFromGitHub {
     owner = "Sonarr";
     repo = "Sonarr";
     rev = "v${version}";
-    hash = "sha256-KTOaIw4oZTEiwB/G3u5R02beVqP4f82su6JofxYzsE4=";
+    hash = "sha256-5MfP0rhOyIQb6ImhZr1IOgos3kx7qNQhE0cft/uy2JM=";
 
     # passthru.fetch-deps and nuget-to-nix fail to generate deps.nix for
     # packages from third-party registries since NuGet.config is not in the
