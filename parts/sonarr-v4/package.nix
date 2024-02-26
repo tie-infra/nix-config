@@ -6,6 +6,7 @@
 , dotnet-sdk_6
 , dotnet-aspnetcore_6
 , sqlite
+, ffmpeg
 , fetchYarnDeps
 , yarn
 , nodejs
@@ -71,6 +72,8 @@ buildDotnetModule rec {
     yarn --offline run build --env production
   '';
   postInstall = ''
+    rm $out/lib/sonarr/ffprobe
+    ln -s ${lib.getExe' ffmpeg "ffprobe"} $out/lib/sonarr/ffprobe
     cp -a _output/UI $out/lib/sonarr/UI
   '';
   postFixup = ''
