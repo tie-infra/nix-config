@@ -49,7 +49,7 @@
 
   eraseYourDarlings = {
     bootDisk = "/dev/disk/by-uuid/6846-A71E";
-    rootDisk = "/dev/disk/by-uuid/e461062c-c7cf-449e-b661-97d84d07f596";
+    rootDisk = "/dev/disk/by-uuid/08f6c6e3-de0f-4058-a1e6-35587097e6c1";
   };
 
   btrfsOnBcache.enable = true;
