@@ -33,7 +33,7 @@
       ];
       allowedTCPPortRanges = [
         # Brim Minecraft
-        { from = 25500; to = 25599; },
+        { from = 25500; to = 25599; }
         # Shared Minecraft (for Tie)
         { from = 22500; to = 22599; }
       ];
