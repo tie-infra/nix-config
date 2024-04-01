@@ -32,8 +32,10 @@
         443
       ];
       allowedTCPPortRanges = [
-        # Minecraft
-        { from = 25500; to = 25599; }
+        # Brim Minecraft
+        { from = 25500; to = 25599; },
+        # Shared Minecraft (for Tie)
+        { from = 22500; to = 22599; }
       ];
       allowedUDPPorts = [
         # Caddy HTTP/3
