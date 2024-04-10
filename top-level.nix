@@ -18,6 +18,7 @@
     ./parts/java-wrappers
     ./parts/jellyfin-wal-backport
     ./parts/machine-info
+    ./parts/mcactivity
     ./parts/nix-flakes
     ./parts/nixos-with-system
     ./parts/services

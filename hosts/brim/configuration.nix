@@ -136,6 +136,40 @@
       };
       environmentFile = config.sops.templates."minio.env".path;
     };
+
+    mcactivity = {
+      enable = true;
+      settings = {
+        config = {
+          bot_token = "\${MCACTIVITY_BOT_TOKEN}";
+          server_ip = "play1.brimworld.online";
+          server_port = "25511";
+          activity_format = "BrimWorld online: {online}/{max}";
+          players_format = "Игроков: {online}/{max}";
+          status_online = "Сервер в сети " +
+            # Honey Pot U+1F36F
+            builtins.fromJSON ''"\uD83C\uDF6F"'';
+          status_offline = "Сервер не в сети " +
+            # Broken Heart U+1F494
+            builtins.fromJSON ''"\uD83D\uDC94"'';
+        };
+        channels = {
+          enable_channels = true;
+          channel_1_id = "942439402272075786";
+          channel_2_id = "942439439483940984";
+        };
+      };
+    };
+  };
+
+  systemd.services.mcactivity.serviceConfig = {
+    EnvironmentFile = config.sops.templates."mcactivity.env".path;
+    IPAddressAllow = [ "any" ];
+    IPAddressDeny = [
+      "localhost"
+      "link-local"
+      "multicast"
+    ];
   };
 
   systemd.services.caddy = {

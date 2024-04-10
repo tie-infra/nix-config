@@ -11,6 +11,7 @@
         btrfs-on-bcache
         erase-your-darlings
         machine-info
+        mcactivity
         nix-flakes
         secrets
         services
