@@ -8,7 +8,7 @@ in
     systemd.sockets.minecraft-ddss = {
       unitConfig.Description = "Minecraft DDSS socket";
       wantedBy = [ "sockets.target" ];
-      listenStreams = [ "25521" ];
+      listenStreams = [ "22521" ];
     };
     systemd.services.minecraft-ddss = {
       description = "Minecraft DDSS socket proxy";
