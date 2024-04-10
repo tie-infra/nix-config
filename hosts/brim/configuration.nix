@@ -144,7 +144,7 @@
           bot_token = "\${MCACTIVITY_BOT_TOKEN}";
           server_ip = "play1.brimworld.online";
           server_port = "25511";
-          activity_format = "BrimWorld online: {online}/{max}";
+          activity_format = "BrimWorld: {online}/{max}";
           players_format = "Игроков: {online}/{max}";
           status_online = "Сервер в сети " +
             # Honey Pot U+1F36F

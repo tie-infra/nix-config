@@ -8,10 +8,10 @@ index 652fb46..0000000
 -package-lock.json
 \ No newline at end of file
 diff --git a/index.js b/index.js
-index 41e3968..5d7961b 100644
+index 41e3968..a39e358 100644
 --- a/index.js
 +++ b/index.js
-@@ -2,7 +2,15 @@ console.log('Attempting to start bot...')
+@@ -2,70 +2,58 @@ console.log('Attempting to start bot...')
  const Discord = require('discord.js')
  const client = new Discord.Client()
  const fetch = require('node-fetch')
@@ -27,37 +27,59 @@ index 41e3968..5d7961b 100644
 +}
  
  client.on('ready', async () => {
-   const v = validateConfig()
-@@ -20,7 +28,7 @@ client.on('ready', async () => {
+-  const v = validateConfig()
++  validateConfig()
+   console.log('Bot is ready.')
+-  if (v) {
+-    setInterval(() => {
+-      updateChannels(config.server_ip, config.server_port)
+-    }, 300000)
+-    updateChannels(config.server_ip, config.server_port)
+-  }
++  updateStatus(config.server_ip, config.server_port)
+   setInterval(() => {
+-    setPlayers(config.server_ip, config.server_port)
++    updateStatus(config.server_ip, config.server_port)
+   }, 300000)
+-  setPlayers(config.server_ip, config.server_port)
  })
  
- function setPlayers(serverIP, serverPort) {
+-function setPlayers(serverIP, serverPort) {
 -  fetch(`http://mcapi.us/server/status?ip=${serverIP}&port=${serverPort}`)
++function updateStatus(serverIP, serverPort) {
 +  fetch(`https://mcapi.us/server/status?ip=${serverIP}&port=${serverPort}`)
      .then(r => r.json())
      .then(json => {
-       if (json.status == 'error') return console.error('ERROR: Failed to connect to server. Is the bot configured correctly?');
-@@ -33,15 +41,13 @@ function setPlayers(serverIP, serverPort) {
- }
- 
- function updateChannels(serverIP, serverPort) {
--  fetch(`http://mcapi.us/server/status?ip=${serverIP}&port=${serverPort}`)
-+  fetch(`https://mcapi.us/server/status?ip=${serverIP}&port=${serverPort}`)
-     .then(r => r.json())
-     .then(json => {
-       if (json.status == 'error') return console.error('ERROR: Failed to connect to server. Is the bot configured correctly?');
--      let status = json.online ? 'ONLINE' : 'OFFLINE'
+-      if (json.status == 'error') return console.error('ERROR: Failed to connect to server. Is the bot configured correctly?');
+       client.user.setActivity(config.activity_format.replace('{online}', `${json.players.now}`).replace('{max}', `${json.players.max}`), {type: 'PLAYING'})
+-      console.log(`Player count updated successfully.`)
+-    })
+-    .catch(e => {
+-      console.error(`Player count failed to update:\n${e}`)
+-    })
+-}
 -
+-function updateChannels(serverIP, serverPort) {
+-  fetch(`http://mcapi.us/server/status?ip=${serverIP}&port=${serverPort}`)
+-    .then(r => r.json())
+-    .then(json => {
+-      if (json.status == 'error') return console.error('ERROR: Failed to connect to server. Is the bot configured correctly?');
+-      let status = json.online ? 'ONLINE' : 'OFFLINE'
++      console.log("User activity updated successfully.")
+ 
 -      const channels = require('./channels.json')
 -      client.channels.cache.get(channels.channel_1_id).setName(`Status: ${status}`)
 -      client.channels.cache.get(channels.channel_2_id).setName(`Players: ${json.players.now}/${json.players.max}`)
+-      console.log("Live channels updated successfully.");
 +      let status = json.online ? config.status_online : config.status_offline
 +      client.channels.cache.get(channels.channel_1_id).setName(status)
 +      client.channels.cache.get(channels.channel_2_id).setName(config.players_format.replace('{online}', `${json.players.now}`).replace('{max}', `${json.players.max}`))
-       console.log("Live channels updated successfully.");
++      console.log("Live channels updated successfully.")
      })
      .catch(e => {
-@@ -50,22 +56,21 @@ function updateChannels(serverIP, serverPort) {
+-      console.error(`Live channels failed to update:\n${e}`)
++      console.error(`Failed to update status:\n${e}`)
+     })
  }
  
  function validateConfig() {
@@ -86,8 +108,11 @@ index 41e3968..5d7961b 100644
    if (channel1.id == channel2.id) {
      console.error('ERROR: The ID for channel 1 and channel 2 are the same.')
      process.exit()
-@@ -81,7 +86,7 @@ function validateConfig() {
-   return true;
+@@ -78,10 +66,9 @@ function validateConfig() {
+     console.error('ERROR: Bot does not have VIEW_CHANNEL permission for channel 2.')
+     process.exit()
+   }
+-  return true;
  }
  
 -client.login(config.bot_token)
