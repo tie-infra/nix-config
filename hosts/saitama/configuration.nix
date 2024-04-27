@@ -52,8 +52,6 @@
     rootDisk = "/dev/disk/by-uuid/08f6c6e3-de0f-4058-a1e6-35587097e6c1";
   };
 
-  btrfsOnBcache.enable = true;
-
   networking = {
     hostName = "saitama";
     firewall = {
