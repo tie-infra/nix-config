@@ -6,7 +6,6 @@
     ./hosts/bootstrap
     ./hosts/brim
     ./hosts/helsing
-    ./hosts/hikari
     ./hosts/kazuma
     ./hosts/saitama
 
