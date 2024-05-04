@@ -1,5 +1,5 @@
-{ self, inputs, lib, ... }: {
-  perSystem = { system, config, ... }:
+{ self, inputs, ... }: {
+  perSystem = { system, ... }:
     let
       nixpkgsArgs = {
         localSystem = { inherit system; };
@@ -18,19 +18,14 @@
       };
 
       nixpkgsFun = newArgs: import inputs.nixpkgs (nixpkgsArgs // newArgs);
-
-      pkgs = nixpkgsFun { };
     in
     {
-      _module.args.pkgs = pkgs;
-
-      packageSets = {
-        default = { inherit pkgs; };
-        x86_64-linux.pkgs = nixpkgsFun {
-          # FIXME: we cannot use pkgsCross or crossSystem.config. Keep this
-          # definition identical to localSystem until NixOS is released with
-          # the fix. See https://github.com/NixOS/nixpkgs/pull/254763
-          crossSystem.system = "x86_64-linux";
+      _module.args = {
+        pkgs = nixpkgsFun { };
+        pkgsCross = {
+          x86-64 = nixpkgsFun {
+            crossSystem.config = "x86_64-unknown-linux-gnu";
+          };
         };
       };
     };

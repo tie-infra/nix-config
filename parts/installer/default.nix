@@ -1,9 +1,5 @@
-{ self, inputs, lib, package-sets-lib, ... }:
+{ self, inputs, lib, ... }:
 let
-  inherit (package-sets-lib)
-    concatFilteredPackages
-    availableOnHostPlatform;
-
   installer = inputs.nixpkgs.lib.nixosSystem {
     modules = [
       self.nixosModules.base-system
@@ -12,18 +8,18 @@ let
     ];
   };
 
-  # Some packages cannot be cross-compiled from macOS.
-  buildPlatformIsNotDarwin =
-    { pkgs, ... }: _: !pkgs.stdenv.buildPlatform.isDarwin;
+  isoImageFor = pkgs:
+    let
+      cfg = installer.extendModules {
+        modules = [{ nixpkgs.pkgs = pkgs; }];
+      };
+    in
+    cfg.config.system.build.isoImage;
 in
 {
-  perSystem = { config, ... }: {
-    packages = concatFilteredPackages buildPlatformIsNotDarwin
-      ({ name, pkgs, ... }: {
-        "installer-iso-${name}" =
-          let cfg = installer.extendModules { modules = [{ nixpkgs.pkgs = pkgs; }]; }; in
-          cfg.config.system.build.isoImage;
-      })
-      { inherit (config.packageSets) x86_64-linux; };
+  perSystem = { pkgsCross, ... }: {
+    packages = {
+      installer-iso-x86-64 = isoImageFor pkgsCross.x86-64;
+    };
   };
 }
