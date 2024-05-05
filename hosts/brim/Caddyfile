@@ -103,11 +103,11 @@ sync.brim.su {
 #	import tls-brim-su
 #	reverse_proxy localhost:5000
 #}
-#
-#nakama.brim.su {
-#	import tls-brim-su
-#	reverse_proxy localhost:7351
-#}
+
+nakama.brim.su {
+	import tls-brim-su
+	reverse_proxy localhost:7351
+}
 
 git.brim.su {
 	import tls-brim-su
