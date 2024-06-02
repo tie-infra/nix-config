@@ -14,7 +14,6 @@
       "mpt3sas"
       "nvme"
       "ahci"
-      "bcache"
     ];
 
     kernel.sysctl = {
