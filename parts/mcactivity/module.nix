@@ -18,7 +18,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     systemd.services.mcactivity = {
       description = "MCActivity Discord Bot";
       wantedBy = [ "multi-user.target" ];
