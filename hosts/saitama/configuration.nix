@@ -25,7 +25,7 @@
       # Also needed for H3/QUIC in Caddy (though a smaller buffer size is sufficient),
       # https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
       "net.core.rmem_max" = 4194304; # 4MB
-      "net.core.wmem_max" = "1048576"; # 1MB
+      "net.core.wmem_max" = 1048576; # 1MB
     };
   };
 

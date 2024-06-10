@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.11";
+    nixpkgs.url = "nixpkgs/nixos-24.05";
 
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.flake = false;
@@ -17,6 +17,7 @@
     sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs";
 
     minimal-shell.url = "github:tie-infra/minimal-shell";
+    minimal-shell.inputs.nixpkgs-lib.follows = "nixpkgs";
 
     btrfs-rollback.url = "github:tie-infra/btrfs-rollback";
     btrfs-rollback.inputs.nixpkgs.follows = "nixpkgs";

@@ -10,17 +10,18 @@
 , fetchYarnDeps
 , yarn
 , nodejs
+, fixup-yarn-lock
 , prefetch-yarn-deps
 }:
 buildDotnetModule rec {
   pname = "sonarr";
-  version = "4.0.1.929";
+  version = "4.0.5.1710";
 
   src = fetchFromGitHub {
     owner = "Sonarr";
     repo = "Sonarr";
     rev = "v${version}";
-    hash = "sha256-5MfP0rhOyIQb6ImhZr1IOgos3kx7qNQhE0cft/uy2JM=";
+    hash = "sha256-bfpd1yiW+Ftq7sTic91wX3w92Q73RI7Ow5fDjt/Yu3s=";
 
     # passthru.fetch-deps and nuget-to-nix fail to generate deps.nix for
     # packages from third-party registries since NuGet.config is not in the
@@ -48,6 +49,7 @@ buildDotnetModule rec {
   nativeBuildInputs = [
     nodejs
     yarn
+    fixup-yarn-lock
     prefetch-yarn-deps
 
     # Looks like buildDotnetModule hooks are using propagatedBuildInputs for
@@ -59,7 +61,7 @@ buildDotnetModule rec {
 
   yarnOfflineCache = fetchYarnDeps {
     yarnLock = src + "/yarn.lock";
-    hash = "sha256-N/yeKkYTpOTkwl2o9YjfioeBxUf3YSZ692nuQcb7PzM=";
+    hash = "sha256-dSZBifvUGJx5lj7C+Sj+kJprK8JG6SE5vg6+X6QdCZ8=";
   };
 
   postConfigure = ''

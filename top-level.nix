@@ -14,7 +14,6 @@
     ./parts/erase-your-darlings
     ./parts/installer
     ./parts/java-wrappers
-    ./parts/jellyfin-wal-backport
     ./parts/machine-info
     ./parts/mcactivity
     ./parts/nix-flakes

@@ -7,7 +7,6 @@
         overlays = [
           self.overlays.backports
           self.overlays.java-wrappers
-          self.overlays.jellyfin-wal-backport
           self.overlays.mcactivity
           self.overlays.sonarr-v4
           inputs.steam-games.overlays.default
