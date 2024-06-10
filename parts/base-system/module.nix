@@ -16,6 +16,11 @@
     shellAliases = {
       lsd = "lsblk --nodeps --output=MODEL,SERIAL,SIZE,NAME,TYPE,TRAN,FSTYPE --sort=NAME";
     };
+    variables = {
+      # Most terminals are dark, but ip from iproute2 assumes otherwise.
+      # See also https://unix.stackexchange.com/a/245568
+      COLORFGBG = ";0";
+    };
   };
 
   hardware.enableRedistributableFirmware = lib.mkDefault true;
