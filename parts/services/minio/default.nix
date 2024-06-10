@@ -49,7 +49,7 @@ in
   config = lib.mkIf cfg.enable {
     systemd.services.minio = {
       description = "Minio Object Storage";
-      after = [ "network-online.target" ];
+      after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
       environment = cfg.environment;
