@@ -12,6 +12,7 @@
       vim
       rcon
       mc
+      tmux
     ];
     shellAliases = {
       lsd = "lsblk --nodeps --output=MODEL,SERIAL,SIZE,NAME,TYPE,TRAN,FSTYPE --sort=NAME";
