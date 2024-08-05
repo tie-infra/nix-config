@@ -61,6 +61,7 @@
         eco-server
         javaWrappers.java8
         javaWrappers.java17
+        javaWrappers.java21
       ];
       environment = {
         PUFFER_WEB_HOST = ":8080";
