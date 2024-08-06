@@ -48,6 +48,7 @@
         15777
         # Minecraft SimpleVoiceChat
         24454
+        24455
       ];
     };
   };
