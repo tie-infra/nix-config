@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+{ self, inputs, lib, ... }: {
   perSystem = { system, ... }:
     let
       nixpkgsArgs = {
@@ -13,7 +13,17 @@
           inputs.btrfs-rollback.overlays.default
         ];
 
-        config.allowUnfreePredicate = inputs.steam-games.lib.unfreePredicate;
+        config.allowUnfreePredicate =
+          let
+            allowUnfree = {
+              steamworks-sdk-redist = true;
+              satisfactory-server = true;
+              palworld-server = true;
+              eco-server = true;
+              outline = true;
+            };
+          in
+          pkg: builtins.hasAttr (lib.getName pkg) allowUnfree;
       };
 
       nixpkgsFun = newArgs: import inputs.nixpkgs (nixpkgsArgs // newArgs);

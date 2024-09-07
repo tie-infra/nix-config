@@ -106,6 +106,16 @@
       package = pkgs.mariadb_1011;
     };
 
+    redis.servers.outline = {
+      enable = true;
+      bind = "::1 127.0.0.1";
+    };
+
+    postgresql = {
+      enable = true;
+      package = pkgs.postgresql_16;
+    };
+
     caddy = {
       enable = true;
       adapter = "caddyfile";
@@ -161,6 +171,60 @@
           channel_2_id = "942439439483940984";
         };
       };
+    };
+  };
+
+  # TODO: refactor into separate module?
+  systemd.services.outline = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+
+    environment = {
+      NODE_ENV = "production";
+
+      URL = "https://outline.brim.su";
+      PORT = "3000";
+
+      DATABASE_URL = "postgresql://localhost/outline?user=outline&host=/run/postgresql&sslmode=disable";
+      REDIS_URL = "unix://${config.services.redis.servers.outline.unixSocket}";
+
+      DISCORD_SERVER_ID = "925681822766092319"; # BrimWorld
+      DISCORD_SERVER_ROLES = "925695895880761345,1281827267634401341"; # Admin, Wiki editor
+      DISCORD_CLIENT_ID = "1279604766476861451";
+      # DISCORD_CLIENT_SECRET is set from EnvironmentFile.
+
+      FILE_STORAGE = "s3";
+      AWS_ACCESS_KEY_ID = "y2gCQlb66nIzJLthers4";
+      AWS_REGION = "eu-west-1";
+      # AWS_SECRET_ACCESS_KEY is set from EnvironmentFile.
+      AWS_S3_UPLOAD_BUCKET_URL = "https://s3.brim.su";
+      AWS_S3_UPLOAD_BUCKET_NAME = "outline";
+      AWS_S3_FORCE_PATH_STYLE = "1";
+    };
+
+    restartTriggers = [ config.sops.templates."outline.env".file ];
+
+    serviceConfig = {
+      Type = "exec";
+      ExecStart = "${pkgs.outline}/bin/outline-server";
+      WorkingDirectory = "${pkgs.outline}/share/outline";
+
+      EnvironmentFile = config.sops.templates."outline.env".path;
+
+      Restart = "always";
+
+      DynamicUser = true;
+      SupplementaryGroups = [
+        config.users.groups.postgres.name
+        config.services.redis.servers.outline.user
+      ];
+
+      UMask = "0007";
+
+      StateDirectory = "outline";
+      StateDirectoryMode = "0750";
+      RuntimeDirectory = "outline";
+      RuntimeDirectoryMode = "0750";
     };
   };
 

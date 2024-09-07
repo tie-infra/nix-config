@@ -77,6 +77,16 @@ s3.brim.su {
 	reverse_proxy localhost:9000
 }
 
+outline.brim.su {
+	import tls-brim-su
+	reverse_proxy localhost:3000
+}
+
+wiki.brimworld.online {
+	import tls-brimworld-online
+	reverse_proxy localhost:3000
+}
+
 netdata.brim.su {
 	import tls-brim-su
 	reverse_proxy localhost:19999
