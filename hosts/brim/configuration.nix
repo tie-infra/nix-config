@@ -200,6 +200,8 @@
       AWS_S3_UPLOAD_BUCKET_URL = "https://s3.brim.su";
       AWS_S3_UPLOAD_BUCKET_NAME = "outline";
       AWS_S3_FORCE_PATH_STYLE = "1";
+
+      FILE_STORAGE_UPLOAD_MAX_SIZE = "100000000"; # 100 MB
     };
 
     restartTriggers = [ config.sops.templates."outline.env".file ];
