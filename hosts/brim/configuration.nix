@@ -182,7 +182,7 @@
     environment = {
       NODE_ENV = "production";
 
-      URL = "https://outline.brim.su";
+      URL = "https://wiki.brimworld.online";
       PORT = "3000";
 
       DATABASE_URL = "postgresql://localhost/outline?user=outline&host=/run/postgresql&sslmode=disable";
