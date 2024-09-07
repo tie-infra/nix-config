@@ -268,6 +268,7 @@
             Description = "WireGuard tunnel";
             Name = wanWireguardInterface;
             Kind = "wireguard";
+            MTUBytes = "1368"; # 1500 - 52 - 80 # "1280"; # FIXME: aeza, WTF?!
           };
           wireguardConfig = {
             PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
