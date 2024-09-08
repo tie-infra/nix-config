@@ -85,6 +85,7 @@ outline.brim.su {
 wiki.brimworld.online {
 	import tls-brimworld-online
 	reverse_proxy localhost:3000
+	redir / /s/0372e4d6-c95b-47d3-98ff-5951e97eac00
 }
 
 netdata.brim.su {
