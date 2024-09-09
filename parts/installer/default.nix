@@ -1,4 +1,9 @@
-{ self, inputs, lib, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
 let
   installer = inputs.nixpkgs.lib.nixosSystem {
     modules = [
@@ -8,18 +13,19 @@ let
     ];
   };
 
-  isoImageFor = pkgs:
+  isoImageFor =
+    pkgs:
     let
-      cfg = installer.extendModules {
-        modules = [{ nixpkgs.pkgs = pkgs; }];
-      };
+      cfg = installer.extendModules { modules = [ { nixpkgs.pkgs = pkgs; } ]; };
     in
     cfg.config.system.build.isoImage;
 in
 {
-  perSystem = { pkgsCross, ... }: {
-    packages = {
-      installer-iso-x86-64 = isoImageFor pkgsCross.x86-64;
+  perSystem =
+    { pkgsCross, ... }:
+    {
+      packages = {
+        installer-iso-x86-64 = isoImageFor pkgsCross.x86-64;
+      };
     };
-  };
 }

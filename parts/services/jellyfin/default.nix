@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.services.jellyfin;
 in
@@ -36,7 +41,10 @@ in
         '';
 
         TimeoutSec = 15;
-        SuccessExitStatus = [ "0" "143" ];
+        SuccessExitStatus = [
+          "0"
+          "143"
+        ];
 
         DynamicUser = true;
         SupplementaryGroups = cfg.extraGroups;
@@ -56,7 +64,12 @@ in
 
         NoNewPrivileges = true;
         # AF_NETLINK needed because Jellyfin monitors the network connection
-        RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" "AF_NETLINK" ];
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+          "AF_NETLINK"
+        ];
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;

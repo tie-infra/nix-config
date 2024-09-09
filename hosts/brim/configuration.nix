@@ -1,4 +1,5 @@
-{ lib, pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
   system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
@@ -11,7 +12,10 @@
       configurationLimit = 10;
     };
 
-    initrd.availableKernelModules = [ "mpt3sas" "i7core_edac" ];
+    initrd.availableKernelModules = [
+      "mpt3sas"
+      "i7core_edac"
+    ];
   };
 
   environment.machineInfo = {
@@ -33,9 +37,15 @@
       ];
       allowedTCPPortRanges = [
         # Brim Minecraft
-        { from = 25500; to = 25599; }
+        {
+          from = 25500;
+          to = 25599;
+        }
         # Shared Minecraft (for Tie)
-        { from = 22500; to = 22599; }
+        {
+          from = 22500;
+          to = 22599;
+        }
       ];
       allowedUDPPorts = [
         # Caddy HTTP/3
@@ -158,12 +168,16 @@
           server_port = "25511";
           activity_format = "BrimWorld: {online}/{max}";
           players_format = "Игроков: {online}/{max}";
-          status_online = "Сервер в сети " +
-            # Honey Pot U+1F36F
-            builtins.fromJSON ''"\uD83C\uDF6F"'';
-          status_offline = "Сервер не в сети " +
-            # Broken Heart U+1F494
-            builtins.fromJSON ''"\uD83D\uDC94"'';
+          status_online =
+            "Сервер в сети "
+            +
+              # Honey Pot U+1F36F
+              builtins.fromJSON ''"\uD83C\uDF6F"'';
+          status_offline =
+            "Сервер не в сети "
+            +
+              # Broken Heart U+1F494
+              builtins.fromJSON ''"\uD83D\uDC94"'';
         };
         channels = {
           enable_channels = true;
@@ -245,9 +259,8 @@
       TLS_CERTIFICATE_PATH_FOR_BRIM_SU = ./certs/brim-su.pem;
       TLS_CERTIFICATE_PATH_FOR_BRIMWORLD_ONLINE = ./certs/brimworld-online.pem;
     };
-    serviceConfig.LoadCredential =
-      map
-        (name: name + ":" + config.sops.secrets."caddy/${name}".path)
-        config.passthru.caddySecrets;
+    serviceConfig.LoadCredential = map (
+      name: name + ":" + config.sops.secrets."caddy/${name}".path
+    ) config.passthru.caddySecrets;
   };
 }

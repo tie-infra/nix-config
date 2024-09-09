@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = true;
     "net.ipv6.conf.all.forwarding" = true;
@@ -99,7 +100,10 @@
             wireguardPeerConfig = {
               # NB 28d = 00011100b = 1Ch, damn IPv4 subnets are not easy.
               # That said, we can use 28–31 for a /16 subnet.
-              AllowedIPs = [ "2a12:5940:7226:ff00::/56" "172.28.0.0/14" ];
+              AllowedIPs = [
+                "2a12:5940:7226:ff00::/56"
+                "172.28.0.0/14"
+              ];
               RouteTable = "main";
               PublicKey = "gvAPp/g475vG9Jpj9b4rdPKPwhIKvuxynuw8EffMrGk=";
               PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
@@ -108,7 +112,10 @@
           # eerie (TODO: remove after rolling out akane)
           {
             wireguardPeerConfig = {
-              AllowedIPs = [ "2a12:5940:7226:1000::face/128" "172.16.0.3/32" ];
+              AllowedIPs = [
+                "2a12:5940:7226:1000::face/128"
+                "172.16.0.3/32"
+              ];
               RouteTable = "main";
               PublicKey = "UaXdcPYo2GiqdXgaxlkGpeKQKO7casrRR9eJCZs5RVs=";
               PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;

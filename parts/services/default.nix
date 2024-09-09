@@ -1,3 +1,1 @@
-{
-  flake.nixosModules.services = ./module.nix;
-}
+{ flake.nixosModules.services = ./module.nix; }

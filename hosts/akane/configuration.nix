@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
@@ -55,8 +61,7 @@
 
   systemd.network =
     let
-      interfaceRange = a: b:
-        map (i: "enp${toString i}s0") (lib.range a b);
+      interfaceRange = a: b: map (i: "enp${toString i}s0") (lib.range a b);
 
       ispInterfaces = interfaceRange 2 2;
       lanInterfaces = interfaceRange 3 9;
@@ -141,26 +146,34 @@
           #};
           addresses =
             let
-              makeAddress = { cidr, tempAddr ? false, ... }: {
-                addressConfig = {
-                  Address = cidr;
-                  AddPrefixRoute = false;
-                } // lib.optionalAttrs tempAddr {
-                  ManageTemporaryAddress = true;
+              makeAddress =
+                {
+                  cidr,
+                  tempAddr ? false,
+                  ...
+                }:
+                {
+                  addressConfig = {
+                    Address = cidr;
+                    AddPrefixRoute = false;
+                  } // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
                 };
-              };
             in
             map makeAddress lanConfiguration;
           routes =
             let
-              makeRoute = { network, address, ... }: {
-                routeConfig = {
-                  Destination = network;
-                  PreferredSource = address;
+              makeRoute =
+                { network, address, ... }:
+                {
+                  routeConfig = {
+                    Destination = network;
+                    PreferredSource = address;
+                  };
                 };
-              };
               routes = map makeRoute lanConfiguration;
-              withTable = routeTable: { routeConfig }:
+              withTable =
+                routeTable:
+                { routeConfig }:
                 {
                   routeConfig = routeConfig // {
                     Table = routeTable;
@@ -170,23 +183,39 @@
             routes ++ map (withTable "wireguard") routes;
           ipv6Prefixes =
             let
-              makeIPv6Prefix = { network, ... }: {
-                ipv6PrefixConfig = {
-                  Prefix = network;
+              makeIPv6Prefix =
+                { network, ... }:
+                {
+                  ipv6PrefixConfig = {
+                    Prefix = network;
+                  };
                 };
-              };
-              radv = lib.filter ({ radv ? false, ... }: radv) lanConfiguration;
+              radv = lib.filter (
+                {
+                  radv ? false,
+                  ...
+                }:
+                radv
+              ) lanConfiguration;
             in
             map makeIPv6Prefix radv;
           # NB seems to be working fine without IPv6RoutePrefix.
           ipv6RoutePrefixes =
             let
-              makeIPv6RoutePrefix = { network, ... }: {
-                ipv6RoutePrefixConfig = {
-                  Route = network;
+              makeIPv6RoutePrefix =
+                { network, ... }:
+                {
+                  ipv6RoutePrefixConfig = {
+                    Route = network;
+                  };
                 };
-              };
-              radv = lib.filter ({ radv ? false, ... }: radv) lanConfiguration;
+              radv = lib.filter (
+                {
+                  radv ? false,
+                  ...
+                }:
+                radv
+              ) lanConfiguration;
             in
             map makeIPv6RoutePrefix radv;
           linkConfig = {
@@ -220,33 +249,39 @@
           };
           addresses =
             let
-              makeAddress = { cidr, ... }: {
-                addressConfig = {
-                  Address = cidr;
-                  AddPrefixRoute = false;
+              makeAddress =
+                { cidr, ... }:
+                {
+                  addressConfig = {
+                    Address = cidr;
+                    AddPrefixRoute = false;
+                  };
                 };
-              };
             in
             map makeAddress wireguardConfiguration;
           routes =
             let
-              makeRoute = { network, address, ... }: {
-                routeConfig = {
-                  Destination = network;
-                  PreferredSource = address;
+              makeRoute =
+                { network, address, ... }:
+                {
+                  routeConfig = {
+                    Destination = network;
+                    PreferredSource = address;
+                  };
                 };
-              };
             in
             map makeRoute wireguardConfiguration;
           routingPolicyRules =
             let
-              makeRoutingPolicyRule = { network, ... }: {
-                routingPolicyRuleConfig = {
-                  From = network;
-                  Table = "wireguard";
-                  Priority = 1000;
+              makeRoutingPolicyRule =
+                { network, ... }:
+                {
+                  routingPolicyRuleConfig = {
+                    From = network;
+                    Table = "wireguard";
+                    Priority = 1000;
+                  };
                 };
-              };
             in
             map makeRoutingPolicyRule wireguardConfiguration;
           linkConfig = {
@@ -276,7 +311,10 @@
           wireguardPeers = [
             {
               wireguardPeerConfig = {
-                AllowedIPs = [ "::/0" "0.0.0.0/0" ];
+                AllowedIPs = [
+                  "::/0"
+                  "0.0.0.0/0"
+                ];
                 RouteTable = "wireguard";
                 PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
                 Endpoint = wireguardEndpoint;

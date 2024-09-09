@@ -1,3 +1,1 @@
-{
-  flake.nixosModules.base-system = ./module.nix;
-}
+{ flake.nixosModules.base-system = ./module.nix; }

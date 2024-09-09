@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.radarr;
 in
@@ -57,20 +62,18 @@ in
         ExecStartPre = pkgs.writeShellScript "radarr-setup" ''
           cd "$STATE_DIRECTORY"
           mkdir -p data media
-          ${lib.concatLines (map (folder: ''
-            mkdir -p media/${lib.escapeShellArg folder}
-          '') cfg.mediaFolders)}
+          ${lib.concatLines (
+            map (folder: ''
+              mkdir -p media/${lib.escapeShellArg folder}
+            '') cfg.mediaFolders
+          )}
           chmod u=rwx,g=,o= data
         '';
 
         ExecStart = "${lib.getExe' cfg.package "Radarr"} --nobrowser --data=\${STATE_DIRECTORY}/data";
 
-        User =
-          if cfg.user != null then cfg.user
-          else config.users.users.radarr.name;
-        Group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.radarr.name;
+        User = if cfg.user != null then cfg.user else config.users.users.radarr.name;
+        Group = if cfg.group != null then cfg.group else config.users.groups.radarr.name;
 
         SupplementaryGroups = cfg.extraGroups;
 
@@ -84,14 +87,10 @@ in
     users = {
       users.radarr = lib.mkIf (cfg.user == null) {
         isSystemUser = true;
-        group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.radarr.name;
+        group = if cfg.group != null then cfg.group else config.users.groups.radarr.name;
       };
       groups.radarr = lib.mkIf (cfg.group == null) {
-        members = lib.singleton
-          (if cfg.user != null then cfg.user
-          else config.users.users.radarr.name);
+        members = lib.singleton (if cfg.user != null then cfg.user else config.users.users.radarr.name);
       };
     };
   };

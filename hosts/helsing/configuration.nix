@@ -1,7 +1,11 @@
-{ config, modulesPath, pkgs, ... }: {
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+{
+  config,
+  modulesPath,
+  pkgs,
+  ...
+}:
+{
+  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
 
   system.stateVersion = "23.11";
 

@@ -1,13 +1,15 @@
-final: prev:
+final: _prev:
 let
   inherit (final)
     lib
     writeShellScriptBin
     jre8
     jdk17
-    jdk21;
+    jdk21
+    ;
 
-  makeJavaWrapper = package: name:
+  makeJavaWrapper =
+    package: name:
     writeShellScriptBin name ''
       set -eu
       exec ${lib.getExe' package "java"} "$@"

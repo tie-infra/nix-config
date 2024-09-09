@@ -1,4 +1,5 @@
-{ lib, pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
   system.stateVersion = "23.11";
 
   time.timeZone = "Europe/Moscow";
@@ -26,10 +27,18 @@
     hostName = "kazuma";
     firewall = {
       allowedUDPPorts = [ 3000 ];
-      allowedTCPPorts = [ 3001 8080 5657 19999 ];
+      allowedTCPPorts = [
+        3001
+        8080
+        5657
+        19999
+      ];
       allowedTCPPortRanges = [
         # Minecraft
-        { from = 25500; to = 25599; }
+        {
+          from = 25500;
+          to = 25599;
+        }
       ];
     };
   };

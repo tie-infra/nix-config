@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.services.sonarr;
 in
@@ -57,20 +62,18 @@ in
         ExecStartPre = pkgs.writeShellScript "sonarr-setup" ''
           cd "$STATE_DIRECTORY"
           mkdir -p data media
-          ${lib.concatLines (map (folder: ''
-            mkdir -p media/${lib.escapeShellArg folder}
-          '') cfg.mediaFolders)}
+          ${lib.concatLines (
+            map (folder: ''
+              mkdir -p media/${lib.escapeShellArg folder}
+            '') cfg.mediaFolders
+          )}
           chmod u=rwx,g=,o= data
         '';
 
         ExecStart = "${lib.getExe' cfg.package "NzbDrone"} --nobrowser --data=\${STATE_DIRECTORY}/data";
 
-        User =
-          if cfg.user != null then cfg.user
-          else config.users.users.sonarr.name;
-        Group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.sonarr.name;
+        User = if cfg.user != null then cfg.user else config.users.users.sonarr.name;
+        Group = if cfg.group != null then cfg.group else config.users.groups.sonarr.name;
 
         SupplementaryGroups = cfg.extraGroups;
 
@@ -84,14 +87,10 @@ in
     users = {
       users.sonarr = lib.mkIf (cfg.user == null) {
         isSystemUser = true;
-        group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.sonarr.name;
+        group = if cfg.group != null then cfg.group else config.users.groups.sonarr.name;
       };
       groups.sonarr = lib.mkIf (cfg.group == null) {
-        members = lib.singleton
-          (if cfg.user != null then cfg.user
-          else config.users.users.sonarr.name);
+        members = lib.singleton (if cfg.user != null then cfg.user else config.users.users.sonarr.name);
       };
     };
   };

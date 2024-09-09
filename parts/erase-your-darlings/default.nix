@@ -1,3 +1,1 @@
-{
-  flake.nixosModules.erase-your-darlings = ./module.nix;
-}
+{ flake.nixosModules.erase-your-darlings = ./module.nix; }

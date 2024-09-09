@@ -1,4 +1,5 @@
-{ config, lib, ... }: {
+{ config, lib, ... }:
+{
   passthru.caddySecrets = [
     "brim-su-key.pem"
     "brimworld-online-key.pem"
@@ -20,16 +21,15 @@
   '';
 
   sops.secrets =
-    lib.listToAttrs
-      (map
-        (secret: {
-          name = "caddy/" + secret;
-          value = {
-            restartUnits = [ "caddy.service" ];
-            sopsFile = ./secrets.yaml;
-          };
-        })
-        config.passthru.caddySecrets)
+    lib.listToAttrs (
+      map (secret: {
+        name = "caddy/" + secret;
+        value = {
+          restartUnits = [ "caddy.service" ];
+          sopsFile = ./secrets.yaml;
+        };
+      }) config.passthru.caddySecrets
+    )
     // {
       "outline/secret-key" = {
         restartUnits = [ "outline.service" ];

@@ -1,3 +1,1 @@
-{
-  flake.overlays.sonarr-v4 = import ./overlay.nix;
-}
+{ flake.overlays.sonarr-v4 = import ./overlay.nix; }

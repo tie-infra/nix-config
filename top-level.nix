@@ -23,14 +23,20 @@
     ./parts/trust-admins
   ];
 
-  perSystem = { pkgs, ... }: {
-    formatter = pkgs.nixpkgs-fmt;
+  perSystem =
+    { pkgs, ... }:
+    {
+      treefmt = {
+        projectRootFile = "flake.nix";
+        programs.deadnix.enable = true;
+        programs.nixfmt.enable = true;
+      };
 
-    minimalShells.direnv = with pkgs; [
-      nixpkgs-fmt
-      sops
-      ssh-to-age
-      go-task
-    ];
-  };
+      minimalShells.direnv = with pkgs; [
+        nixpkgs-fmt
+        sops
+        ssh-to-age
+        go-task
+      ];
+    };
 }

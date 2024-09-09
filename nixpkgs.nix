@@ -1,8 +1,17 @@
-{ self, inputs, lib, ... }: {
-  perSystem = { system, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+{
+  perSystem =
+    { system, ... }:
     let
       nixpkgsArgs = {
-        localSystem = { inherit system; };
+        localSystem = {
+          inherit system;
+        };
 
         overlays = [
           self.overlays.backports
@@ -32,9 +41,7 @@
       _module.args = {
         pkgs = nixpkgsFun { };
         pkgsCross = {
-          x86-64 = nixpkgsFun {
-            crossSystem.config = "x86_64-unknown-linux-gnu";
-          };
+          x86-64 = nixpkgsFun { crossSystem.config = "x86_64-unknown-linux-gnu"; };
         };
       };
     };

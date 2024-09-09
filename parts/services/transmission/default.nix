@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.services.transmission;
   systemCerts = config.environment.etc."ssl/certs/ca-certificates.crt".source;
@@ -91,8 +96,8 @@ in
         Restart = "always";
 
         LoadCredential =
-          lib.optional (cfg.settingsFile != null) "settings.json:${cfg.settingsFile}" ++
-          lib.optional (cfg.cacertBundle != null) "ca-bundle.crt:${cfg.cacertBundle}";
+          lib.optional (cfg.settingsFile != null) "settings.json:${cfg.settingsFile}"
+          ++ lib.optional (cfg.cacertBundle != null) "ca-bundle.crt:${cfg.cacertBundle}";
 
         ExecStartPre = pkgs.writeShellScript "transmission-setup" ''
           set -eu
@@ -114,9 +119,7 @@ in
 
         ExecStart = pkgs.writeShellScript "transmission" ''
           export CURL_CA_BUNDLE=${
-            if cfg.cacertBundle != null
-            then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt"
-            else systemCerts
+            if cfg.cacertBundle != null then "\"$CREDENTIALS_DIRECTORY\"/ca-bundle.crt" else systemCerts
           }
           exec ${lib.getExe' cfg.package "transmission-daemon"} --foreground \
             --config-dir "$STATE_DIRECTORY/config" \
@@ -124,12 +127,8 @@ in
             ${lib.escapeShellArgs cfg.extraFlags}
         '';
 
-        User =
-          if cfg.user != null then cfg.user
-          else config.users.users.transmission.name;
-        Group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.transmission.name;
+        User = if cfg.user != null then cfg.user else config.users.users.transmission.name;
+        Group = if cfg.group != null then cfg.group else config.users.groups.transmission.name;
 
         SupplementaryGroups = cfg.extraGroups;
 
@@ -156,7 +155,11 @@ in
         ProtectKernelTunables = true;
         ProtectSystem = "strict";
         RemoveIPC = true;
-        RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" ];
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+        ];
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
@@ -184,14 +187,12 @@ in
     users = {
       users.transmission = lib.mkIf (cfg.user == null) {
         isSystemUser = true;
-        group =
-          if cfg.group != null then cfg.group
-          else config.users.groups.transmission.name;
+        group = if cfg.group != null then cfg.group else config.users.groups.transmission.name;
       };
       groups.transmission = lib.mkIf (cfg.group == null) {
-        members = lib.singleton
-          (if cfg.user != null then cfg.user
-          else config.users.users.transmission.name);
+        members = lib.singleton (
+          if cfg.user != null then cfg.user else config.users.users.transmission.name
+        );
       };
     };
   };

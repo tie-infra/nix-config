@@ -1,12 +1,15 @@
-{ lib, pkgs, modulesPath, ... }:
+{
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 let
   # NB we do not use writeShellApplication since shellcheck fails to cross-compile.
   setup-disk = pkgs.writeScriptBin "setup-disk" (builtins.readFile ./setup-disk.sh);
 in
 {
-  imports = [
-    (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
-  ];
+  imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
 
   # Fails with the following error unless we disable mdadm:
   #
@@ -21,20 +24,24 @@ in
     useDHCP = true;
   };
 
-  environment.systemPackages = [ setup-disk ] ++ (with pkgs; [
-    # Useful for verifying that ECC is working.
-    edac-utils
-    dmidecode
-  ]);
+  environment.systemPackages =
+    [ setup-disk ]
+    ++ (with pkgs; [
+      # Useful for verifying that ECC is working.
+      edac-utils
+      dmidecode
+    ]);
 
   services.openssh = {
     # Always start SSH to generate host keys that are used by the setup-disk script.
     # FIXME: generate keys if the file does not exist instead.
     startWhenNeeded = lib.mkForce false;
-    hostKeys = [{
-      path = "/etc/ssh/ssh_host_ed25519_key";
-      type = "ed25519";
-    }];
+    hostKeys = [
+      {
+        path = "/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
+    ];
   };
 
   # See https://github.com/NixOS/nixpkgs/blob/9cfaa8a1a00830d17487cb60a19bb86f96f09b27/nixos/modules/profiles/installation-device.nix#LL52C1-L67C1

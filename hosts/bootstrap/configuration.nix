@@ -1,7 +1,6 @@
-{ lib, modulesPath, ... }: {
-  imports = [
-    (modulesPath + "/profiles/all-hardware.nix")
-  ];
+{ lib, modulesPath, ... }:
+{
+  imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
 
   system.stateVersion = lib.trivial.release;
 

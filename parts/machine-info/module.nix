@@ -9,11 +9,26 @@ let
   cfg = config.environment.machineInfo;
 
   needsEscaping = s: builtins.match "[a-zA-Z0-9]+" s == null;
-  escapeIfNecessary = s: if needsEscaping s then ''"${lib.escape [ "\$" "\"" "\\" "\`" ] s}"'' else s;
-  attrsToText = attrs:
-    lib.concatLines (lib.mapAttrsToList
-      (name: value: "${name}=${escapeIfNecessary value}")
-      (lib.filterAttrs (_: value: value != null) attrs));
+  escapeIfNecessary =
+    s:
+    if needsEscaping s then
+      ''"${
+        lib.escape [
+          "\$"
+          "\""
+          "\\"
+          "\`"
+        ] s
+      }"''
+    else
+      s;
+  attrsToText =
+    attrs:
+    lib.concatLines (
+      lib.mapAttrsToList (name: value: "${name}=${escapeIfNecessary value}") (
+        lib.filterAttrs (_: value: value != null) attrs
+      )
+    );
 
   text = attrsToText {
     PRETTY_HOSTNAME = cfg.prettyHostname;
@@ -25,11 +40,13 @@ let
     HARDWARE_MODEL = cfg.hardwareModel;
   };
 
-  mkVarOption = description: lib.mkOption {
-    type = lib.types.nullOr lib.types.singleLineStr;
-    default = null;
-    description = lib.mdDoc description;
-  };
+  mkVarOption =
+    description:
+    lib.mkOption {
+      type = lib.types.nullOr lib.types.singleLineStr;
+      default = null;
+      description = lib.mdDoc description;
+    };
 in
 {
   options.environment.machineInfo = {
@@ -84,6 +101,8 @@ in
   };
 
   config = lib.mkIf (text != "") {
-    environment.etc.machine-info = { inherit text; };
+    environment.etc.machine-info = {
+      inherit text;
+    };
   };
 }

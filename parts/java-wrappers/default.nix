@@ -1,3 +1,1 @@
-{
-  flake.overlays.java-wrappers = import ./overlay.nix;
-}
+{ flake.overlays.java-wrappers = import ./overlay.nix; }

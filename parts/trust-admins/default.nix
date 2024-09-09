@@ -1,3 +1,1 @@
-{
-  flake.nixosModules.trust-admins = ./module.nix;
-}
+{ flake.nixosModules.trust-admins = ./module.nix; }

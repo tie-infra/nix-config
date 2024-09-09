@@ -1,6 +1,11 @@
 # See https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
 
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.eraseYourDarlings;
 in
@@ -75,15 +80,20 @@ in
     # https://btrfs.readthedocs.io/en/latest/mkfs.btrfs.html#man-mkfs-filesystem-features
     fileSystems =
       let
-        subvolumeFileSystems = lib.mapAttrs' (name: lib.nameValuePair "/${name}")
-          (lib.genAttrs cfg.subvolumes (name: {
+        subvolumeFileSystems = lib.mapAttrs' (name: lib.nameValuePair "/${name}") (
+          lib.genAttrs cfg.subvolumes (name: {
             device = cfg.rootDisk;
             fsType = "btrfs";
-            options = [ "subvol=${name}" "compress=zstd" ];
+            options = [
+              "subvol=${name}"
+              "compress=zstd"
+            ];
             neededForBoot = true;
-          }));
+          })
+        );
       in
-      subvolumeFileSystems // {
+      subvolumeFileSystems
+      // {
         "/boot" = {
           device = cfg.bootDisk;
           fsType = "vfat";
@@ -91,35 +101,48 @@ in
         "/" = {
           device = cfg.rootDisk;
           fsType = "btrfs";
-          options = [ "subvol=root" "compress=zstd" ];
+          options = [
+            "subvol=root"
+            "compress=zstd"
+          ];
         };
         "/nix" = {
           device = cfg.rootDisk;
           fsType = "btrfs";
-          options = [ "subvol=nix" "compress-force=zstd" "noatime" ];
+          options = [
+            "subvol=nix"
+            "compress-force=zstd"
+            "noatime"
+          ];
         };
         "/var" = {
           device = cfg.rootDisk;
           fsType = "btrfs";
-          options = [ "subvol=var" "compress=zstd" ];
+          options = [
+            "subvol=var"
+            "compress=zstd"
+          ];
         };
         "/persist" = {
           device = cfg.rootDisk;
           fsType = "btrfs";
-          options = [ "subvol=persist" "compress=zstd" ];
+          options = [
+            "subvol=persist"
+            "compress=zstd"
+          ];
           neededForBoot = true;
         };
       };
 
-    environment.etc = lib.mkIf cfg.persist.machineId {
-      "machine-id".source = "/persist/machine-id";
-    };
+    environment.etc = lib.mkIf cfg.persist.machineId { "machine-id".source = "/persist/machine-id"; };
 
     services = {
-      openssh.hostKeys = lib.mkIf cfg.persist.openssh [{
-        path = "/persist/ssh/ssh_host_ed25519_key";
-        type = "ed25519";
-      }];
+      openssh.hostKeys = lib.mkIf cfg.persist.openssh [
+        {
+          path = "/persist/ssh/ssh_host_ed25519_key";
+          type = "ed25519";
+        }
+      ];
 
       btrfs.autoScrub = {
         enable = true;

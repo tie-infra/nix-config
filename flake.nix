@@ -10,6 +10,9 @@
     flake-parts.url = "flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     sops-nix.url = "sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs";
@@ -26,16 +29,19 @@
     steam-games.inputs.flake-parts.follows = "flake-parts";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-    systems = [
-      "aarch64-linux"
-      "x86_64-linux"
-    ];
+  outputs =
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "aarch64-linux"
+        "x86_64-linux"
+      ];
 
-    imports = [
-      inputs.minimal-shell.flakeModule
-      ./nixpkgs.nix
-      ./top-level.nix
-    ];
-  };
+      imports = [
+        inputs.treefmt-nix.flakeModule
+        inputs.minimal-shell.flakeModule
+        ./nixpkgs.nix
+        ./top-level.nix
+      ];
+    };
 }
