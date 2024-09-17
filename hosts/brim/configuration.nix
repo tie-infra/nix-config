@@ -238,7 +238,7 @@ in
     environment = {
       NODE_ENV = "production";
 
-      URL = "https://wiki.brimworld.online";
+      URL = "https://brimworld.online";
       PORT = "3000";
 
       DATABASE_URL = "postgresql://localhost/outline?user=outline&host=/run/postgresql&sslmode=disable";
