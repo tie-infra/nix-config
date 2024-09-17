@@ -85,7 +85,7 @@ outline.brim.su {
 wiki.brimworld.online {
 	import tls-brimworld-online
 	reverse_proxy localhost:3000
-	redir / /s/0372e4d6-c95b-47d3-98ff-5951e97eac00
+	redir / /s/3447b683-0b35-4ccd-b0cd-2f677ac812f4
 }
 
 netdata.brim.su {
@@ -142,7 +142,8 @@ letmein.brim.su {
 
 brimworld.online {
 	import tls-brimworld-online
-	redir https://vk.com/brimworld temporary
+	reverse_proxy localhost:3000
+	redir / /s/3447b683-0b35-4ccd-b0cd-2f677ac812f4
 }
 
 api.brimworld.online {
