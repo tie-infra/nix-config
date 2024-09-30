@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install nix
-        uses: cachix/install-nix-action@V28
+        uses: cachix/install-nix-action@v29
         with:
           extra_nix_config: "extra-experimental-features = nix-command flakes"
 
