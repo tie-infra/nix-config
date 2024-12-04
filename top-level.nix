@@ -5,7 +5,6 @@
     ./hosts/akane
     ./hosts/bootstrap
     ./hosts/brim
-    ./hosts/helsing
     ./hosts/kazuma
     ./hosts/saitama
 
