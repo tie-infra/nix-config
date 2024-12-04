@@ -2,8 +2,6 @@
 {
   system.stateVersion = "23.11";
 
-  time.timeZone = "Europe/Moscow";
-
   boot = {
     loader.systemd-boot = {
       enable = true;
@@ -18,7 +16,8 @@
     location = "Ivan’s homelab";
   };
 
-  eraseYourDarlings = {
+  profiles.btrfs-erase-your-darlings = {
+    enable = true;
     bootDisk = "/dev/disk/by-uuid/1628-65F3";
     rootDisk = "/dev/disk/by-uuid/5104f49c-ff08-49dc-96e4-8fbe00702f0a";
   };
@@ -89,7 +88,7 @@
   sops.secrets = {
     "pufferpanel/env" = {
       restartUnits = [ "pufferpanel.service" ];
-      sopsFile = ./secrets.yaml;
+      sopsFile = ../../secrets/kazuma.sops.yaml;
     };
   };
 }

@@ -2,8 +2,6 @@
 {
   system.stateVersion = "23.11";
 
-  time.timeZone = "Europe/Moscow";
-
   i18n.defaultLocale = "ru_RU.UTF-8";
 
   boot = {
@@ -23,7 +21,8 @@
     location = "mtw.ru colocation";
   };
 
-  eraseYourDarlings = {
+  profiles.btrfs-erase-your-darlings = {
+    enable = true;
     bootDisk = "/dev/disk/by-uuid/2FAC-A633";
     rootDisk = "/dev/disk/by-uuid/96448376-c96b-4fa0-adcb-65dee46427c0";
   };

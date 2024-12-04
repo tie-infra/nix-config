@@ -40,8 +40,19 @@
       imports = [
         inputs.treefmt-nix.flakeModule
         inputs.minimal-shell.flakeModule
+
         ./nixpkgs.nix
-        ./top-level.nix
+        ./installer.nix
+        ./nixos-system.nix
+        ./configurations.nix
       ];
+
+      perSystem.imports = [ ./shell.nix ];
+
+      perSystem.treefmt = {
+        projectRootFile = "flake.nix";
+        programs.deadnix.enable = true;
+        programs.nixfmt.enable = true;
+      };
     };
 }

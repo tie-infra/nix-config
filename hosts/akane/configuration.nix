@@ -7,8 +7,6 @@
 {
   system.stateVersion = "23.11";
 
-  time.timeZone = "Europe/Moscow";
-
   boot = {
     loader.systemd-boot = {
       enable = true;
@@ -43,7 +41,8 @@
     iperf3
   ];
 
-  eraseYourDarlings = {
+  profiles.btrfs-erase-your-darlings = {
+    enable = true;
     bootDisk = "/dev/disk/by-uuid/7F67-589D";
     rootDisk = "/dev/disk/by-uuid/5b169687-13c2-4357-9cfc-d7ecba357db0";
   };
@@ -344,12 +343,13 @@
         mode = "0440";
         group = config.users.groups.systemd-network.name;
         reloadUnits = [ "systemd-networkd.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/wireguard-pk-akane.sops.yaml;
       };
       "wireguard/psk.txt" = {
         mode = "0440";
         group = config.users.groups.systemd-network.name;
         reloadUnits = [ "systemd-networkd.service" ];
+        sopsFile = ../../secrets/wireguard-psk.sops.yaml;
       };
     };
   };

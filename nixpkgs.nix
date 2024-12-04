@@ -1,9 +1,4 @@
-{
-  self,
-  inputs,
-  lib,
-  ...
-}:
+{ inputs, lib, ... }:
 {
   perSystem =
     { system, ... }:
@@ -14,12 +9,16 @@
         };
 
         overlays = [
-          self.overlays.backports
-          self.overlays.java-wrappers
-          self.overlays.mcactivity
-          self.overlays.sonarr-v4
           inputs.steam-games.overlays.default
           inputs.btrfs-rollback.overlays.default
+          (import ./overlays/java-wrappers.nix)
+          (import ./overlays/mcactivity.nix)
+          (import ./overlays/sonarr_4.nix)
+          (final: _: {
+            # edac-utils: unstable-2015-01-07 -> unstable-2023-01-30
+            # https://github.com/NixOS/nixpkgs/pull/234603
+            edac-utils = final.callPackage (inputs.nixpkgs-unstable + "/pkgs/os-specific/linux/edac-utils") { };
+          })
         ];
 
         config.allowUnfreePredicate =
