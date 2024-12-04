@@ -26,34 +26,34 @@
         name = "caddy/" + secret;
         value = {
           restartUnits = [ "caddy.service" ];
-          sopsFile = ./secrets.yaml;
+          sopsFile = ../../secrets/brim.sops.yaml;
         };
       }) config.passthru.caddySecrets
     )
     // {
       "outline/secret-key" = {
         restartUnits = [ "outline.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
       "outline/utils-secret" = {
         restartUnits = [ "outline.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
       "outline/discord-client-secret" = {
         restartUnits = [ "outline.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
       "outline/s3-secret-access-key" = {
         restartUnits = [ "outline.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
       "discord/brimworld-bot-token" = {
         restartUnits = [ "mcactivity.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
       "minio/root-password" = {
         restartUnits = [ "minio.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/brim.sops.yaml;
       };
     };
 }

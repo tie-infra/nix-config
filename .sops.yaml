@@ -1,5 +1,4 @@
 keys:
-  - &server_hikari age1qxynzvrfen282n20zhrgeqcm2aty53hr30uxerzle4m727e6cf6s6ms9q9
   - &server_saitama age13y59mzrlrlckjls3j3w4avxyrtre6jcnehnszpv2aummj8a0sc0sl43652
   - &server_kazuma age1c6h8l08uyktp45eartmdyy0p0x0w3pnet5dcvy4lg00guxmrq4xqdpcdfe
   - &server_akane age1peysazn863qdnquutt3gvnm60utvr7czmuq0pppnz6v6ngaepy9q4x3glm
@@ -7,32 +6,28 @@ keys:
   - &admin_tie age1y20x3mwhjaax0q5zc9mwytuste6r02m2m2ee26sz4595u0yxtp3qpk9z4t
   - &admin_brim age1vx2a9gx2gw6720xnhk2qm2qhfnrv0jkv3z7w28xa0p8y9453m90qdgk88w
 creation_rules:
-  - path_regex: ^secrets/secrets\.yaml$
+  - path_regex: ^secrets/wireguard-psk\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *admin_brim
-        - *server_hikari
-        - *server_saitama
-        - *server_kazuma
         - *server_akane
-        - *server_brim
-  - path_regex: ^hosts/akane/secrets\.yaml$
+  - path_regex: ^secrets/wireguard-pk-akane\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_akane
-  - path_regex: ^hosts/saitama/secrets\.yaml$
+  - path_regex: ^secrets/transmission\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_saitama
-  - path_regex: ^hosts/kazuma/secrets\.yaml$
+  - path_regex: ^secrets/kazuma\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_kazuma
-  - path_regex: ^hosts/brim/secrets\.yaml$
+  - path_regex: ^secrets/brim\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie

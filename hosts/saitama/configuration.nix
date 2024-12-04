@@ -2,8 +2,6 @@
 {
   system.stateVersion = "23.11";
 
-  time.timeZone = "Europe/Moscow";
-
   boot = {
     loader.systemd-boot = {
       enable = true;
@@ -48,7 +46,8 @@
     };
   };
 
-  eraseYourDarlings = {
+  profiles.btrfs-erase-your-darlings = {
+    enable = true;
     bootDisk = "/dev/disk/by-uuid/6846-A71E";
     rootDisk = "/dev/disk/by-uuid/08f6c6e3-de0f-4058-a1e6-35587097e6c1";
   };
@@ -199,7 +198,7 @@
     secrets = {
       "transmission/settings.json" = {
         restartUnits = [ "transmission.service" ];
-        sopsFile = ./secrets.yaml;
+        sopsFile = ../../secrets/transmission.sops.yaml;
       };
     };
   };
