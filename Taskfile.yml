@@ -42,14 +42,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
-  switch:helsing:
+  switch:falcon:
     cmds:
       - task: nixos-rebuild
         vars:
           ACTION: switch
-          BUILD_HOST: helsing # TODO
-          TARGET_HOST: helsing # TODO
-          FLAKE_URI: .#helsing
+          BUILD_HOST: nixos@falcon.tie.rip
+          TARGET_HOST: nixos@falcon.tie.rip
+          FLAKE_URI: .#falcon
 
   boot:saitama:
     cmds:
@@ -83,14 +83,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
-  boot:helsing:
+  boot:falcon:
     cmds:
       - task: nixos-rebuild
         vars:
           ACTION: boot
-          BUILD_HOST: helsing # TODO
-          TARGET_HOST: helsing # TODO
-          FLAKE_URI: .#helsing
+          BUILD_HOST: nixos@falcon.tie.rip
+          TARGET_HOST: nixos@falcon.tie.rip
+          FLAKE_URI: .#falcon
 
   check:saitama:
     cmds:
@@ -124,14 +124,14 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
-  check:helsing:
+  check:falcon:
     cmds:
       - task: nixos-rebuild
         vars:
           ACTION: dry-activate
-          BUILD_HOST: helsing # TODO
-          TARGET_HOST: helsing # TODO
-          FLAKE_URI: .#helsing
+          BUILD_HOST: nixos@falcon.tie.rip
+          TARGET_HOST: nixos@falcon.tie.rip
+          FLAKE_URI: .#falcon
 
   build:saitama:
     cmds:
@@ -165,11 +165,11 @@ tasks:
           BUILD_HOST: nixos@akane.tie.rip
           TARGET_HOST: nixos@akane.tie.rip
           FLAKE_URI: .#akane
-  build:helsing:
+  build:falcon:
     cmds:
       - task: nixos-rebuild
         vars:
           ACTION: build
-          BUILD_HOST: helsing # TODO
-          TARGET_HOST: helsing # TODO
-          FLAKE_URI: .#helsing
+          BUILD_HOST: nixos@falcon.tie.rip
+          TARGET_HOST: nixos@falcon.tie.rip
+          FLAKE_URI: .#falcon
