@@ -60,9 +60,8 @@ jobs:
           EOF
           sudo apt-get update
           sudo apt-get install -y cloudflare-warp
-          warp-cli --accept-tos register
+          warp-cli --accept-tos registration new
           warp-cli --accept-tos connect
-          warp-cli --accept-tos enable-always-on
           sleep 1 && echo
           curl -i https://cloudflare.com/cdn-cgi/trace
 
@@ -73,3 +72,9 @@ jobs:
           NIX_SSHOPTS: "-o CheckHostIP=no -o UserKnownHostsFile=known_hosts"
           installable: "github:${{ github.repository }}/${{ github.sha }}#${{ matrix.system }}"
           target: ${{ matrix.server }}
+
+
+      - name: Delete WARP registration
+        if: always()
+        run: |
+          warp-cli --accept-tos registration delete
