@@ -20,6 +20,7 @@ let
     ./modules/btrfs-erase-your-darlings.nix
     ./modules/trust-admins.nix
     ./modules/mcactivity.nix
+    ./modules/outline.nix
     ./modules/flood.nix
     ./modules/jellyfin.nix
     ./modules/minio.nix
@@ -36,6 +37,7 @@ let
     "services/misc/radarr.nix"
     "services/misc/sonarr.nix"
     "services/torrent/transmission.nix"
+    "services/web-apps/outline.nix"
     "services/web-servers/minio.nix"
   ];
 

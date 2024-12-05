@@ -136,6 +136,8 @@ in
       package = pkgs.postgresql_16;
     };
 
+    outline.enable = true;
+
     caddy = {
       enable = true;
       adapter = "caddyfile";
@@ -198,11 +200,7 @@ in
     };
   };
 
-  # TODO: refactor into separate module?
   systemd.services.outline = {
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
-
     environment = {
       NODE_ENV = "production";
 
@@ -231,26 +229,11 @@ in
     restartTriggers = [ config.sops.templates."outline.env".file ];
 
     serviceConfig = {
-      Type = "exec";
-      ExecStart = "${pkgs.outline}/bin/outline-server";
-      WorkingDirectory = "${pkgs.outline}/share/outline";
-
       EnvironmentFile = config.sops.templates."outline.env".path;
-
-      Restart = "always";
-
-      DynamicUser = true;
       SupplementaryGroups = [
         config.users.groups.postgres.name
         config.services.redis.servers.outline.user
       ];
-
-      UMask = "0007";
-
-      StateDirectory = "outline";
-      StateDirectoryMode = "0750";
-      RuntimeDirectory = "outline";
-      RuntimeDirectoryMode = "0750";
     };
   };
 
