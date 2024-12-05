@@ -18,8 +18,8 @@
 
   profiles.btrfs-erase-your-darlings = {
     enable = true;
-    bootDisk = "/dev/disk/by-uuid/TODO1";
-    rootDisk = "/dev/disk/by-uuid/TODO2";
+    bootDisk = "/dev/disk/by-uuid/2EBA-AC04";
+    rootDisk = "/dev/disk/by-uuid/84b3349c-3c87-4d95-b4de-1c1a646fce09";
   };
 
   networking.hostName = "falcon";
