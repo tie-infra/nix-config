@@ -13,12 +13,6 @@
           inputs.btrfs-rollback.overlays.default
           (import ./overlays/java-wrappers.nix)
           (import ./overlays/mcactivity.nix)
-          (import ./overlays/sonarr_4.nix)
-          (final: _: {
-            # edac-utils: unstable-2015-01-07 -> unstable-2023-01-30
-            # https://github.com/NixOS/nixpkgs/pull/234603
-            edac-utils = final.callPackage (inputs.nixpkgs-unstable + "/pkgs/os-specific/linux/edac-utils") { };
-          })
         ];
 
         config.allowUnfreePredicate =
@@ -32,6 +26,15 @@
             };
           in
           pkg: builtins.hasAttr (lib.getName pkg) allowUnfree;
+
+        # Sonarr uses .NET 6 that is EOL.
+        # https://github.com/NixOS/nixpkgs/issues/360592
+        config.permittedInsecurePackages = [
+          "aspnetcore-runtime-6.0.36"
+          "aspnetcore-runtime-wrapped-6.0.36"
+          "dotnet-sdk-6.0.428"
+          "dotnet-sdk-wrapped-6.0.428"
+        ];
       };
 
       nixpkgsFun = newArgs: import inputs.nixpkgs (nixpkgsArgs // newArgs);

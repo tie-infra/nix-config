@@ -13,12 +13,12 @@ let
 in
 {
   options.services.mcactivity = {
-    enable = lib.mkEnableOption (lib.mdDoc "MCActivity Discord Bot");
-    package = lib.mkPackageOptionMD pkgs "mcactivity" { };
+    enable = lib.mkEnableOption "MCActivity Discord Bot";
+    package = lib.mkPackageOption pkgs "mcactivity" { };
     settings = lib.mkOption {
       type = settingsFormat.type;
       default = { };
-      description = lib.mdDoc ''
+      description = ''
         Structured MCActivity service configuration.
       '';
     };

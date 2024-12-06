@@ -152,11 +152,10 @@
                   ...
                 }:
                 {
-                  addressConfig = {
-                    Address = cidr;
-                    AddPrefixRoute = false;
-                  } // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
-                };
+                  Address = cidr;
+                  AddPrefixRoute = false;
+                }
+                // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
             in
             map makeAddress lanConfiguration;
           routes =
@@ -164,20 +163,11 @@
               makeRoute =
                 { network, address, ... }:
                 {
-                  routeConfig = {
-                    Destination = network;
-                    PreferredSource = address;
-                  };
+                  Destination = network;
+                  PreferredSource = address;
                 };
               routes = map makeRoute lanConfiguration;
-              withTable =
-                routeTable:
-                { routeConfig }:
-                {
-                  routeConfig = routeConfig // {
-                    Table = routeTable;
-                  };
-                };
+              withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
             in
             routes ++ map (withTable "wireguard") routes;
           ipv6Prefixes =
@@ -185,9 +175,7 @@
               makeIPv6Prefix =
                 { network, ... }:
                 {
-                  ipv6PrefixConfig = {
-                    Prefix = network;
-                  };
+                  Prefix = network;
                 };
               radv = lib.filter (
                 {
@@ -204,9 +192,7 @@
               makeIPv6RoutePrefix =
                 { network, ... }:
                 {
-                  ipv6RoutePrefixConfig = {
-                    Route = network;
-                  };
+                  Route = network;
                 };
               radv = lib.filter (
                 {
@@ -251,10 +237,8 @@
               makeAddress =
                 { cidr, ... }:
                 {
-                  addressConfig = {
-                    Address = cidr;
-                    AddPrefixRoute = false;
-                  };
+                  Address = cidr;
+                  AddPrefixRoute = false;
                 };
             in
             map makeAddress wireguardConfiguration;
@@ -263,10 +247,8 @@
               makeRoute =
                 { network, address, ... }:
                 {
-                  routeConfig = {
-                    Destination = network;
-                    PreferredSource = address;
-                  };
+                  Destination = network;
+                  PreferredSource = address;
                 };
             in
             map makeRoute wireguardConfiguration;
@@ -275,11 +257,9 @@
               makeRoutingPolicyRule =
                 { network, ... }:
                 {
-                  routingPolicyRuleConfig = {
-                    From = network;
-                    Table = "wireguard";
-                    Priority = 1000;
-                  };
+                  From = network;
+                  Table = "wireguard";
+                  Priority = 1000;
                 };
             in
             map makeRoutingPolicyRule wireguardConfiguration;
@@ -309,17 +289,15 @@
           };
           wireguardPeers = [
             {
-              wireguardPeerConfig = {
-                AllowedIPs = [
-                  "::/0"
-                  "0.0.0.0/0"
-                ];
-                RouteTable = "wireguard";
-                PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
-                Endpoint = wireguardEndpoint;
-                PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-                PersistentKeepalive = 30;
-              };
+              AllowedIPs = [
+                "::/0"
+                "0.0.0.0/0"
+              ];
+              RouteTable = "wireguard";
+              PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
+              Endpoint = wireguardEndpoint;
+              PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+              PersistentKeepalive = 30;
             }
           ];
         };

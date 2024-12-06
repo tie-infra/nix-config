@@ -16,14 +16,14 @@ in
     bootDisk = lib.mkOption {
       type = lib.types.str;
       example = "/dev/disk/by-uuid/CFF8-EF57";
-      description = lib.mdDoc ''
+      description = ''
         Boot disk device node path to use.
       '';
     };
     rootDisk = lib.mkOption {
       type = lib.types.str;
       example = "/dev/disk/by-uuid/0d0da679-fc37-4cd0-8098-6216a4e28d7d";
-      description = lib.mdDoc ''
+      description = ''
         Root disk device node path to use.
       '';
     };
@@ -31,7 +31,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [ ];
       example = [ "home" ];
-      description = lib.mdDoc ''
+      description = ''
         Additional subvolumes to mount, e.g. for persistent home directory.
       '';
     };
@@ -40,7 +40,7 @@ in
       openssh = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = lib.mdDoc ''
+        description = ''
           Use SSH host key from persist subvolume.
         '';
       };
@@ -48,7 +48,7 @@ in
       machineId = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = lib.mdDoc ''
+        description = ''
           Use /etc/machine-id from persist subvolume.
         '';
       };

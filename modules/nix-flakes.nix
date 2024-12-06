@@ -1,7 +1,6 @@
-{ pkgs, ... }:
 {
   nix = {
-    package = pkgs.nixFlakes;
+    channel.enable = false;
     settings = {
       experimental-features = [
         "nix-command"
@@ -10,7 +9,5 @@
       use-xdg-base-directories = true;
       warn-dirty = false;
     };
-
-    channel.enable = false;
   };
 }

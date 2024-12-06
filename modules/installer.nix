@@ -11,6 +11,10 @@ in
 {
   imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
 
+  # Installer profile causes issues with readOnlyPkgs module.
+  # https://github.com/NixOS/nixpkgs/blob/7dd001f3e20243d8df1c1f2b7268dd259804fc1e/nixos/modules/profiles/installation-device.nix#L130-L138
+  nixpkgs.overlays = lib.mkForce [ ];
+
   # Fails with the following error unless we disable mdadm:
   #
   #  trace: warning: mdadm: Neither MAILADDR nor PROGRAM has been set. This will cause the `mdmon` service to crash.

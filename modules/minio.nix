@@ -9,19 +9,19 @@ let
 in
 {
   options.services.minio = {
-    enable = lib.mkEnableOption (lib.mdDoc "Minio Object Storage");
-    package = lib.mkPackageOptionMD pkgs "minio" { };
+    enable = lib.mkEnableOption "Minio Object Storage";
+    package = lib.mkPackageOption pkgs "minio" { };
 
     listenAddress = lib.mkOption {
       default = ":9000";
       type = lib.types.str;
-      description = lib.mdDoc "IP address and port of the server.";
+      description = "IP address and port of the server.";
     };
 
     consoleAddress = lib.mkOption {
       default = ":9001";
       type = lib.types.str;
-      description = lib.mdDoc "IP address and port of the web UI (console).";
+      description = "IP address and port of the web UI (console).";
     };
 
     environment = lib.mkOption {
@@ -33,7 +33,7 @@ in
           MINIO_BROWSER = "off";
         }
       '';
-      description = lib.mdDoc ''
+      description = ''
         Environment variables to set for the service. Secrets should be
         specified using {option}`environmentFile`.
       '';
@@ -42,7 +42,7 @@ in
     environmentFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         File to load environment variables from. Loaded variables override
         values set in {option}`environment`.
       '';

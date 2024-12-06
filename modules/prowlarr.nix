@@ -9,8 +9,8 @@ let
 in
 {
   options.services.prowlarr = {
-    enable = lib.mkEnableOption (lib.mdDoc "Prowlarr");
-    package = lib.mkPackageOptionMD pkgs "prowlarr" { };
+    enable = lib.mkEnableOption "Prowlarr";
+    package = lib.mkPackageOption pkgs "prowlarr" { };
   };
 
   config = lib.mkIf cfg.enable {

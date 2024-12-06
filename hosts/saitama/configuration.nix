@@ -29,7 +29,7 @@
   };
 
   hardware = {
-    opengl.enable = true;
+    graphics.enable = true;
     amdgpu = {
       initrd.enable = true;
       amdvlk.enable = true;
@@ -117,7 +117,6 @@
 
     sonarr = {
       enable = true;
-      package = pkgs.sonarr_4;
       mediaFolders = [
         "anime"
         "tvshows"
@@ -132,19 +131,6 @@
 
     flood = {
       enable = true;
-      package =
-        with pkgs;
-        buildNpmPackage {
-          pname = "flood";
-          version = "unstable-2023-08-04";
-          src = fetchFromGitHub {
-            owner = "jesec";
-            repo = "flood";
-            rev = "2b652f8148dab7134eeeb201b9d81dd6b8bda074";
-            hash = "sha256-wI6URPGUZUbydSgNaHN2C5IA2x/HHjBWIRT6H6iZU/0=";
-          };
-          npmDepsHash = "sha256-XmDnvq+ni5TOf3UQFc4JvGI3LiGpjbrLAocRvrW8qgk=";
-        };
       extraFlags = [
         "--host=::"
         "--port=9092"
@@ -154,8 +140,11 @@
 
     transmission = {
       enable = true;
+      # TODO: update to transmission_4; don’t forget to backup!
+      package = pkgs.transmission_3;
       settings = {
         port-forwarding-enabled = false;
+        encryption = 2; # required
 
         rpc-enabled = true;
         rpc-whitelist-enabled = false;
@@ -187,19 +176,17 @@
   };
 
   # Getting an error when trying to download metadata.
-  # 
+  #
   # System.IO.PathTooLongException: Path is too long. Path: /var/lib/sonarr/media/anime/KamiKatsu - Working for God in a Godless World (2023) [tvdb-419126]/Season 01/KamiKatsu - Working for God in a Godless World (2023) - S01E01 - 001 - We know we are not worthy O great Lord Mitama Please purify us Please cleanse us Lord Mitama We beg for you to hear our prayer [HDTV-1080p][8bit][x264][AAC 2.0][JA]-SubsPlease-thumb.jpg.part
   #
   # https://github.com/Sonarr/Sonarr/blob/dee8820b1f31e9180c55c6d29b950ff6cfe0205f/src/NzbDrone.Common/Disk/LongPathSupport.cs#L47
   # https://github.com/Sonarr/Sonarr/blob/dee8820b1f31e9180c55c6d29b950ff6cfe0205f/src/NzbDrone.Common/Http/HttpClient.cs#L251
   systemd.services.sonarr.environment.MAX_NAME = "225";
 
-  sops = {
-    secrets = {
-      "transmission/settings.json" = {
-        restartUnits = [ "transmission.service" ];
-        sopsFile = ../../secrets/transmission.sops.yaml;
-      };
+  sops.secrets = {
+    "transmission/settings.json" = {
+      restartUnits = [ "transmission.service" ];
+      sopsFile = ../../secrets/transmission.sops.yaml;
     };
   };
 }

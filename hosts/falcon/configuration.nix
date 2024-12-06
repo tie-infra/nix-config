@@ -32,32 +32,24 @@
         };
         addresses = [
           {
-            addressConfig = {
-              Address = "2a01:4f8:222:1618::1/64";
-              AddPrefixRoute = false;
-              DuplicateAddressDetection = "none";
-              ManageTemporaryAddress = true;
-            };
+            Address = "2a01:4f8:222:1618::1/64";
+            AddPrefixRoute = false;
+            DuplicateAddressDetection = "none";
+            ManageTemporaryAddress = true;
           }
           {
-            addressConfig = {
-              Address = "213.133.111.103/27";
-              AddPrefixRoute = false;
-            };
+            Address = "213.133.111.103/27";
+            AddPrefixRoute = false;
           }
         ];
         routes = [
           {
-            routeConfig = {
-              Gateway = "fe80::1";
-              GatewayOnLink = true;
-            };
+            Gateway = "fe80::1";
+            GatewayOnLink = true;
           }
           {
-            routeConfig = {
-              Gateway = "213.133.111.97";
-              GatewayOnLink = true;
-            };
+            Gateway = "213.133.111.97";
+            GatewayOnLink = true;
           }
         ];
         networkConfig = {

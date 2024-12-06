@@ -13,13 +13,13 @@ let
 in
 {
   options.services.transmission = {
-    enable = lib.mkEnableOption (lib.mdDoc "Transmission daemon");
-    package = lib.mkPackageOptionMD pkgs "transmission" { };
+    enable = lib.mkEnableOption "Transmission daemon";
+    package = lib.mkPackageOption pkgs "transmission" { };
 
     cacertBundle = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         File containing trusted certification authorities (CA) to verify
         certificates. If set to `null`, defaults to system trust store.
       '';
@@ -28,7 +28,7 @@ in
     user = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         User account under which Transmission runs. If set to `null`,
         `transmission` user is set up.
       '';
@@ -37,7 +37,7 @@ in
     group = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         Group account under which Transmission runs. If set to `null`,
         `transmission` group is set up.
       '';
@@ -46,7 +46,7 @@ in
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc ''
+      description = ''
         Additional groups under which Transmission runs.
       '';
     };
@@ -54,7 +54,7 @@ in
     settings = lib.mkOption {
       type = settingsFormat.type;
       default = { };
-      description = lib.mdDoc ''
+      description = ''
         Settings that overwrite fields in `settings.json` each time the
         service starts.
       '';
@@ -64,7 +64,7 @@ in
       type = lib.types.nullOr lib.types.path;
       default = null;
       example = "/run/secrets/transmission/settings.json";
-      description = lib.mdDoc ''
+      description = ''
         Path to a JSON file to be merged with the settings.
 
         Useful to merge a file which is better kept out of the Nix store
@@ -76,7 +76,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [ ];
       example = [ "--log-debug" ];
-      description = lib.mdDoc ''
+      description = ''
         Extra flags passed to the transmission command in the service definition.
       '';
     };

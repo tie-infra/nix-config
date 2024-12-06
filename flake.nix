@@ -2,10 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.05";
-
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    nixpkgs-unstable.flake = false;
+    nixpkgs.url = "nixpkgs/nixos-24.11";
 
     flake-parts.url = "flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -53,6 +50,7 @@
         projectRootFile = "flake.nix";
         programs.deadnix.enable = true;
         programs.nixfmt.enable = true;
+        settings.on-unmatched = "info";
       };
     };
 }

@@ -9,13 +9,13 @@ let
 in
 {
   options.services.radarr = {
-    enable = lib.mkEnableOption (lib.mdDoc "Radarr");
-    package = lib.mkPackageOptionMD pkgs "radarr" { };
+    enable = lib.mkEnableOption "Radarr";
+    package = lib.mkPackageOption pkgs "radarr" { };
 
     user = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         User account under which Radarr runs. If set to `null`,
         `radarr` user is set up.
       '';
@@ -24,7 +24,7 @@ in
     group = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
-      description = lib.mdDoc ''
+      description = ''
         Group account under which Radarr runs. If set to `null`,
         `radarr` group is set up.
       '';
@@ -33,7 +33,7 @@ in
     mediaFolders = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc ''
+      description = ''
         Additional media folders to create under the root folder.
       '';
     };
@@ -41,7 +41,7 @@ in
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc ''
+      description = ''
         Additional groups under which Radarr runs.
       '';
     };

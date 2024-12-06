@@ -9,13 +9,13 @@ let
 in
 {
   options.services.jellyfin = {
-    enable = lib.mkEnableOption (lib.mdDoc "Jellyfin Media Server");
-    package = lib.mkPackageOptionMD pkgs "jellyfin" { };
+    enable = lib.mkEnableOption "Jellyfin Media Server";
+    package = lib.mkPackageOption pkgs "jellyfin" { };
 
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc ''
+      description = ''
         Additional groups under which Jellyfin runs.
       '';
     };

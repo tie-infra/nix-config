@@ -45,7 +45,7 @@ let
     lib.mkOption {
       type = lib.types.nullOr lib.types.singleLineStr;
       default = null;
-      description = lib.mdDoc description;
+      description = description;
     };
 in
 {

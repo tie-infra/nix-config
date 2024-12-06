@@ -9,14 +9,14 @@ let
 in
 {
   options.services.flood = {
-    enable = lib.mkEnableOption (lib.mdDoc "Flood");
-    package = lib.mkPackageOptionMD pkgs "flood" { };
+    enable = lib.mkEnableOption "Flood";
+    package = lib.mkPackageOption pkgs "flood" { };
 
     extraFlags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       example = [ "--auth=none" ];
-      description = lib.mdDoc ''
+      description = ''
         Extra flags passed to the Flood command in the service definition.
       '';
     };
@@ -24,7 +24,7 @@ in
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = lib.mdDoc ''
+      description = ''
         Additional groups under which Flood runs.
       '';
     };
