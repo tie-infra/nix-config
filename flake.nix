@@ -15,7 +15,6 @@
 
     sops-nix.url = "sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    sops-nix.inputs.nixpkgs-stable.follows = "nixpkgs";
 
     minimal-shell.url = "github:tie-infra/minimal-shell";
     minimal-shell.inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -27,6 +26,7 @@
     steam-games.url = "github:tie-infra/steam-games";
     steam-games.inputs.nixpkgs.follows = "nixpkgs";
     steam-games.inputs.flake-parts.follows = "flake-parts";
+    steam-games.inputs.treefmt-nix.follows = "treefmt-nix";
   };
 
   outputs =
