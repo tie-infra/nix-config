@@ -200,6 +200,40 @@ in
     };
   };
 
+  services.zapret = {
+    enable = true;
+    params = [
+      "--dpi-desync=fake"
+      "--dpi-desync-ttl=1"
+    ];
+    whitelist = [
+      "discord.com"
+      "cloudflare-ech.com" # TLS ECH
+    ];
+
+    # Uses iptables instead of nftables :(
+    # We manually configure nftables below.
+    configureFirewall = false;
+  };
+
+  # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
+  networking.nftables.tables.zapret = {
+    family = "inet";
+    content = ''
+      chain pre {
+        type filter hook prerouting priority filter;
+        tcp sport {80,443} ct reply packets 1-3 queue num 200 bypass
+      }
+      chain post {
+        type filter hook postrouting priority mangle;
+        meta mark and 0x40000000 == 0 tcp dport {80,443} ct original packets 1-6 queue num 200 bypass
+        meta mark and 0x40000000 == 0 udp dport 443 ct original packets 1-6 queue num 200 bypass
+      }
+    '';
+  };
+
+  boot.kernel.sysctl."net.netfilter.nf_conntrack_tcp_be_liberal" = true;
+
   systemd.services.outline = {
     environment = {
       NODE_ENV = "production";
