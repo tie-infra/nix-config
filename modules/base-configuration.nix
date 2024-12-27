@@ -32,12 +32,19 @@
 
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
+  # For some workloads, zram provides significant RAM usage savings with
+  # otherwise negligible performance impact.
   zramSwap.enable = true;
 
   time.timeZone = "Europe/Moscow";
 
   networking = {
+    # Enable systemd-networkd for network configuration management instead of
+    # ad-hoc NixOS networking infrastructure.
     useNetworkd = true;
+
+    # Use nftables instead of legacy iptables for firewall.
+    nftables.enable = true;
 
     # Disables DHCP on `en*` and `eth*` interfaces.
     # See https://github.com/NixOS/nixpkgs/blob/2920b6fc16a9ed5d51429e94238b28306ceda79e/nixos/modules/tasks/network-interfaces-systemd.nix#L49-L56
@@ -46,19 +53,28 @@
     # configuration is host-specific.
     useDHCP = lib.mkDefault false;
 
+    # By default, NixOS logs refused TCP connections to the kernel log (see
+    # dmesg). Since we are on the wild Internet, we likely get a lot of these.
     firewall.logRefusedConnections = lib.mkDefault false;
   };
 
-  systemd.network.config = {
+  systemd.network.config.networkConfig = {
     # Enable traffic meters on all interfaces.
     # https://www.freedesktop.org/software/systemd/man/networkd.conf.html#SpeedMeter=
-    networkConfig = {
-      SpeedMeter = true;
-    };
+    SpeedMeter = true;
+    # Enable IPv6 privacy extensions for all interfaces by default and prefer
+    # temporary addresses. See also net.ipv6.conf.all.use_tempaddr.
+    # https://www.freedesktop.org/software/systemd/man/networkd.conf.html#IPv6PrivacyExtensions=
+    IPv6PrivacyExtensions = true;
   };
 
+  # While polkit is a bit controversial, systemd is deeply integrated with it.
+  # Having it enabled makes interactions with systemctl and other commands more
+  # convenient.
   security.polkit.enable = true;
 
+  # Disable mutable users (i.e. useradd and other commands). Define a single
+  # nixos user that we use for administrative tasks.
   users = {
     mutableUsers = false;
     users.nixos = {
@@ -77,21 +93,21 @@
   };
 
   services = {
+    # Automatically log in as nixos user from terminals without unnecessary
+    # password prompts. Password prompt is a nuisance in this case since an
+    # attacker would likely have a physical access to the server, making it
+    # trivial to bypass the prompt.
     getty.autologinUser = config.users.users.nixos.name;
 
+    # Enable systemd-networkd for local DNS resolution and cache.
     resolved.enable = true;
 
+    # Enable OpenSSH sever that uses systemd socket activation instead of
+    # running all the time.
     openssh = {
       enable = true;
       startWhenNeeded = true;
-      settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-      };
-      extraConfig = ''
-        LoginGraceTime 15s
-        RekeyLimit default 30m
-      '';
+      settings.LoginGraceTime = "15s";
     };
   };
 }

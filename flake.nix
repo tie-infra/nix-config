@@ -24,6 +24,8 @@
     steam-games.inputs.nixpkgs.follows = "nixpkgs";
     steam-games.inputs.flake-parts.follows = "flake-parts";
     steam-games.inputs.treefmt-nix.follows = "treefmt-nix";
+
+    amneziawg.url = "github:tie-infra/amneziawg";
   };
 
   outputs =

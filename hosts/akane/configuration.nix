@@ -47,15 +47,26 @@
     rootDisk = "/dev/disk/by-uuid/5b169687-13c2-4357-9cfc-d7ecba357db0";
   };
 
-  networking = {
-    hostName = "akane";
-    firewall = {
-      enable = false;
-      allowedTCPPorts = [
-        # Netdata
-        19999
-      ];
-    };
+  networking.hostName = "akane";
+
+  networking.firewall.allowedTCPPorts = [
+    # Netdata
+    19999
+  ];
+
+  # DHCPv4 requests from LAN.
+  networking.firewall.interfaces.br-lan.allowedUDPPorts = [ 67 ];
+
+  # Clamp TCP MSS to PMTU for forwarded packets.
+  # https://wiki.nftables.org/wiki-nftables/index.php/Mangling_packet_headers#Mangling_TCP_options
+  networking.nftables.tables.tcpmss = {
+    family = "inet";
+    content = ''
+      chain forward {
+        type filter hook forward priority 0; policy accept;
+        tcp flags syn tcp option maxseg size set rt mtu
+      }
+    '';
   };
 
   systemd.network =
@@ -67,12 +78,12 @@
       lanBridgeInterface = "br-lan";
       wanWireguardInterface = "wg-wan";
 
-      wireguardEndpoint = "79.137.248.232:51820"; # TODO helsing.tie.rip
+      wireguardEndpoint = "falcon.tie.rip:51820";
       wireguardConfiguration = [
         {
-          cidr = "2a12:5940:7226:ff00::1/56";
-          address = "2a12:5940:7226:ff00::1";
-          network = "2a12:5940:7226:ff00::/56";
+          cidr = "2a01:4f8:222:fee0::1/60";
+          address = "2a01:4f8:222:fee0::1";
+          network = "2a01:4f8:222:fee0::/60";
         }
         {
           cidr = "172.28.0.1/14";
@@ -86,16 +97,16 @@
       # dhcpv4: set up DHCPv4 server
       lanConfiguration = [
         {
-          cidr = "2a12:5940:7226:ffff::1/64";
-          address = "2a12:5940:7226:ffff::1";
-          network = "2a12:5940:7226:ffff::/64";
+          cidr = "2a01:4f8:222:feed::1/64";
+          address = "2a01:4f8:222:feed::1";
+          network = "2a01:4f8:222:feed::/64";
           tempAddr = true;
           radv = true;
         }
         {
-          cidr = "fddb:eeb7:b646:ffff::1/64";
-          address = "fddb:eeb7:b646:ffff::1";
-          network = "fddb:eeb7:b646:ffff::/64";
+          cidr = "fddb:eeb7:b646:feed::1/64";
+          address = "fddb:eeb7:b646:feed::1";
+          network = "fddb:eeb7:b646:feed::/64";
           radv = true;
         }
         {
@@ -139,10 +150,19 @@
             IPv6SendRA = true;
             DHCPServer = true;
           };
-          # TODO: added in version 255, we have 254 :(
-          #ipv6SendRAConfig = {
-          #  RetransmitSec = 1800; # 30 minutes
-          #};
+          dhcpServerConfig = {
+            DNS = [
+              "1.1.1.1"
+              "1.0.0.1"
+            ];
+          };
+          ipv6SendRAConfig = {
+            RetransmitSec = 1800; # 30 minutes
+            DNS = [
+              "2606:4700:4700::1111"
+              "2606:4700:4700::1001"
+            ];
+          };
           addresses =
             let
               makeAddress =
@@ -282,13 +302,17 @@
             Description = "WireGuard tunnel";
             Name = wanWireguardInterface;
             Kind = "wireguard";
-            MTUBytes = "1368"; # 1500 - 52 - 80 # "1280"; # FIXME: aeza, WTF?!
           };
           wireguardConfig = {
             PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
+            H1 = 224412;
+            H2 = 52344123;
+            H3 = 6713390;
+            H4 = 2537922;
           };
           wireguardPeers = [
             {
+              AdvancedSecurity = true;
               AllowedIPs = [
                 "::/0"
                 "0.0.0.0/0"
@@ -312,23 +336,23 @@
   systemd.services.systemd-networkd = {
     serviceConfig = {
       SupplementaryGroups = [ config.users.groups.keys.name ];
+      # Uncomment to enable verbose logging for systemd-networkd.
+      #Environment = [ "SYSTEMD_LOG_LEVEL=debug" ];
     };
   };
 
-  sops = {
-    secrets = {
-      "wireguard/pk.txt" = {
-        mode = "0440";
-        group = config.users.groups.systemd-network.name;
-        reloadUnits = [ "systemd-networkd.service" ];
-        sopsFile = ../../secrets/wireguard-pk-akane.sops.yaml;
-      };
-      "wireguard/psk.txt" = {
-        mode = "0440";
-        group = config.users.groups.systemd-network.name;
-        reloadUnits = [ "systemd-networkd.service" ];
-        sopsFile = ../../secrets/wireguard-psk.sops.yaml;
-      };
+  sops.secrets = {
+    "wireguard/pk.txt" = {
+      mode = "0440";
+      group = config.users.groups.systemd-network.name;
+      reloadUnits = [ config.systemd.services.systemd-networkd.name ];
+      sopsFile = ../../secrets/wireguard-pk-akane.sops.yaml;
+    };
+    "wireguard/psk.txt" = {
+      mode = "0440";
+      group = config.users.groups.systemd-network.name;
+      reloadUnits = [ config.systemd.services.systemd-networkd.name ];
+      sopsFile = ../../secrets/wireguard-psk.sops.yaml;
     };
   };
 }
