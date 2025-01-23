@@ -1,8 +1,15 @@
 let
-  interfaceRange = a: b: map (i: "enp${toString i}s0") (lib.range a b);
+  ispInterface = "enp2s0";
+  lanInterfaces = [
+    "enp3s0"
+    "enp4s0"
+    "enp5s0"
+    "enp6s0"
+    "enp7s0"
+    "enp8s0"
+    "enp9s0"
+  ];
 
-  ispInterfaces = interfaceRange 2 2;
-  lanInterfaces = interfaceRange 3 9;
   lanBridgeInterface = "br-lan";
   wanWireguardInterface = "wg-wan";
 
@@ -101,8 +108,15 @@ in
     19999
   ];
 
-  # DHCPv4 requests from LAN.
-  networking.firewall.interfaces.${lanBridgeInterface}.allowedUDPPorts = [ 67 ];
+  networking.firewall.interfaces.${lanBridgeInterface} = {
+    allowedUDPPorts = [
+      # DHCPv4 requests from LAN.
+      67
+      # DNS
+      53
+    ];
+    allowedTCPPorts = [ 53 ];
+  };
 
   # Clamp TCP MSS to PMTU for forwarded packets.
   # https://wiki.nftables.org/wiki-nftables/index.php/Mangling_packet_headers#Mangling_TCP_options
@@ -123,12 +137,12 @@ in
       };
     };
     networks = {
-      "10-bridge-lan" = {
+      "10-lan-ports" = {
         matchConfig = {
           Name = lanInterfaces;
         };
         networkConfig = {
-          Description = "Bridge LAN ports";
+          Description = "LAN bridge ports";
           Bridge = lanBridgeInterface;
           ConfigureWithoutCarrier = true;
         };
@@ -136,8 +150,7 @@ in
           RequiredForOnline = "no-carrier:enslaved";
         };
       };
-
-      "20-lan" = {
+      "10-lan" = {
         matchConfig = {
           Name = lanBridgeInterface;
         };
@@ -150,17 +163,11 @@ in
           DHCPServer = true;
         };
         dhcpServerConfig = {
-          DNS = [
-            "1.1.1.1"
-            "1.0.0.1"
-          ];
+          DNS = [ "_server_address" ];
         };
         ipv6SendRAConfig = {
           RetransmitSec = 1800; # 30 minutes
-          DNS = [
-            "2606:4700:4700::1111"
-            "2606:4700:4700::1001"
-          ];
+          DNS = [ "_link_local" ];
         };
         addresses =
           let
@@ -226,25 +233,38 @@ in
           RequiredForOnline = "no-carrier:routable";
         };
       };
-
-      "30-isp" = {
+      "10-isp" = {
         matchConfig = {
-          Name = ispInterfaces;
+          Name = ispInterface;
         };
         networkConfig = {
           Description = "ISP connection via SLAAC, DHCPv6, and DHCPv4";
-          DHCP = "yes";
+          DHCP = true;
           IPv6PrivacyExtensions = true;
+          DNSOverTLS = true;
+          DNSSEC = true;
+          DNS = [
+            "2620:fe::fe#dns.quad9.net"
+            "2620:fe::9#dns.quad9.net"
+            "9.9.9.9#dns.quad9.net"
+            "149.112.112.112#dns.quad9.net"
+          ];
+        };
+        ipv6AcceptRAConfig = {
+          UseDNS = false;
         };
         dhcpV6Config = {
           UseDelegatedPrefix = false;
+          UseDNS = false;
+        };
+        dhcpV4Config = {
+          UseDNS = false;
         };
         linkConfig = {
           RequiredForOnline = "routable";
         };
       };
-
-      "40-wg" = {
+      "10-wg" = {
         matchConfig = {
           Name = wanWireguardInterface;
         };
@@ -289,14 +309,14 @@ in
     };
 
     netdevs = {
-      "10-bridge-lan" = {
+      "10-lan" = {
         netdevConfig = {
           Description = "LAN network device";
           Name = lanBridgeInterface;
           Kind = "bridge";
         };
       };
-      "20-wg" = {
+      "10-wg" = {
         netdevConfig = {
           Description = "WireGuard tunnel";
           Name = wanWireguardInterface;
@@ -325,6 +345,13 @@ in
         ];
       };
     };
+  };
+
+  services.resolved = {
+    enable = true;
+    extraConfig = lib.concatLines (
+      map ({ address, ... }: "DNSStubListenerExtra=${address}") lanConfiguration
+    );
   };
 
   services = {
