@@ -348,10 +348,11 @@ in
   };
 
   services.resolved = {
-    enable = true;
-    extraConfig = lib.concatLines (
-      map ({ address, ... }: "DNSStubListenerExtra=${address}") lanConfiguration
-    );
+    extraConfig =
+      lib.concatLines (map ({ address, ... }: "DNSStubListenerExtra=${address}") lanConfiguration)
+      + ''
+        StaleRetentionSec=1d
+      '';
   };
 
   services = {
