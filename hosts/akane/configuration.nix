@@ -1,3 +1,9 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   ispInterface = "enp2s0";
   lanInterfaces = [
@@ -51,13 +57,11 @@ let
       dhcpv4 = true;
     }
   ];
+
+  lanConfigurationAddresses = map ({ address, ... }: address) lanConfiguration;
+  lanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") lanConfigurationAddresses;
+  lanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") lanConfigurationAddresses;
 in
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
 {
   system.stateVersion = "23.11";
 
@@ -163,11 +167,11 @@ in
           DHCPServer = true;
         };
         dhcpServerConfig = {
-          DNS = [ "_server_address" ];
+          DNS = lanConfigurationAddressesIpv4;
         };
         ipv6SendRAConfig = {
           RetransmitSec = 1800; # 30 minutes
-          DNS = [ "_link_local" ];
+          DNS = lanConfigurationAddressesIpv6;
         };
         addresses =
           let
@@ -349,7 +353,7 @@ in
 
   services.resolved = {
     extraConfig =
-      lib.concatLines (map ({ address, ... }: "DNSStubListenerExtra=${address}") lanConfiguration)
+      lib.concatLines (map (address: "DNSStubListenerExtra=" + address) lanConfigurationAddresses)
       + ''
         StaleRetentionSec=1d
       '';
