@@ -114,12 +114,17 @@ in
 
   networking.firewall.interfaces.${lanBridgeInterface} = {
     allowedUDPPorts = [
-      # DHCPv4 requests from LAN.
+      # DHCPv4
       67
       # DNS
       53
+      # Multicast DNS
+      5353
     ];
-    allowedTCPPorts = [ 53 ];
+    allowedTCPPorts = [
+      # DNS
+      53
+    ];
   };
 
   # Clamp TCP MSS to PMTU for forwarded packets.
@@ -165,6 +170,8 @@ in
           IPv6AcceptRA = false;
           IPv6SendRA = true;
           DHCPServer = true;
+          MulticastDNS = true;
+          LLMNR = true;
         };
         dhcpServerConfig = {
           DNS = lanConfigurationAddressesIpv4;
@@ -245,6 +252,8 @@ in
           Description = "ISP connection via SLAAC, DHCPv6, and DHCPv4";
           DHCP = true;
           IPv6PrivacyExtensions = true;
+          MulticastDNS = false;
+          LLMNR = false;
           DNSOverTLS = true;
           DNSSEC = true;
           DNS = [
