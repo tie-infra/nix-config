@@ -216,6 +216,13 @@ in
     configureFirewall = false;
   };
 
+  systemd.services.zapret = {
+    serviceConfig = {
+      # https://github.com/NixOS/nixpkgs/blob/035f8c0853c2977b24ffc4d0a42c74f00b182cd8/nixos/modules/services/networking/zapret.nix#L124
+      RuntimeMaxSec = lib.mkForce null;
+    };
+  };
+
   # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
   networking.nftables.tables.zapret = {
     family = "inet";
