@@ -1,4 +1,5 @@
 # See https://mt-caret.github.io/blog/2020-06-29-optin-state.html
+# See https://notthebe.ee/blog/nixos-ephemeral-zfs-root
 
 {
   lib,
@@ -8,6 +9,14 @@
 }:
 let
   cfg = config.profiles.btrfs-erase-your-darlings;
+  script = ''
+    echo 'restoring root filesystem from blank snapshot...'
+    btrfs-rollback \
+      --device-path ${lib.escapeShellArg cfg.rootDisk} \
+      --mountpoint /mnt \
+      --subvolume root \
+      --snapshot root-blank
+  '';
 in
 {
   options.profiles.btrfs-erase-your-darlings = {
@@ -56,23 +65,45 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    boot.initrd.extraUtilsCommands = ''
-      copy_bin_and_libs ${lib.getExe pkgs.btrfs-rollback}
-    '';
+    boot.initrd.systemd = {
+      storePaths = [ pkgs.btrfs-rollback ];
+      services.btrfs-rollback = {
+        description = "Rollback root filesystem";
 
-    boot.initrd.extraUtilsCommandsTest = ''
-      $out/bin/btrfs-rollback --help
-    '';
+        path = [ pkgs.btrfs-rollback ];
+        inherit script;
 
-    # NB we want to run after btrfs device scan, hence lib.mkAfter.
-    boot.initrd.postDeviceCommands = lib.mkAfter ''
-      echo 'restoring root filesystem from blank snapshot...'
-      btrfs-rollback \
-        --device-path ${lib.escapeShellArg cfg.rootDisk} \
-        --mountpoint /mnt \
-        --subvolume root \
-        --snapshot root-blank
-    '';
+        wants = [ "systemd-udev-settle.service" ];
+        after = [
+          "systemd-udev-settle.service"
+          "systemd-modules-load.service"
+          "systemd-ask-password-console.service"
+        ];
+        conflicts = [ "shutdown.target" ];
+        before = [
+          "sysroot.mount"
+          "shutdown.target"
+        ];
+        wantedBy = [ "initrd.target" ];
+
+        unitConfig = {
+          DefaultDependencies = false;
+        };
+
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+      };
+    };
+
+    boot.initrd = {
+      extraUtilsCommands = lib.mkIf (!config.boot.initrd.systemd.enable) ''
+        copy_bin_and_libs ${lib.getExe pkgs.btrfs-rollback}
+      '';
+      # NB we want to run after btrfs device scan, hence lib.mkAfter.
+      postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable) (lib.mkAfter script);
+    };
 
     # FIXME: turns out this code wrongly assumed that compression can be enable
     # per subvolume or mountpoint. This is not true, see

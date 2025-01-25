@@ -38,6 +38,15 @@ in
     };
   };
 
+  # Use systemd in initrd during boot.
+  boot.initrd.systemd.enable = true;
+
+  # Use /etc overlayfs instead of generating it with Perl script.
+  system.etc.overlay.enable = true;
+
+  # Use Rust-based re-implementation of the original Perl switch-to-configuration.
+  system.switch.enableNg = true;
+
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
   # For some workloads, zram provides significant RAM usage savings with
