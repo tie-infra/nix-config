@@ -4,6 +4,14 @@
   config,
   ...
 }:
+let
+  sshHostKeyPath = "/etc/ssh/ssh_host_ed25519_key";
+  sshAuthorizedKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIPgvPYPtXXqGGerR7k+tbrIG2fCzp3R8ox7mkKRIdEu actions@github.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb mr.trubach@icloud.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPx5SqHCvHuGCt7o+8dVu9sZiXeHP95ROuDGF9+DufCe dev@brim.su"
+  ];
+in
 {
   environment = {
     systemPackages = with pkgs; [
@@ -84,11 +92,7 @@
         wheel.name
         disk.name
       ];
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIPgvPYPtXXqGGerR7k+tbrIG2fCzp3R8ox7mkKRIdEu actions@github.com"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiAKU7x1o6NPI/7AqwCaC8edvl80//2LgyVSV/3tIfb mr.trubach@icloud.com"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPx5SqHCvHuGCt7o+8dVu9sZiXeHP95ROuDGF9+DufCe dev@brim.su"
-      ];
+      openssh.authorizedKeys.keys = sshAuthorizedKeys;
     };
   };
 
@@ -109,8 +113,16 @@
     # running all the time.
     openssh = {
       enable = true;
-      startWhenNeeded = true;
-      settings.LoginGraceTime = "15s";
+      # Disable automatic host key generation on startup. This ensures that SSH
+      # host keys are not overwritten should the filesystem misbehave. Instead,
+      # we configure host keys explicitly.
+      hostKeys = lib.mkDefault [ ];
+      settings = {
+        HostKey = lib.mkDefault sshHostKeyPath;
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        LoginGraceTime = "15s";
+      };
     };
   };
 }

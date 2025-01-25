@@ -99,7 +99,7 @@ for subvolume in $subvolumes; do
 	mount -t btrfs -o subvol="$subvolume",compress=zstd,noatime "$root" /mnt/"$subvolume"
 done
 mkdir /mnt/boot
-mount -t vfat "$boot" /mnt/boot
+mount -t vfat -o dmask=0007,fmask=0007,noatime "$boot" /mnt/boot
 
 echo "copying machine-id and SSH host key"
 cp -a /etc/machine-id /mnt/persist/machine-id

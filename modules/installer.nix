@@ -36,17 +36,12 @@ in
       dmidecode
     ]);
 
-  services.openssh = {
-    # Always start SSH to generate host keys that are used by the setup-disk script.
-    # FIXME: generate keys if the file does not exist instead.
-    startWhenNeeded = lib.mkForce false;
-    hostKeys = [
-      {
-        path = "/etc/ssh/ssh_host_ed25519_key";
-        type = "ed25519";
-      }
-    ];
-  };
+  services.openssh.hostKeys = [
+    {
+      path = "/etc/ssh/ssh_host_ed25519_key";
+      type = "ed25519";
+    }
+  ];
 
   # See https://github.com/NixOS/nixpkgs/blob/9cfaa8a1a00830d17487cb60a19bb86f96f09b27/nixos/modules/profiles/installation-device.nix#LL52C1-L67C1
   services.getty.helpLine = lib.mkForce ''

@@ -99,6 +99,11 @@ in
         "/boot" = {
           device = cfg.bootDisk;
           fsType = "vfat";
+          options = [
+            "dmask=0007"
+            "fmask=0007"
+            "noatime"
+          ];
         };
         "/" = {
           device = cfg.rootDisk;
@@ -138,18 +143,11 @@ in
 
     environment.etc = lib.mkIf cfg.persist.machineId { "machine-id".source = "/persist/machine-id"; };
 
-    services = {
-      openssh.hostKeys = lib.mkIf cfg.persist.openssh [
-        {
-          path = "/persist/ssh/ssh_host_ed25519_key";
-          type = "ed25519";
-        }
-      ];
+    services.openssh.settings.HostKey = lib.mkIf cfg.persist.openssh "/persist/ssh/ssh_host_ed25519_key";
 
-      btrfs.autoScrub = {
-        enable = true;
-        fileSystems = [ "/" ];
-      };
+    services.btrfs.autoScrub = {
+      enable = true;
+      fileSystems = [ "/" ];
     };
   };
 }
