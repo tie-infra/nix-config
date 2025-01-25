@@ -100,7 +100,10 @@
     getty.autologinUser = config.users.users.nixos.name;
 
     # Enable systemd-networkd for local DNS resolution and cache.
-    resolved.enable = true;
+    resolved = {
+      enable = true;
+      fallbackDns = [ ];
+    };
 
     # Enable OpenSSH sever that uses systemd socket activation instead of
     # running all the time.
