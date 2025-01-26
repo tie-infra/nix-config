@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install nix
-        uses: cachix/install-nix-action@V28
+        uses: cachix/install-nix-action@v30
         with:
           extra_nix_config: "extra-experimental-features = nix-command flakes"
 
@@ -54,6 +54,9 @@ jobs:
       # See https://github.com/actions/runner-images/issues/668
       - name: Set up IPv6
         run: |
+          if curl --ipv6 --include https://cloudflare.com/cdn-cgi/trace; then
+            exit 0
+          fi
           curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
           sudo tee /etc/apt/sources.list.d/cloudflare-client.list <<EOF
           deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main
@@ -62,8 +65,7 @@ jobs:
           sudo apt-get install -y cloudflare-warp
           warp-cli --accept-tos registration new
           warp-cli --accept-tos connect
-          sleep 1 && echo
-          curl -i https://cloudflare.com/cdn-cgi/trace
+          curl --ipv6 --include --retry 5 --retry-delay 1 --retry-all-errors https://cloudflare.com/cdn-cgi/trace
 
       - name: Switch configuration
         run: |
