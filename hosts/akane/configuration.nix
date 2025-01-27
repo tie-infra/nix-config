@@ -5,19 +5,14 @@
   ...
 }:
 let
-  ispInterface = "enp2s0";
-  lanInterfaces = [
-    "enp3s0"
-    "enp4s0"
-    "enp5s0"
-    "enp6s0"
-    "enp7s0"
-    "enp8s0"
-    "enp9s0"
-  ];
+  ispInterface = "vl-isp";
+  lanInterface = "vl-lan";
 
-  lanBridgeInterface = "br-lan";
-  wanWireguardInterface = "wg-wan";
+  lanVlanId = 1;
+  ispVlanId = 2;
+
+  bridgeInterface = "br0";
+  wireguardInterface = "wg0";
 
   wireguardEndpoint = "falcon.tie.rip:51820";
   wireguardConfiguration = [
@@ -112,7 +107,7 @@ in
     19999
   ];
 
-  networking.firewall.interfaces.${lanBridgeInterface} = {
+  networking.firewall.interfaces.${lanInterface} = {
     allowedUDPPorts = [
       # DHCPv4
       67
@@ -139,224 +134,296 @@ in
     '';
   };
 
-  systemd.network = {
-    config = {
-      routeTables = {
-        wireguard = 1000;
-      };
+  systemd.network.config = {
+    routeTables = {
+      wireguard = 1000;
     };
-    networks = {
-      "10-lan-ports" = {
-        matchConfig = {
-          Name = lanInterfaces;
-        };
-        networkConfig = {
-          Description = "LAN bridge ports";
-          Bridge = lanBridgeInterface;
-          ConfigureWithoutCarrier = true;
-        };
-        linkConfig = {
-          RequiredForOnline = "no-carrier:enslaved";
-        };
-      };
-      "10-lan" = {
-        matchConfig = {
-          Name = lanBridgeInterface;
-        };
-        networkConfig = {
-          Description = "Local area network";
-          ConfigureWithoutCarrier = true;
-          IPv6PrivacyExtensions = true;
-          IPv6AcceptRA = false;
-          IPv6SendRA = true;
-          DHCPServer = true;
-          MulticastDNS = true;
-          LLMNR = true;
-        };
-        dhcpServerConfig = {
-          DNS = lanConfigurationAddressesIpv4;
-        };
-        ipv6SendRAConfig = {
-          RetransmitSec = 1800; # 30 minutes
-          DNS = lanConfigurationAddressesIpv6;
-        };
-        addresses =
-          let
-            makeAddress =
-              {
-                cidr,
-                tempAddr ? false,
-                ...
-              }:
-              {
-                Address = cidr;
-                AddPrefixRoute = false;
-              }
-              // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
-          in
-          map makeAddress lanConfiguration;
-        routes =
-          let
-            makeRoute =
-              { network, address, ... }:
-              {
-                Destination = network;
-                PreferredSource = address;
-              };
-            routes = map makeRoute lanConfiguration;
-            withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
-          in
-          routes ++ map (withTable "wireguard") routes;
-        ipv6Prefixes =
-          let
-            makeIPv6Prefix =
-              { network, ... }:
-              {
-                Prefix = network;
-              };
-            radv = lib.filter (
-              {
-                radv ? false,
-                ...
-              }:
-              radv
-            ) lanConfiguration;
-          in
-          map makeIPv6Prefix radv;
-        # NB seems to be working fine without IPv6RoutePrefix.
-        ipv6RoutePrefixes =
-          let
-            makeIPv6RoutePrefix =
-              { network, ... }:
-              {
-                Route = network;
-              };
-            radv = lib.filter (
-              {
-                radv ? false,
-                ...
-              }:
-              radv
-            ) lanConfiguration;
-          in
-          map makeIPv6RoutePrefix radv;
-        linkConfig = {
-          RequiredForOnline = "no-carrier:routable";
-        };
-      };
-      "10-isp" = {
-        matchConfig = {
-          Name = ispInterface;
-        };
-        networkConfig = {
-          Description = "ISP connection via SLAAC, DHCPv6, and DHCPv4";
-          DHCP = true;
-          IPv6PrivacyExtensions = true;
-          MulticastDNS = false;
-          LLMNR = false;
-          DNSOverTLS = true;
-          DNSSEC = true;
-          DNS = [
-            "2620:fe::fe#dns.quad9.net"
-            "2620:fe::9#dns.quad9.net"
-            "9.9.9.9#dns.quad9.net"
-            "149.112.112.112#dns.quad9.net"
-          ];
-        };
-        ipv6AcceptRAConfig = {
-          UseDNS = false;
-        };
-        dhcpV6Config = {
-          UseDelegatedPrefix = false;
-          UseDNS = false;
-        };
-        dhcpV4Config = {
-          UseDNS = false;
-        };
-        linkConfig = {
-          RequiredForOnline = "routable";
-        };
-      };
-      "10-wg" = {
-        matchConfig = {
-          Name = wanWireguardInterface;
-        };
-        networkConfig = {
-          Description = "WireGuard tunnel over ISP connection";
-        };
-        addresses =
-          let
-            makeAddress =
-              { cidr, ... }:
-              {
-                Address = cidr;
-                AddPrefixRoute = false;
-              };
-          in
-          map makeAddress wireguardConfiguration;
-        routes =
-          let
-            makeRoute =
-              { network, address, ... }:
-              {
-                Destination = network;
-                PreferredSource = address;
-              };
-          in
-          map makeRoute wireguardConfiguration;
-        routingPolicyRules =
-          let
-            makeRoutingPolicyRule =
-              { network, ... }:
-              {
-                From = network;
-                Table = "wireguard";
-                Priority = 1000;
-              };
-          in
-          map makeRoutingPolicyRule wireguardConfiguration;
-        linkConfig = {
-          RequiredForOnline = "carrier:routable";
-        };
-      };
-    };
+  };
 
-    netdevs = {
-      "10-lan" = {
-        netdevConfig = {
-          Description = "LAN network device";
-          Name = lanBridgeInterface;
-          Kind = "bridge";
-        };
-      };
-      "10-wg" = {
-        netdevConfig = {
-          Description = "WireGuard tunnel";
-          Name = wanWireguardInterface;
-          Kind = "wireguard";
-        };
-        wireguardConfig = {
-          PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
-          H1 = 224412;
-          H2 = 52344123;
-          H3 = 6713390;
-          H4 = 2537922;
-        };
-        wireguardPeers = [
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "::/0"
-              "0.0.0.0/0"
-            ];
-            RouteTable = "wireguard";
-            PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
-            Endpoint = wireguardEndpoint;
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-            PersistentKeepalive = 30;
-          }
+  systemd.network.netdevs."10-bridge" = {
+    netdevConfig = {
+      Name = bridgeInterface;
+      Kind = "bridge";
+    };
+    bridgeConfig = {
+      DefaultPVID = "none";
+      VLANFiltering = true;
+    };
+  };
+
+  systemd.network.netdevs."10-lan" = {
+    netdevConfig = {
+      Name = lanInterface;
+      Kind = "vlan";
+    };
+    vlanConfig = {
+      Id = lanVlanId;
+    };
+  };
+
+  systemd.network.netdevs."10-isp" = {
+    netdevConfig = {
+      Name = ispInterface;
+      Kind = "vlan";
+    };
+    vlanConfig = {
+      Id = ispVlanId;
+    };
+  };
+
+  systemd.network.netdevs."10-wg" = {
+    netdevConfig = {
+      Name = wireguardInterface;
+      Kind = "wireguard";
+    };
+    wireguardConfig = {
+      PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
+      H1 = 224412;
+      H2 = 52344123;
+      H3 = 6713390;
+      H4 = 2537922;
+    };
+    wireguardPeers = [
+      {
+        AdvancedSecurity = true;
+        AllowedIPs = [
+          "::/0"
+          "0.0.0.0/0"
         ];
-      };
+        RouteTable = "wireguard";
+        PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
+        Endpoint = wireguardEndpoint;
+        PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+        PersistentKeepalive = 30;
+      }
+    ];
+  };
+
+  systemd.network.networks."10-bridge" = {
+    matchConfig = {
+      Name = bridgeInterface;
+    };
+    networkConfig = {
+      VLAN = [
+        ispInterface
+        lanInterface
+      ];
+      ConfigureWithoutCarrier = true;
+      # https://github.com/systemd/systemd/issues/575#issuecomment-163810166
+      LinkLocalAddressing = false;
+    };
+    bridgeVLANs = [
+      { VLAN = lanVlanId; }
+      { VLAN = ispVlanId; }
+    ];
+    linkConfig = {
+      RequiredForOnline = "no-carrier:carrier";
+    };
+  };
+
+  systemd.network.networks."10-bridge-lan" = {
+    matchConfig = {
+      Name = [
+        "enp3s0"
+        "enp4s0"
+        "enp5s0"
+        "enp6s0"
+        "enp7s0"
+        "enp8s0"
+        "enp9s0"
+      ];
+    };
+    networkConfig = {
+      Bridge = bridgeInterface;
+      ConfigureWithoutCarrier = true;
+    };
+    bridgeVLANs = [
+      {
+        PVID = lanVlanId;
+        EgressUntagged = lanVlanId;
+      }
+      # Allow downstream devices to access ISP network.
+      { VLAN = ispVlanId; }
+    ];
+    linkConfig = {
+      RequiredForOnline = "no-carrier:enslaved";
+    };
+  };
+
+  systemd.network.networks."10-bridge-isp" = {
+    matchConfig = {
+      Name = [ "enp2s0" ];
+    };
+    networkConfig = {
+      Bridge = bridgeInterface;
+      ConfigureWithoutCarrier = true;
+    };
+    bridgeVLANs = [
+      {
+        PVID = ispVlanId;
+        EgressUntagged = ispVlanId;
+      }
+    ];
+    linkConfig = {
+      RequiredForOnline = "no-carrier:enslaved";
+    };
+  };
+
+  systemd.network.networks."10-lan" = {
+    matchConfig = {
+      Name = lanInterface;
+    };
+    networkConfig = {
+      ConfigureWithoutCarrier = true;
+      IPv6PrivacyExtensions = true;
+      IPv6AcceptRA = false;
+      IPv6SendRA = true;
+      DHCPServer = true;
+      MulticastDNS = true;
+      LLMNR = true;
+    };
+    dhcpServerConfig = {
+      DNS = lanConfigurationAddressesIpv4;
+    };
+    ipv6SendRAConfig = {
+      RetransmitSec = 1800; # 30 minutes
+      DNS = lanConfigurationAddressesIpv6;
+    };
+    addresses =
+      let
+        makeAddress =
+          {
+            cidr,
+            tempAddr ? false,
+            ...
+          }:
+          {
+            Address = cidr;
+            AddPrefixRoute = false;
+          }
+          // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
+      in
+      map makeAddress lanConfiguration;
+    routes =
+      let
+        makeRoute =
+          { network, address, ... }:
+          {
+            Destination = network;
+            PreferredSource = address;
+          };
+        routes = map makeRoute lanConfiguration;
+        withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
+      in
+      routes ++ map (withTable "wireguard") routes;
+    ipv6Prefixes =
+      let
+        makeIPv6Prefix =
+          { network, ... }:
+          {
+            Prefix = network;
+          };
+        radv = lib.filter (
+          {
+            radv ? false,
+            ...
+          }:
+          radv
+        ) lanConfiguration;
+      in
+      map makeIPv6Prefix radv;
+    # NB seems to be working fine without IPv6RoutePrefix.
+    ipv6RoutePrefixes =
+      let
+        makeIPv6RoutePrefix =
+          { network, ... }:
+          {
+            Route = network;
+          };
+        radv = lib.filter (
+          {
+            radv ? false,
+            ...
+          }:
+          radv
+        ) lanConfiguration;
+      in
+      map makeIPv6RoutePrefix radv;
+    linkConfig = {
+      RequiredForOnline = "no-carrier:routable";
+    };
+  };
+
+  systemd.network.networks."10-isp" = {
+    matchConfig = {
+      Name = ispInterface;
+    };
+    networkConfig = {
+      DHCP = true;
+      IPv6PrivacyExtensions = true;
+      MulticastDNS = false;
+      LLMNR = false;
+      DNSOverTLS = true;
+      DNSSEC = true;
+      DNS = [
+        "2620:fe::fe#dns.quad9.net"
+        "2620:fe::9#dns.quad9.net"
+        "9.9.9.9#dns.quad9.net"
+        "149.112.112.112#dns.quad9.net"
+      ];
+    };
+    ipv6AcceptRAConfig = {
+      UseDNS = false;
+    };
+    dhcpV6Config = {
+      UseDelegatedPrefix = false;
+      UseDNS = false;
+    };
+    dhcpV4Config = {
+      UseDNS = false;
+    };
+    linkConfig = {
+      RequiredForOnline = "routable";
+    };
+  };
+
+  systemd.network.networks."10-wg" = {
+    matchConfig = {
+      Name = wireguardInterface;
+    };
+    addresses =
+      let
+        makeAddress =
+          { cidr, ... }:
+          {
+            Address = cidr;
+            AddPrefixRoute = false;
+          };
+      in
+      map makeAddress wireguardConfiguration;
+    routes =
+      let
+        makeRoute =
+          { network, address, ... }:
+          {
+            Destination = network;
+            PreferredSource = address;
+          };
+      in
+      map makeRoute wireguardConfiguration;
+    routingPolicyRules =
+      let
+        makeRoutingPolicyRule =
+          { network, ... }:
+          {
+            From = network;
+            Table = "wireguard";
+            Priority = 1000;
+          };
+      in
+      map makeRoutingPolicyRule wireguardConfiguration;
+    linkConfig = {
+      RequiredForOnline = "carrier:routable";
     };
   };
 
