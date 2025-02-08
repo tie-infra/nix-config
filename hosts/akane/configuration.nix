@@ -364,7 +364,9 @@ in
       MulticastDNS = false;
       LLMNR = false;
       DNSOverTLS = true;
-      DNSSEC = true;
+      # DNSSEC implementation seems to be broken.
+      # E.g. https://github.com/systemd/systemd/issues/34896
+      DNSSEC = false;
       DNS = [
         "2620:fe::fe#dns.quad9.net"
         "2620:fe::9#dns.quad9.net"
