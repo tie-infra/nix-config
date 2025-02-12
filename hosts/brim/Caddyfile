@@ -51,6 +51,11 @@ brim.su {
 	reverse_proxy localhost:9000
 }
 
+hunt-api.brim.su {
+	import tls-brim-su
+	reverse_proxy 84.23.43.94:1896
+}
+
 assets.brim.su {
 	import tls-brim-su
 	redir https://brim.su/assets/ permanent
