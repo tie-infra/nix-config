@@ -26,15 +26,6 @@
             };
           in
           pkg: builtins.hasAttr (lib.getName pkg) allowUnfree;
-
-        # Sonarr uses .NET 6 that is EOL.
-        # https://github.com/NixOS/nixpkgs/issues/360592
-        config.permittedInsecurePackages = [
-          "aspnetcore-runtime-6.0.36"
-          "aspnetcore-runtime-wrapped-6.0.36"
-          "dotnet-sdk-6.0.428"
-          "dotnet-sdk-wrapped-6.0.428"
-        ];
       };
 
       nixpkgsFun = newArgs: import inputs.nixpkgs (nixpkgsArgs // newArgs);
