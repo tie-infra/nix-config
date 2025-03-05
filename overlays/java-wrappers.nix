@@ -6,6 +6,7 @@ let
     jre8
     jdk17
     jdk21
+    jdk23
     ;
 
   makeJavaWrapper =
@@ -20,5 +21,6 @@ in
     java8 = makeJavaWrapper jre8 "java8";
     java17 = makeJavaWrapper jdk17 "java17";
     java21 = makeJavaWrapper jdk21 "java21";
+    java23 = makeJavaWrapper jdk23 "java23";
   };
 }
