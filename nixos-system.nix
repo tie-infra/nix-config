@@ -15,6 +15,7 @@ let
     inputs.sops-nix.nixosModules.sops
     ./modules/sops.nix
     ./modules/nix-flakes.nix
+    ./modules/tcpmss.nix
     ./modules/machine-info.nix
     ./modules/base-configuration.nix
     ./modules/btrfs-erase-your-darlings.nix
