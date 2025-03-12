@@ -200,26 +200,16 @@ in
     };
   };
 
-  services.zapret = {
+  services.zapret.nfqws."" = {
     enable = true;
-    params = [
-      "--dpi-desync=fake"
-      "--dpi-desync-ttl=1"
-    ];
-    whitelist = [
-      "discord.com"
-      "cloudflare-ech.com" # TLS ECH
-    ];
-
-    # Uses iptables instead of nftables :(
-    # We manually configure nftables below.
-    configureFirewall = false;
-  };
-
-  systemd.services.zapret = {
-    serviceConfig = {
-      # https://github.com/NixOS/nixpkgs/blob/035f8c0853c2977b24ffc4d0a42c74f00b182cd8/nixos/modules/services/networking/zapret.nix#L124
-      RuntimeMaxSec = lib.mkForce null;
+    settings.qnum = 200;
+    profiles."".settings = {
+      dpi-desync = "fakeknown";
+      dpi-desync-ttl = 1;
+      hostlist-domains = lib.concatStringsSep "," [
+        "discord.com"
+        "cloudflare-ech.com" # TLS ECH
+      ];
     };
   };
 

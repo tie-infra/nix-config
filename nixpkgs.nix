@@ -13,6 +13,7 @@
           inputs.btrfs-rollback.overlays.default
           (import ./overlays/java-wrappers.nix)
           (import ./overlays/mcactivity.nix)
+          (import ./overlays/zapret/default.nix)
         ];
 
         config.allowUnfreePredicate =

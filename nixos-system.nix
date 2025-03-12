@@ -29,6 +29,7 @@ let
     ./modules/radarr.nix
     ./modules/sonarr.nix
     ./modules/transmission.nix
+    ./modules/zapret.nix
     { inherit disabledModules; }
   ];
 
@@ -37,6 +38,7 @@ let
     "services/misc/prowlarr.nix"
     "services/misc/radarr.nix"
     "services/misc/sonarr.nix"
+    "services/networking/zapret.nix"
     "services/torrent/flood.nix"
     "services/torrent/transmission.nix"
     "services/web-apps/outline.nix"

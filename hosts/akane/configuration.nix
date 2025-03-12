@@ -53,6 +53,10 @@ let
     }
   ];
 
+  # Netfilter queue number of nfqws DPI bypass.
+  zapretQnum = 200;
+  zapretFwmark = 1073741824; # 0x40000000
+
   lanConfigurationAddresses = map ({ address, ... }: address) lanConfiguration;
   lanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") lanConfigurationAddresses;
   lanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") lanConfigurationAddresses;
@@ -75,6 +79,10 @@ in
       # option.
       "net.ipv4.ip_forward" = true;
       "net.ipv6.conf.all.forwarding" = true;
+
+      # Allow nfqws to detect censorship for auto hostlist.
+      # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
+      "net.netfilter.nf_conntrack_tcp_be_liberal" = true;
     };
 
     initrd.availableKernelModules = [ "ahci" ];
@@ -123,6 +131,66 @@ in
   };
 
   networking.tcpmssClamping.enable = true;
+
+  services.zapret.nfqws."" = {
+    enable = true;
+    settings = {
+      qnum = zapretQnum;
+    };
+    profiles = {
+      "20-https".settings = {
+        filter-l7 = "tls,quic";
+        hostlist-auto = "hosts.txt";
+        hostlist-auto-fail-threshold = 1;
+        dpi-desync = "fake";
+        dpi-desync-ttl = 4;
+        dpi-desync-fwmark = zapretFwmark;
+      };
+      "99-known".settings = {
+        dpi-desync = "fakeknown";
+        dpi-desync-ttl = 4;
+        dpi-desync-repeats = 3;
+        dpi-desync-fwmark = zapretFwmark;
+      };
+    };
+  };
+
+  # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
+  # https://www.netfilter.org/projects/nftables/manpage.html
+  networking.nftables.tables.zapret = {
+    family = "inet";
+    content = ''
+      define iface = ${ispInterface}
+      define qnum = ${toString zapretQnum}
+      define fwmark = ${toString zapretFwmark}
+
+      set services {
+        type inet_proto . inet_service
+        elements = {
+          tcp . 443,
+          udp . 443,
+        }
+      }
+
+      chain postrouting {
+        type filter hook postrouting priority mangle; policy accept;
+        oifname $iface \
+          meta mark & $fwmark == 0 \
+          meta l4proto . th dport @services \
+          ct original packets 1-6 \
+          queue flags bypass to $qnum
+      }
+
+      chain prerouting {
+        type filter hook prerouting priority filter; policy accept;
+        iifname $iface \
+          meta mark & $fwmark == 0 \
+          meta l4proto . th sport @services \
+          ct reply packets 1-3 \
+          queue flags bypass to $qnum
+      }
+    '';
+  };
 
   systemd.network.config = {
     routeTables = {
