@@ -14,6 +14,10 @@ let
   bridgeInterface = "br0";
   wireguardInterface = "wg0";
 
+  wireguardRouteTable = "wireguard";
+  wireguardRouteTableNumber = 1000;
+  wireguardRoutingPolicyRulePriority = 1000;
+
   wireguardEndpoint = "falcon.tie.rip:51820";
   wireguardConfiguration = [
     {
@@ -194,7 +198,7 @@ in
 
   systemd.network.config = {
     routeTables = {
-      wireguard = 1000;
+      ${wireguardRouteTable} = wireguardRouteTableNumber;
     };
   };
 
@@ -248,7 +252,7 @@ in
           "::/0"
           "0.0.0.0/0"
         ];
-        RouteTable = "wireguard";
+        RouteTable = wireguardRouteTable;
         PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
         Endpoint = wireguardEndpoint;
         PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
@@ -373,7 +377,7 @@ in
         routes = map makeRoute lanConfiguration;
         withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
       in
-      routes ++ map (withTable "wireguard") routes;
+      routes ++ map (withTable wireguardRouteTable) routes;
     ipv6Prefixes =
       let
         makeIPv6Prefix =
@@ -477,8 +481,8 @@ in
           { network, ... }:
           {
             From = network;
-            Table = "wireguard";
-            Priority = 1000;
+            Table = wireguardRouteTable;
+            Priority = wireguardRoutingPolicyRulePriority;
           };
       in
       map makeRoutingPolicyRule wireguardConfiguration;
