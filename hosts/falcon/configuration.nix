@@ -11,11 +11,6 @@
     kernelParams = [ "nomodeset" ]; # for KVM Console
 
     initrd.availableKernelModules = [ "nvme" ];
-
-    kernel.sysctl = {
-      "net.ipv4.ip_forward" = true;
-      "net.ipv6.conf.all.forwarding" = true;
-    };
   };
 
   environment.machineInfo = {
@@ -46,6 +41,13 @@
     };
     tcpmssClamping = {
       enable = true;
+    };
+  };
+
+  systemd.network.config = {
+    networkConfig = {
+      IPv4Forwarding = true;
+      IPv6Forwarding = true;
     };
   };
 

@@ -75,15 +75,6 @@ in
     };
 
     kernel.sysctl = {
-      # Note: IPForward in systemd.network sets this too despite being defined
-      # per each network. However, it also affects defaults for some other
-      # options in network configuration, e.g. not accepting IPv6 RAs (see
-      # IPv6AcceptRA) when IPForward is set. This is a weird design decision
-      # systemd-networkd made. Let’s be explicit about forwarding being a global
-      # option.
-      "net.ipv4.ip_forward" = true;
-      "net.ipv6.conf.all.forwarding" = true;
-
       # Allow nfqws to detect censorship for auto hostlist.
       # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
       "net.netfilter.nf_conntrack_tcp_be_liberal" = true;
@@ -197,6 +188,10 @@ in
   };
 
   systemd.network.config = {
+    networkConfig = {
+      IPv4Forwarding = true;
+      IPv6Forwarding = true;
+    };
     routeTables = {
       ${wireguardRouteTable} = wireguardRouteTableNumber;
     };
@@ -422,6 +417,7 @@ in
     };
     networkConfig = {
       DHCP = true;
+      IPv6AcceptRA = true;
       IPv6PrivacyExtensions = true;
       MulticastDNS = false;
       LLMNR = false;
