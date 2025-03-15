@@ -29,7 +29,8 @@ let
     ./modules/radarr.nix
     ./modules/sonarr.nix
     ./modules/transmission.nix
-    ./modules/zapret.nix
+    ./modules/zapret/nfqws.nix
+    ./modules/zapret/nfqws-systemd.nix
     { inherit disabledModules; }
   ];
 

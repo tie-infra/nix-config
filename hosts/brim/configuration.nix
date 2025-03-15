@@ -200,16 +200,18 @@ in
     };
   };
 
-  services.zapret.nfqws."" = {
+  services.nfqws = {
     enable = true;
-    settings.qnum = 200;
-    profiles."".settings = {
-      dpi-desync = "fakeknown";
-      dpi-desync-ttl = 1;
-      hostlist-domains = lib.concatStringsSep "," [
-        "discord.com"
-        "cloudflare-ech.com" # TLS ECH
-      ];
+    instances."" = {
+      settings.qnum = 200;
+      profiles."".settings = {
+        dpi-desync = "fakeknown";
+        dpi-desync-ttl = 1;
+        hostlist-domains = lib.concatStringsSep "," [
+          "discord.com"
+          "cloudflare-ech.com" # TLS ECH
+        ];
+      };
     };
   };
 

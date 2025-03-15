@@ -127,25 +127,27 @@ in
 
   networking.tcpmssClamping.enable = true;
 
-  services.zapret.nfqws."" = {
+  services.nfqws = {
     enable = true;
-    settings = {
-      qnum = zapretQnum;
-    };
-    profiles = {
-      "20-https".settings = {
-        filter-l7 = "tls,quic";
-        hostlist-auto = "hosts.txt";
-        hostlist-auto-fail-threshold = 1;
-        dpi-desync = "fake";
-        dpi-desync-ttl = 4;
-        dpi-desync-fwmark = zapretFwmark;
+    instances."" = {
+      settings = {
+        qnum = zapretQnum;
       };
-      "99-known".settings = {
-        dpi-desync = "fakeknown";
-        dpi-desync-ttl = 4;
-        dpi-desync-repeats = 3;
-        dpi-desync-fwmark = zapretFwmark;
+      profiles = {
+        "20-https".settings = {
+          filter-l7 = "tls,quic";
+          hostlist-auto = "hosts.txt";
+          hostlist-auto-fail-threshold = 1;
+          dpi-desync = "fake";
+          dpi-desync-ttl = 4;
+          dpi-desync-fwmark = zapretFwmark;
+        };
+        "99-known".settings = {
+          dpi-desync = "fakeknown";
+          dpi-desync-ttl = 4;
+          dpi-desync-repeats = 3;
+          dpi-desync-fwmark = zapretFwmark;
+        };
       };
     };
   };
