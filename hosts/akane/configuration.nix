@@ -6,10 +6,10 @@
 }:
 let
   ispInterface = "vl-isp";
-  lanInterface = "vl-lan";
+  wglanInterface = "vl-wglan";
 
-  lanVlanId = 1;
-  ispVlanId = 2;
+  ispVlanId = 1;
+  wglanVlanId = 2;
 
   bridgeInterface = "br0";
   wireguardInterface = "wg0";
@@ -35,7 +35,7 @@ let
   # tempAddr: manage temporary addresses
   # radv: set up router advertisements
   # dhcpv4: set up DHCPv4 server
-  lanConfiguration = [
+  wglanConfiguration = [
     {
       cidr = "2a01:4f8:222:feed::1/64";
       address = "2a01:4f8:222:feed::1";
@@ -61,9 +61,9 @@ let
   zapretQnum = 200;
   zapretFwmark = 1073741824; # 0x40000000
 
-  lanConfigurationAddresses = map ({ address, ... }: address) lanConfiguration;
-  lanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") lanConfigurationAddresses;
-  lanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") lanConfigurationAddresses;
+  wglanConfigurationAddresses = map ({ address, ... }: address) wglanConfiguration;
+  wglanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") wglanConfigurationAddresses;
+  wglanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") wglanConfigurationAddresses;
 in
 {
   system.stateVersion = "23.11";
@@ -110,7 +110,7 @@ in
     19999
   ];
 
-  networking.firewall.interfaces.${lanInterface} = {
+  networking.firewall.interfaces.${wglanInterface} = {
     allowedUDPPorts = [
       # DHCPv4
       67
@@ -210,13 +210,13 @@ in
     };
   };
 
-  systemd.network.netdevs."10-lan" = {
+  systemd.network.netdevs."10-wglan" = {
     netdevConfig = {
-      Name = lanInterface;
+      Name = wglanInterface;
       Kind = "vlan";
     };
     vlanConfig = {
-      Id = lanVlanId;
+      Id = wglanVlanId;
     };
   };
 
@@ -265,14 +265,14 @@ in
     networkConfig = {
       VLAN = [
         ispInterface
-        lanInterface
+        wglanInterface
       ];
       ConfigureWithoutCarrier = true;
       # https://github.com/systemd/systemd/issues/575#issuecomment-163810166
       LinkLocalAddressing = false;
     };
     bridgeVLANs = [
-      { VLAN = lanVlanId; }
+      { VLAN = wglanVlanId; }
       { VLAN = ispVlanId; }
     ];
     linkConfig = {
@@ -298,8 +298,8 @@ in
     };
     bridgeVLANs = [
       {
-        PVID = lanVlanId;
-        EgressUntagged = lanVlanId;
+        PVID = wglanVlanId;
+        EgressUntagged = wglanVlanId;
       }
       # Allow downstream devices to access ISP network.
       { VLAN = ispVlanId; }
@@ -328,9 +328,9 @@ in
     };
   };
 
-  systemd.network.networks."10-lan" = {
+  systemd.network.networks."10-wglan" = {
     matchConfig = {
-      Name = lanInterface;
+      Name = wglanInterface;
     };
     networkConfig = {
       ConfigureWithoutCarrier = true;
@@ -342,11 +342,11 @@ in
       LLMNR = true;
     };
     dhcpServerConfig = {
-      DNS = lanConfigurationAddressesIpv4;
+      DNS = wglanConfigurationAddressesIpv4;
     };
     ipv6SendRAConfig = {
       RetransmitSec = 1800; # 30 minutes
-      DNS = lanConfigurationAddressesIpv6;
+      DNS = wglanConfigurationAddressesIpv6;
     };
     addresses =
       let
@@ -362,7 +362,7 @@ in
           }
           // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
       in
-      map makeAddress lanConfiguration;
+      map makeAddress wglanConfiguration;
     routes =
       let
         makeRoute =
@@ -371,7 +371,7 @@ in
             Destination = network;
             PreferredSource = address;
           };
-        routes = map makeRoute lanConfiguration;
+        routes = map makeRoute wglanConfiguration;
         withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
       in
       routes ++ map (withTable wireguardRouteTable) routes;
@@ -388,7 +388,7 @@ in
             ...
           }:
           radv
-        ) lanConfiguration;
+        ) wglanConfiguration;
       in
       map makeIPv6Prefix radv;
     # NB seems to be working fine without IPv6RoutePrefix.
@@ -405,7 +405,7 @@ in
             ...
           }:
           radv
-        ) lanConfiguration;
+        ) wglanConfiguration;
       in
       map makeIPv6RoutePrefix radv;
     linkConfig = {
@@ -491,7 +491,7 @@ in
 
   services.resolved = {
     extraConfig =
-      lib.concatLines (map (address: "DNSStubListenerExtra=" + address) lanConfigurationAddresses)
+      lib.concatLines (map (address: "DNSStubListenerExtra=" + address) wglanConfigurationAddresses)
       + ''
         StaleRetentionSec=1d
       '';
