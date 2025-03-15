@@ -1,11 +1,11 @@
 final: prev: {
   zapret = prev.zapret.overrideAttrs (oldAttrs: {
-    version = "unstable-2025-03-12";
+    version = "unstable-2025-03-14";
     src = final.fetchFromGitHub {
       owner = "bol-van";
       repo = "zapret";
-      rev = "9ac73f7d2f07958e33451609c81f241838ef6337";
-      hash = "sha256-QnGC5HxLoV/cWkOxFyidl0bVAWHPpaErECqj2ywSo1A=";
+      rev = "94d4238af2ed272248b695b44a8851be456855a2";
+      hash = "sha256-Jlcq3jX4h8DBrerNVZm8SWRepMacEbk2D+pNO/Zo1OE=";
     };
     strictDeps = true;
     buildInputs = oldAttrs.buildInputs or [ ] ++ [ final.systemdLibs ];

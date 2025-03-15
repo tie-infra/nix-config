@@ -54,7 +54,7 @@ let
     RestrictAddressFamilies = "AF_NETLINK AF_UNIX AF_INET6 AF_INET";
     SystemCallFilter = [
       "@system-service"
-      "~@resources @privileged"
+      "~@resources"
     ];
   };
 in
