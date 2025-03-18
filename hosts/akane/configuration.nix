@@ -7,9 +7,11 @@
 let
   ispInterface = "vl-isp";
   wglanInterface = "vl-wglan";
+  isplanInterface = "vl-isplan";
 
   ispVlanId = 1;
   wglanVlanId = 2;
+  isplanVlanId = 3;
 
   bridgeInterface = "br0";
   wireguardInterface = "wg0";
@@ -57,13 +59,41 @@ let
     }
   ];
 
-  # Netfilter queue number of nfqws DPI bypass.
-  zapretQnum = 200;
-  zapretFwmark = 1073741824; # 0x40000000
-
   wglanConfigurationAddresses = map ({ address, ... }: address) wglanConfiguration;
   wglanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") wglanConfigurationAddresses;
   wglanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") wglanConfigurationAddresses;
+
+  isplanConfiguration = [
+    {
+      cidr = "fd5c:581e:b102:beef::1/64";
+      address = "fd5c:581e:b102:beef::1";
+      network = "fd5c:581e:b102:beef::/64";
+      radv = true;
+    }
+    {
+      cidr = "192.168.0.1/16";
+      address = "192.168.0.1";
+      network = "192.168.0.0/16";
+      dhcpv4 = true;
+    }
+  ];
+
+  isplanConfigurationAddresses = map ({ address, ... }: address) isplanConfiguration;
+  isplanConfigurationAddressesIpv4 = lib.filter (lib.hasInfix ".") isplanConfigurationAddresses;
+  isplanConfigurationAddressesIpv6 = lib.filter (lib.hasInfix ":") isplanConfigurationAddresses;
+
+  isplanConfigurationNetworks = map ({ network, ... }: network) isplanConfiguration;
+  isplanConfigurationNetworksIpv4 = lib.filter (lib.hasInfix ".") isplanConfigurationNetworks;
+
+  # Netfilter queue number for nfqws DPI bypass.
+  zapretQnum = 200;
+  zapretFwmark = 1073741824; # 0x40000000
+
+  # Networks that voluntarily block our traffic, usually based on GeoIP
+  # databases, have to be routed through VPN.
+  ipblockNetworks = lib.concatMap (x: x.networks) (lib.importJSON ../../zapret/ipblock.json);
+  ipblockNetworksIpv4 = lib.filter (lib.hasInfix ".") ipblockNetworks;
+  ipblockNetworksIpv6 = lib.filter (lib.hasInfix ":") ipblockNetworks;
 in
 {
   system.stateVersion = "23.11";
@@ -110,47 +140,85 @@ in
     19999
   ];
 
-  networking.firewall.interfaces.${wglanInterface} = {
-    allowedUDPPorts = [
-      # DHCPv4
-      67
-      # DNS
-      53
-      # Multicast DNS
-      5353
-    ];
-    allowedTCPPorts = [
-      # DNS
-      53
-    ];
-  };
+  networking.firewall.interfaces =
+    lib.genAttrs
+      [
+        wglanInterface
+        isplanInterface
+      ]
+      (_: {
+        allowedUDPPorts = [
+          # DHCPv4
+          67
+          # DNS
+          53
+          # Multicast DNS
+          5353
+        ];
+        allowedTCPPorts = [
+          # DNS
+          53
+        ];
+      });
 
   networking.tcpmssClamping.enable = true;
 
-  services.nfqws = {
-    enable = true;
-    instances."" = {
-      settings = {
-        qnum = zapretQnum;
-      };
-      profiles = {
-        "20-https".settings = {
-          filter-l7 = "tls,quic";
-          hostlist-auto = "hosts.txt";
-          hostlist-auto-fail-threshold = 1;
-          dpi-desync = "fake";
-          dpi-desync-ttl = 4;
-          dpi-desync-fwmark = zapretFwmark;
+  services.nfqws =
+    let
+      zapretDesyncTTL = 5;
+      zapretDesyncRepeats = 5;
+      zapretFakeTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_www_google_com.bin;
+      zapretFakeQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_www_google_com.bin;
+      # Avoids auto hostlist pollution with subdomains.
+      zapretHostlistFiles = map pkgs.copyPathToStore [
+        ../../zapret/rutracker-domains.txt
+        ../../zapret/discord-domains.txt
+        ../../zapret/youtube-domains.txt
+        ../../zapret/twitter-domains.txt
+      ];
+      zapretHostlistDomains = lib.concatStringsSep "," [
+        "cloudflare-ech.com"
+      ];
+      zapretHostlistExcludeDomains = lib.concatStringsSep "," [
+        "dns.quad9.net"
+      ];
+      # TODO: hm, it should be possible to detect Discord voice protocol.
+      zapretDiscordIpset = pkgs.copyPathToStore ../../zapret/discord-ipset.txt;
+    in
+    {
+      enable = true;
+      instances."" = {
+        settings = {
+          qnum = zapretQnum;
         };
-        "99-known".settings = {
-          dpi-desync = "fakeknown";
-          dpi-desync-ttl = 4;
-          dpi-desync-repeats = 3;
-          dpi-desync-fwmark = zapretFwmark;
+        profiles = {
+          "50-https".settings = {
+            filter-l7 = "http,tls,quic";
+            hostlist = zapretHostlistFiles;
+            hostlist-domains = zapretHostlistDomains;
+            hostlist-exclude-domains = zapretHostlistExcludeDomains;
+            hostlist-auto = "hosts.txt";
+            hostlist-auto-fail-threshold = 1;
+            dpi-desync = "fake,fakedsplit";
+            dpi-desync-fake-tls = zapretFakeTLS;
+            dpi-desync-fake-quic = zapretFakeQUIC;
+            dpi-desync-ttl = zapretDesyncTTL;
+            dpi-desync-repeats = zapretDesyncRepeats;
+            dpi-desync-fwmark = zapretFwmark;
+          };
+          "70-discord-voice".settings = {
+            filter-udp = "50000-50100";
+            ipset = zapretDiscordIpset;
+            dpi-desync = "fake";
+            dpi-desync-any-protocol = true;
+            dpi-desync-cutoff = "d3";
+            dpi-desync-ttl = zapretDesyncTTL;
+            dpi-desync-repeats = zapretDesyncRepeats;
+            dpi-desync-fwmark = zapretFwmark;
+          };
         };
       };
     };
-  };
 
   # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
   # https://www.netfilter.org/projects/nftables/manpage.html
@@ -163,9 +231,12 @@ in
 
       set services {
         type inet_proto . inet_service
+        flags interval
         elements = {
+          tcp . 80,
           tcp . 443,
           udp . 443,
+          udp . 50000-50100,
         }
       }
 
@@ -189,6 +260,41 @@ in
     '';
   };
 
+  networking.nftables.tables.ipblock-nat = {
+    family = "inet";
+    content = ''
+      define local = ${isplanInterface}
+      define tunnel = ${wireguardInterface}
+
+      # nftables currently does not have type that represents a union of
+      # `ipv{6,4}_addr`. See https://unix.stackexchange.com/a/647640
+      set networks6 {
+        type ipv6_addr
+        flags interval
+        auto-merge
+        elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv6} }
+      }
+      set networks4 {
+        type ipv4_addr
+        flags interval
+        auto-merge
+        elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv4} }
+      }
+
+      chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        ip daddr @networks4 iifname $local oifname $tunnel masquerade
+        ip6 daddr @networks6 iifname $local oifname $tunnel masquerade
+      }
+    '';
+  };
+
+  networking.nat = {
+    enable = true;
+    externalInterface = ispInterface;
+    internalIPs = isplanConfigurationNetworksIpv4;
+  };
+
   systemd.network.config = {
     networkConfig = {
       IPv4Forwarding = true;
@@ -207,6 +313,16 @@ in
     bridgeConfig = {
       DefaultPVID = "none";
       VLANFiltering = true;
+    };
+  };
+
+  systemd.network.netdevs."10-isplan" = {
+    netdevConfig = {
+      Name = isplanInterface;
+      Kind = "vlan";
+    };
+    vlanConfig = {
+      Id = isplanVlanId;
     };
   };
 
@@ -266,14 +382,16 @@ in
       VLAN = [
         ispInterface
         wglanInterface
+        isplanInterface
       ];
       ConfigureWithoutCarrier = true;
       # https://github.com/systemd/systemd/issues/575#issuecomment-163810166
       LinkLocalAddressing = false;
     };
     bridgeVLANs = [
-      { VLAN = wglanVlanId; }
       { VLAN = ispVlanId; }
+      { VLAN = wglanVlanId; }
+      { VLAN = isplanVlanId; }
     ];
     linkConfig = {
       RequiredForOnline = "no-carrier:carrier";
@@ -303,6 +421,7 @@ in
       }
       # Allow downstream devices to access ISP network.
       { VLAN = ispVlanId; }
+      { VLAN = isplanVlanId; }
     ];
     linkConfig = {
       RequiredForOnline = "no-carrier:enslaved";
@@ -413,6 +532,92 @@ in
     };
   };
 
+  systemd.network.networks."10-isplan" = {
+    matchConfig = {
+      Name = isplanInterface;
+    };
+    networkConfig = {
+      ConfigureWithoutCarrier = true;
+      IPv6PrivacyExtensions = true;
+      IPv6AcceptRA = false;
+      IPv6SendRA = true;
+      DHCPServer = true;
+      DHCPPrefixDelegation = true;
+      MulticastDNS = true;
+      LLMNR = true;
+    };
+    dhcpServerConfig = {
+      DNS = isplanConfigurationAddressesIpv4;
+    };
+    ipv6SendRAConfig = {
+      RetransmitSec = 1800; # 30 minutes
+      DNS = isplanConfigurationAddressesIpv6;
+    };
+    dhcpPrefixDelegationConfig = {
+      UplinkInterface = ispInterface;
+    };
+    addresses =
+      let
+        makeAddress =
+          {
+            cidr,
+            tempAddr ? false,
+            ...
+          }:
+          {
+            Address = cidr;
+            AddPrefixRoute = false;
+          }
+          // lib.optionalAttrs tempAddr { ManageTemporaryAddress = true; };
+      in
+      map makeAddress isplanConfiguration;
+    routes =
+      let
+        makeRoute =
+          { network, address, ... }:
+          {
+            Destination = network;
+            PreferredSource = address;
+          };
+      in
+      map makeRoute isplanConfiguration;
+    ipv6Prefixes =
+      let
+        makeIPv6Prefix =
+          { network, ... }:
+          {
+            Prefix = network;
+          };
+        radv = lib.filter (
+          {
+            radv ? false,
+            ...
+          }:
+          radv
+        ) isplanConfiguration;
+      in
+      map makeIPv6Prefix radv;
+    ipv6RoutePrefixes =
+      let
+        makeIPv6RoutePrefix =
+          { network, ... }:
+          {
+            Route = network;
+          };
+        radv = lib.filter (
+          {
+            radv ? false,
+            ...
+          }:
+          radv
+        ) isplanConfiguration;
+      in
+      map makeIPv6RoutePrefix radv;
+    linkConfig = {
+      RequiredForOnline = "no-carrier:routable";
+    };
+  };
+
   systemd.network.networks."10-isp" = {
     matchConfig = {
       Name = ispInterface;
@@ -438,7 +643,7 @@ in
       UseDNS = false;
     };
     dhcpV6Config = {
-      UseDelegatedPrefix = false;
+      UseDelegatedPrefix = true;
       UseDNS = false;
     };
     dhcpV4Config = {
@@ -472,7 +677,10 @@ in
             PreferredSource = address;
           };
       in
-      map makeRoute wireguardConfiguration;
+      map makeRoute wireguardConfiguration
+      ++ map (network: {
+        Destination = network;
+      }) ipblockNetworks;
     routingPolicyRules =
       let
         makeRoutingPolicyRule =
@@ -491,7 +699,11 @@ in
 
   services.resolved = {
     extraConfig =
-      lib.concatLines (map (address: "DNSStubListenerExtra=" + address) wglanConfigurationAddresses)
+      lib.concatLines (
+        map (address: "DNSStubListenerExtra=" + address) (
+          wglanConfigurationAddresses ++ isplanConfigurationAddresses
+        )
+      )
       + ''
         StaleRetentionSec=1d
       '';
