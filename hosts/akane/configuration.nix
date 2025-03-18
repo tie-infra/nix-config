@@ -415,13 +415,12 @@ in
       ConfigureWithoutCarrier = true;
     };
     bridgeVLANs = [
-      {
-        PVID = wglanVlanId;
-        EgressUntagged = wglanVlanId;
-      }
-      # Allow downstream devices to access ISP network.
       { VLAN = ispVlanId; }
-      { VLAN = isplanVlanId; }
+      { VLAN = wglanVlanId; }
+      {
+        PVID = isplanVlanId;
+        EgressUntagged = isplanVlanId;
+      }
     ];
     linkConfig = {
       RequiredForOnline = "no-carrier:enslaved";
@@ -681,6 +680,9 @@ in
       ++ map (network: {
         Destination = network;
       }) ipblockNetworks;
+    # Note that WireGuard host must be running MSS fix since the kernel does not
+    # take non-main routing tables into account for nftables’s `set rt mtu`.
+    # See https://github.com/openwrt/openwrt/issues/12112
     routingPolicyRules =
       let
         makeRoutingPolicyRule =
