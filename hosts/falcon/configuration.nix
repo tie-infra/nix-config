@@ -39,7 +39,7 @@
       externalInterface = "enp9s0";
       internalIPs = [ "172.16.0.0/12" ];
     };
-    tcpmssClamping = {
+    mssfix = {
       enable = true;
     };
   };

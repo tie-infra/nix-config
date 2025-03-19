@@ -161,7 +161,7 @@ in
         ];
       });
 
-  networking.tcpmssClamping.enable = true;
+  networking.mssfix.enable = true;
 
   services.nfqws =
     let
