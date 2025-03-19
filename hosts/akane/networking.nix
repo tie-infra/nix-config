@@ -234,6 +234,11 @@ in
         auto-merge
         elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv6} }
       }
+
+      chain postrouting_ipv6 {
+        ip6 daddr @networks6 iifname $local oifname $tunnel masquerade
+      }
+
       set networks4 {
         type ipv4_addr
         flags interval
@@ -241,10 +246,16 @@ in
         elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv4} }
       }
 
+      chain postrouting_ipv4 {
+        ip daddr @networks4 iifname $local oifname $tunnel masquerade
+      }
+
       chain postrouting {
         type nat hook postrouting priority srcnat; policy accept;
-        ip daddr @networks4 iifname $local oifname $tunnel masquerade
-        ip6 daddr @networks6 iifname $local oifname $tunnel masquerade
+        meta protocol vmap {
+          ip : jump postrouting_ipv4,
+          ip6 : jump postrouting_ipv6,
+        }
       }
     '';
   };
