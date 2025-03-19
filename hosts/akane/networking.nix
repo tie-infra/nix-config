@@ -95,6 +95,11 @@ in
     "net.netfilter.nf_conntrack_tcp_be_liberal" = true;
   };
 
+  networking.firewall = {
+    checkReversePath = "strict";
+    logReversePathDrops = true;
+  };
+
   networking.firewall.interfaces =
     lib.genAttrs
       [
