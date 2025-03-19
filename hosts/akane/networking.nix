@@ -98,6 +98,11 @@ in
   networking.firewall = {
     checkReversePath = "strict";
     logReversePathDrops = true;
+    # Supress IGMP spam in logs from ISP’s IPTV implementation that uses
+    # 10.0.0.0/8 subnet. See also https://zveronline.ru/archives/1120
+    extraReversePathFilterRules = ''
+      ip protocol igmp drop
+    '';
   };
 
   networking.firewall.interfaces =
