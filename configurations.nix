@@ -4,6 +4,7 @@
     bootstrap-x86-64 = nixosWithSystem "x86_64-linux" [ ./hosts/bootstrap/configuration.nix ];
     akane = nixosWithSystem "x86_64-linux" [
       ./hosts/akane/configuration.nix
+      ./hosts/akane/networking.nix
       inputs.amneziawg.nixosModules.nixos-2411
     ];
     brim = nixosWithSystem "x86_64-linux" [ ./hosts/brim/configuration.nix ];
