@@ -63,9 +63,9 @@ let
       network = "fd5c:581e:b102:beef::/64";
     }
     {
-      cidr = "10.0.0.1/8";
-      address = "10.0.0.1";
-      network = "10.0.0.0/8";
+      cidr = "10.10.10.10/16";
+      address = "10.10.10.10";
+      network = "10.10.0.0/16";
     }
   ];
 
@@ -98,11 +98,6 @@ in
   networking.firewall = {
     checkReversePath = "strict";
     logReversePathDrops = true;
-    # Supress IGMP spam in logs from ISP’s IPTV implementation that uses
-    # 10.0.0.0/8 subnet. See also https://zveronline.ru/archives/1120
-    extraReversePathFilterRules = ''
-      ip protocol igmp drop
-    '';
   };
 
   networking.firewall.interfaces =
