@@ -30,6 +30,8 @@ in
     ];
     shellAliases = {
       lsd = "lsblk --nodeps --output=MODEL,SERIAL,SIZE,NAME,TYPE,TRAN,FSTYPE --sort=NAME";
+      ip4 = "ip -4";
+      ip6 = "ip -6";
     };
     variables = {
       # Most terminals are dark, but ip from iproute2 assumes otherwise.

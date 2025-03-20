@@ -19,9 +19,27 @@ let
   bridgeInterface = "br0";
   wireguardInterface = "wg0";
 
+  # An additional table for our routes, except that it the default route uses
+  # WireGuard interface instead of direct ISP connection.
+  #
+  # Note that WireGuard host must be running MSS fix since the kernel does not
+  # take non-main routing tables into account for nftables’s `set rt mtu`.
+  # See https://github.com/openwrt/openwrt/issues/12112
+  #
+  # In addition to that, we can’t use IncomingInterface= for PBR because reverse
+  # path filter implementation in NixOS firewall uses prerouting hook. See also
+  # https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=be8be04e5ddb9842d4ff2c1e4eaeec6ca801c573
   wireguardRouteTable = "wireguard";
   wireguardRouteTableNumber = 1000;
-  wireguardRoutingPolicyRulePriority = 1000;
+
+  withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
+  spliceTables =
+    routeConfigs: routeTables:
+    routeConfigs
+    ++ lib.mapCartesianProduct (x: withTable x.routeTable x.routeConfig) {
+      routeTable = routeTables;
+      routeConfig = routeConfigs;
+    };
 
   wireguardEndpoint = "falcon.tie.rip:51820";
   wireguardConfiguration = [
@@ -82,6 +100,16 @@ let
   zapretQnum = 200;
   zapretFwmark = 1073741824; # 0x40000000
 
+  # TODO: do not allow external interfaces to poke around with private networks.
+  # See also https://en.wikipedia.org/wiki/Private_network
+  # and https://en.wikipedia.org/wiki/Martian_packet
+  #privateNetworks = [
+  #  "fc00::/7"
+  #  "10.0.0.0/8"
+  #  "172.16.0.0/12"
+  #  "192.168.0.0/16"
+  #];
+
   # Networks that voluntarily block our traffic, usually based on GeoIP
   # databases, have to be routed through VPN.
   ipblockNetworks = lib.concatMap (x: x.networks) (lib.importJSON ../../zapret/ipblock.json);
@@ -98,6 +126,11 @@ in
   networking.firewall = {
     checkReversePath = "strict";
     logReversePathDrops = true;
+    # Suppress rpfilter drop logs for IGMP traffic (i.e. IPTV) from ISP.
+    # See also https://zveronline.ru/archives/1120
+    #extraReversePathFilterRules = ''
+    #  iifname ${ispInterface} ip protocol igmp drop
+    #'';
   };
 
   networking.firewall.interfaces =
@@ -456,10 +489,8 @@ in
             Destination = network;
             PreferredSource = address;
           };
-        routes = map makeRoute wglanConfiguration;
-        withTable = routeTable: routeConfig: routeConfig // { Table = routeTable; };
       in
-      routes ++ map (withTable wireguardRouteTable) routes;
+      spliceTables (map makeRoute wglanConfiguration) [ wireguardRouteTable ];
     ipv6Prefixes =
       let
         makeIPv6Prefix =
@@ -469,6 +500,16 @@ in
           };
       in
       map makeIPv6Prefix wglanConfigurationIpv6;
+    routingPolicyRules =
+      let
+        makeRoutingPolicyRule =
+          { network, ... }:
+          {
+            From = network;
+            Table = wireguardRouteTable;
+          };
+      in
+      map makeRoutingPolicyRule wglanConfiguration;
     linkConfig = {
       RequiredForOnline = "no-carrier:routable";
     };
@@ -517,7 +558,7 @@ in
             PreferredSource = address;
           };
       in
-      map makeRoute isplanConfiguration;
+      spliceTables (map makeRoute isplanConfiguration) [ wireguardRouteTable ];
     ipv6Prefixes =
       let
         makeIPv6Prefix =
@@ -555,13 +596,27 @@ in
     };
     ipv6AcceptRAConfig = {
       UseDNS = false;
+      UseDomains = false;
     };
     dhcpV6Config = {
       UseDelegatedPrefix = true;
+      # TODO: added in systemd version 257.
+      #UnassignedSubnetPolicy = "none";
+
+      # Note: for prefix delegations that are allocated dynamically if released.
+      # Addresses can be safely released though. TODO: add prefixes/addresses
+      # option to systemd?
+      SendRelease = false;
+
       UseDNS = false;
+      UseDomains = false;
+      UseNTP = false;
     };
     dhcpV4Config = {
       UseDNS = false;
+      UseDomains = false;
+      UseNTP = false;
+      UseSIP = false;
     };
     linkConfig = {
       RequiredForOnline = "routable";
@@ -595,20 +650,6 @@ in
       ++ map (network: {
         Destination = network;
       }) ipblockNetworks;
-    # Note that WireGuard host must be running MSS fix since the kernel does not
-    # take non-main routing tables into account for nftables’s `set rt mtu`.
-    # See https://github.com/openwrt/openwrt/issues/12112
-    routingPolicyRules =
-      let
-        makeRoutingPolicyRule =
-          { network, ... }:
-          {
-            From = network;
-            Table = wireguardRouteTable;
-            Priority = wireguardRoutingPolicyRulePriority;
-          };
-      in
-      map makeRoutingPolicyRule wireguardConfiguration;
     linkConfig = {
       RequiredForOnline = "carrier:routable";
     };
