@@ -226,17 +226,13 @@ in
       define local = ${isplanInterface}
       define tunnel = ${wireguardInterface}
 
-      # nftables currently does not have type that represents a union of
+      # nftables currently does not have a type that represents a union of
       # `ipv{6,4}_addr`. See https://unix.stackexchange.com/a/647640
       set networks6 {
         type ipv6_addr
         flags interval
         auto-merge
         elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv6} }
-      }
-
-      chain postrouting_ipv6 {
-        ip6 daddr @networks6 iifname $local oifname $tunnel masquerade
       }
 
       set networks4 {
@@ -246,16 +242,21 @@ in
         elements = { ${lib.concatStringsSep ", " ipblockNetworksIpv4} }
       }
 
+      chain postrouting_ipv6 {
+        ip6 daddr @networks6 masquerade
+      }
+
       chain postrouting_ipv4 {
-        ip daddr @networks4 iifname $local oifname $tunnel masquerade
+        ip daddr @networks4 masquerade
       }
 
       chain postrouting {
         type nat hook postrouting priority srcnat; policy accept;
-        meta protocol vmap {
-          ip : jump postrouting_ipv4,
-          ip6 : jump postrouting_ipv6,
-        }
+        iifname $local oifname $tunnel \
+          meta protocol vmap {
+            ip : jump postrouting_ipv4,
+            ip6 : jump postrouting_ipv6,
+          }
       }
     '';
   };
