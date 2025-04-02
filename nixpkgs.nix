@@ -14,6 +14,7 @@
           (import ./overlays/java-wrappers.nix)
           (import ./overlays/mcactivity.nix)
           (import ./overlays/zapret/default.nix)
+          (import ./overlays/sonarr/default.nix)
         ];
 
         config.allowUnfreePredicate =
