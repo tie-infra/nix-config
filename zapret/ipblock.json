@@ -51,6 +51,13 @@
     ]
   },
   {
+    "domain": "claude.ai",
+    "networks": [
+      "2607:6bc0::10/128",
+      "160.79.104.10/32"
+    ]
+  },
+  {
     "domain": "buf.build",
     "networks": [
       "34.95.72.198/32"
