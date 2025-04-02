@@ -160,8 +160,8 @@ in
     let
       zapretDesyncTTL = 5;
       zapretDesyncRepeats = 5;
-      zapretFakeTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_www_google_com.bin;
-      zapretFakeQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_www_google_com.bin;
+      zapretFakeTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_vk_com.bin;
+      zapretFakeQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_vk_com.bin;
       # Avoids auto hostlist pollution with subdomains.
       zapretHostlistFiles = map pkgs.copyPathToStore [
         ../../zapret/rutracker-domains.txt
