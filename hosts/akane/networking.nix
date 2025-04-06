@@ -175,8 +175,6 @@ in
       zapretHostlistExcludeDomains = lib.concatStringsSep "," [
         "dns.quad9.net"
       ];
-      # TODO: hm, it should be possible to detect Discord voice protocol.
-      zapretDiscordIpset = pkgs.copyPathToStore ../../zapret/discord-ipset.txt;
     in
     {
       enable = true;
@@ -201,12 +199,9 @@ in
           };
           "70-discord-voice".settings = {
             filter-udp = "50000-50100";
-            ipset = zapretDiscordIpset;
+            filter-l7 = "discord,stun";
             dpi-desync = "fake";
-            dpi-desync-any-protocol = true;
-            dpi-desync-cutoff = "d3";
             dpi-desync-ttl = zapretDesyncTTL;
-            dpi-desync-repeats = zapretDesyncRepeats;
             dpi-desync-fwmark = zapretFwmark;
           };
         };
