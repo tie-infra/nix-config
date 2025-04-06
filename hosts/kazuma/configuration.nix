@@ -44,7 +44,7 @@
 
   systemd.network.networks."10-wan" = {
     matchConfig = {
-      Name = "enp34s0";
+      Name = "enp6s0";
     };
     networkConfig = {
       DHCP = "yes";
