@@ -398,10 +398,49 @@ in
     };
   };
 
-  systemd.network.networks."10-bridge-lan" = {
+  systemd.network.networks."10-bridge-isp" = {
+    matchConfig = {
+      Name = [ "enp2s0" ];
+    };
+    networkConfig = {
+      Bridge = bridgeInterface;
+      ConfigureWithoutCarrier = true;
+    };
+    bridgeVLANs = [
+      {
+        PVID = ispVlanId;
+        EgressUntagged = ispVlanId;
+      }
+    ];
+    linkConfig = {
+      RequiredForOnline = "no-carrier:enslaved";
+    };
+  };
+
+  systemd.network.networks."10-bridge-lan-isplan-only" = {
     matchConfig = {
       Name = [
         "enp3s0"
+      ];
+    };
+    networkConfig = {
+      Bridge = bridgeInterface;
+      ConfigureWithoutCarrier = true;
+    };
+    bridgeVLANs = [
+      {
+        PVID = isplanVlanId;
+        EgressUntagged = isplanVlanId;
+      }
+    ];
+    linkConfig = {
+      RequiredForOnline = "no-carrier:enslaved";
+    };
+  };
+
+  systemd.network.networks."10-bridge-lan-vlan-aware" = {
+    matchConfig = {
+      Name = [
         "enp4s0"
         "enp5s0"
         "enp6s0"
@@ -420,25 +459,6 @@ in
       {
         PVID = isplanVlanId;
         EgressUntagged = isplanVlanId;
-      }
-    ];
-    linkConfig = {
-      RequiredForOnline = "no-carrier:enslaved";
-    };
-  };
-
-  systemd.network.networks."10-bridge-isp" = {
-    matchConfig = {
-      Name = [ "enp2s0" ];
-    };
-    networkConfig = {
-      Bridge = bridgeInterface;
-      ConfigureWithoutCarrier = true;
-    };
-    bridgeVLANs = [
-      {
-        PVID = ispVlanId;
-        EgressUntagged = ispVlanId;
       }
     ];
     linkConfig = {
