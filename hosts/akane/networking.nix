@@ -41,7 +41,7 @@ let
       routeConfig = routeConfigs;
     };
 
-  wireguardEndpoint = "falcon.tie.rip:51820";
+  wireguardPort = 51820;
   wireguardConfiguration = [
     {
       cidr = "2a01:4f8:222:fee0::1/60";
@@ -126,6 +126,7 @@ in
   networking.firewall = {
     checkReversePath = "strict";
     logReversePathDrops = true;
+    allowedUDPPorts = [ wireguardPort ];
     # Suppress rpfilter drop logs for IGMP traffic (i.e. IPTV) from ISP.
     # See also https://zveronline.ru/archives/1120
     #extraReversePathFilterRules = ''
@@ -352,24 +353,18 @@ in
       Kind = "wireguard";
     };
     wireguardConfig = {
+      ListenPort = wireguardPort;
       PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
-      H1 = 224412;
-      H2 = 52344123;
-      H3 = 6713390;
-      H4 = 2537922;
     };
     wireguardPeers = [
       {
-        AdvancedSecurity = true;
         AllowedIPs = [
           "::/0"
           "0.0.0.0/0"
         ];
         RouteTable = wireguardRouteTable;
         PublicKey = "8LgfPosHOG0SpUGqIlYesskq00Y6wihLtgZFUkutdE0=";
-        Endpoint = wireguardEndpoint;
         PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-        PersistentKeepalive = 30;
       }
     ];
   };

@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   system.stateVersion = "24.05";
 
@@ -17,6 +17,14 @@
     chassis = "server";
     location = "Falkenstein";
   };
+
+  environment.systemPackages = with pkgs; [
+    wireguard-tools
+    traceroute
+    tcpdump
+    ndisc6
+    iperf3
+  ];
 
   profiles.btrfs-erase-your-darlings = {
     enable = true;
@@ -67,7 +75,6 @@
             Address = "2a01:4f8:222:1618::1/64";
             AddPrefixRoute = false;
             DuplicateAddressDetection = "none";
-            ManageTemporaryAddress = true;
           }
           {
             Address = "213.133.111.103/27";
@@ -124,7 +131,6 @@
         wireguardPeers = [
           # akane
           {
-            AdvancedSecurity = true;
             AllowedIPs = [
               "2a01:4f8:222:fee0::/60"
               # NB 28d = 00011100b = 1Ch, damn IPv4 subnets are not easy.
@@ -133,7 +139,9 @@
             ];
             RouteTable = "main";
             PublicKey = "gvAPp/g475vG9Jpj9b4rdPKPwhIKvuxynuw8EffMrGk=";
+            Endpoint = "akane.tie.rip:51820";
             PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+            PersistentKeepalive = 30;
           }
           # eerie (TODO: remove after rolling out akane)
           {
