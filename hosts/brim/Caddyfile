@@ -56,6 +56,11 @@ hunt-api.brim.su {
 	reverse_proxy 84.23.43.94:1896
 }
 
+pubg-api.brim.su {
+	import tls-brim-su
+	reverse_proxy 84.23.43.94:2017
+}
+
 assets.brim.su {
 	import tls-brim-su
 	redir https://brim.su/assets/ permanent
