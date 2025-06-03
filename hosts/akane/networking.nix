@@ -169,6 +169,7 @@ in
         ../../zapret/discord-domains.txt
         ../../zapret/youtube-domains.txt
         ../../zapret/twitter-domains.txt
+        ../../zapret/facebook-domains.txt
       ];
       zapretHostlistDomains = lib.concatStringsSep "," [
         "cloudflare-ech.com"
@@ -184,14 +185,24 @@ in
           qnum = zapretQnum;
         };
         profiles = {
+          "40-googlevideo".settings = {
+            filter-l7 = "tls,quic";
+            hostlist-domains = [ "googlevideo.com" ];
+            dpi-desync = "fake";
+            dpi-desync-fake-tls-mod = "rnd,rndsni,padencap";
+            dpi-desync-fake-quic = zapretFakeQUIC;
+            dpi-desync-ttl = zapretDesyncTTL;
+            dpi-desync-repeats = zapretDesyncRepeats;
+            dpi-desync-fwmark = zapretFwmark;
+          };
           "50-https".settings = {
             filter-l7 = "http,tls,quic";
             hostlist = zapretHostlistFiles;
             hostlist-domains = zapretHostlistDomains;
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
-            hostlist-auto-fail-threshold = 1;
-            dpi-desync = "fake,fakedsplit";
+            hostlist-auto-fail-threshold = 3;
+            dpi-desync = "fake";
             dpi-desync-fake-tls = zapretFakeTLS;
             dpi-desync-fake-quic = zapretFakeQUIC;
             dpi-desync-ttl = zapretDesyncTTL;
