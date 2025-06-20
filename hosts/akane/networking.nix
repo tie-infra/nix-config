@@ -160,7 +160,7 @@ in
   services.nfqws =
     let
       zapretDesyncTTL = 5;
-      zapretDesyncRepeats = 5;
+      zapretDesyncRepeats = 8;
       zapretFakeTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_vk_com.bin;
       zapretFakeQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_vk_com.bin;
       # Avoids auto hostlist pollution with subdomains.
@@ -202,7 +202,8 @@ in
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
             hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fake";
+            dpi-desync = "fakedsplit";
+            dpi-desync-split-pos = 1;
             dpi-desync-fake-tls = zapretFakeTLS;
             dpi-desync-fake-quic = zapretFakeQUIC;
             dpi-desync-ttl = zapretDesyncTTL;

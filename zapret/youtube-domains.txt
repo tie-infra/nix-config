@@ -1,5 +1,6 @@
 # Source: https://github.com/Flowseal/zapret-discord-youtube/blob/main/list-general.txt
 ggpht.com
+googlevideo.com
 jnn-pa.googleapis.com
 wide-youtube.l.google.com
 youtube-nocookie.com
