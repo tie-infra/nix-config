@@ -206,9 +206,11 @@ in
       settings.qnum = 200;
       profiles."".settings = {
         dpi-desync = "fakeknown";
-        dpi-desync-ttl = 1;
+        dpi-desync-fooling = "badseq";
+        hostlist = map pkgs.copyPathToStore [
+          ../../zapret/discord-domains.txt
+        ];
         hostlist-domains = lib.concatStringsSep "," [
-          "discord.com"
           "cloudflare-ech.com" # TLS ECH
         ];
       };
