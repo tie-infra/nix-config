@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.11";
+    nixpkgs.url = "nixpkgs/nixos-25.05";
 
     flake-parts.url = "flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -19,6 +19,7 @@
     btrfs-rollback.url = "github:tie-infra/btrfs-rollback";
     btrfs-rollback.inputs.nixpkgs.follows = "nixpkgs";
     btrfs-rollback.inputs.flake-parts.follows = "flake-parts";
+    btrfs-rollback.inputs.minimal-shell.follows = "minimal-shell";
 
     steam-games.url = "github:tie-infra/steam-games";
     steam-games.inputs.nixpkgs.follows = "nixpkgs";

@@ -22,7 +22,7 @@ in
       htop
       btop
       duf
-      dstat
+      dool
       vim
       rcon
       mc

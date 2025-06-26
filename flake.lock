@@ -2,11 +2,11 @@
   "nodes": {
     "amneziawg": {
       "locked": {
-        "lastModified": 1735106119,
-        "narHash": "sha256-KAZAo0I2tlRg7WP0sq3UGipPhByDMg8IrUQXdVwNyHA=",
+        "lastModified": 1750921012,
+        "narHash": "sha256-LKP76X+Gihv6VyCcEL78Z7oOTjdO2BsvqG6lJOqlyX0=",
         "owner": "tie-infra",
         "repo": "amneziawg",
-        "rev": "3272242685353f97404e29a76c1cccbb0fa58442",
+        "rev": "c0c5cade1f302278a6a0c2ff0ccece4bb4c76a93",
         "type": "github"
       },
       "original": {
@@ -20,18 +20,19 @@
         "flake-parts": [
           "flake-parts"
         ],
-        "minimal-shell": "minimal-shell",
+        "minimal-shell": [
+          "minimal-shell"
+        ],
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "systems": "systems"
+        ]
       },
       "locked": {
-        "lastModified": 1687527843,
-        "narHash": "sha256-9tu7qMqaWijtUBJj43YzLVfileWEZAYMG6SvFkp7YDY=",
+        "lastModified": 1750922143,
+        "narHash": "sha256-CnFR1QlHf3oPZ1nkKmjKZi+OEMmMJv3b8BjJB1OTPno=",
         "owner": "tie-infra",
         "repo": "btrfs-rollback",
-        "rev": "d7fe4402132ddbd2c76936f6b4f3417edf09097e",
+        "rev": "6c78d639dc137a2b9852d8597e2c2a76d50babb8",
         "type": "github"
       },
       "original": {
@@ -47,11 +48,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1740872218,
-        "narHash": "sha256-ZaMw0pdoUKigLpv9HiNDH2Pjnosg7NBYMJlHTIsHEUo=",
+        "lastModified": 1749398372,
+        "narHash": "sha256-tYBdgS56eXYaWVW3fsnPQ/nFlgWi/Z2Ymhyu21zVM98=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "3876f6b87db82f33775b1ef5ea343986105db764",
+        "rev": "9305fe4e5c2a6fcf5ba6a3ff155720fbe4076569",
         "type": "github"
       },
       "original": {
@@ -60,21 +61,6 @@
       }
     },
     "minimal-shell": {
-      "locked": {
-        "lastModified": 1686338447,
-        "narHash": "sha256-v/TBT/lYk62YpcGr1KVVk8Oyg+2flArdM5OG6cwei04=",
-        "owner": "tie-infra",
-        "repo": "minimal-shell",
-        "rev": "689bcf6995544aca458e22d262466ab02417d7e3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tie-infra",
-        "repo": "minimal-shell",
-        "type": "github"
-      }
-    },
-    "minimal-shell_2": {
       "inputs": {
         "nixpkgs-lib": [
           "nixpkgs"
@@ -96,16 +82,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1743231893,
-        "narHash": "sha256-tpJsHMUPEhEnzySoQxx7+kA+KUtgWqvlcUBqROYNNt0=",
+        "lastModified": 1750838302,
+        "narHash": "sha256-aVkL3/yu50oQzi2YuKo0ceiCypVZpZXYd2P2p1FMJM4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c570c1f5304493cafe133b8d843c7c1c4a10d3a6",
+        "rev": "7284e2decc982b81a296ab35aa46e804baaa1cfe",
         "type": "github"
       },
       "original": {
         "id": "nixpkgs",
-        "ref": "nixos-24.11",
+        "ref": "nixos-25.05",
         "type": "indirect"
       }
     },
@@ -114,7 +100,7 @@
         "amneziawg": "amneziawg",
         "btrfs-rollback": "btrfs-rollback",
         "flake-parts": "flake-parts",
-        "minimal-shell": "minimal-shell_2",
+        "minimal-shell": "minimal-shell",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix",
         "steam-games": "steam-games",
@@ -128,11 +114,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1741043164,
-        "narHash": "sha256-9lfmSZLz6eq9Ygr6cCmvQiiBEaPb54pUBcjvbEMPORc=",
+        "lastModified": 1750119275,
+        "narHash": "sha256-Rr7Pooz9zQbhdVxux16h7URa6mA80Pb/G07T4lHvh0M=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "3f2412536eeece783f0d0ad3861417f347219f4d",
+        "rev": "77c423a03b9b2b79709ea2cb63336312e78b72e2",
         "type": "github"
       },
       "original": {
@@ -153,31 +139,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1741190531,
-        "narHash": "sha256-rJ43Zjc9awWxx1r8ZqhvqDNTaXzd1hkRPxaK4kYBXSE=",
+        "lastModified": 1750919776,
+        "narHash": "sha256-nlK7/8hJQXSaUnXR8Ih0Q47JrkIfIn5TW/uihUIwh+0=",
         "owner": "tie-infra",
         "repo": "steam-games",
-        "rev": "c9061536cd12ef61e409470ab2fa1050a418c9c2",
+        "rev": "934cbb13d97db493a87be4c150e6c956137f2b02",
         "type": "github"
       },
       "original": {
         "owner": "tie-infra",
         "repo": "steam-games",
         "type": "github"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "id": "systems",
-        "type": "indirect"
       }
     },
     "treefmt-nix": {
@@ -187,11 +159,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1739829690,
-        "narHash": "sha256-mL1szCeIsjh6Khn3nH2cYtwO5YXG6gBiTw1A30iGeDU=",
+        "lastModified": 1749194973,
+        "narHash": "sha256-eEy8cuS0mZ2j/r/FE0/LYBSBcIs/MKOIVakwHVuqTfk=",
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "rev": "3d0579f5cc93436052d94b73925b48973a104204",
+        "rev": "a05be418a1af1198ca0f63facb13c985db4cb3c5",
         "type": "github"
       },
       "original": {

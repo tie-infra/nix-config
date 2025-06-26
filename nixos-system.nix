@@ -36,9 +36,9 @@ let
 
   disabledModules = [
     "services/misc/jellyfin.nix"
-    "services/misc/prowlarr.nix"
-    "services/misc/radarr.nix"
-    "services/misc/sonarr.nix"
+    "services/misc/servarr/prowlarr.nix"
+    "services/misc/servarr/radarr.nix"
+    "services/misc/servarr/sonarr.nix"
     "services/networking/zapret.nix"
     "services/torrent/flood.nix"
     "services/torrent/transmission.nix"

@@ -11,7 +11,7 @@
     saitama = nixosWithSystem "x86_64-linux" [ ./hosts/saitama/configuration.nix ];
     falcon = nixosWithSystem "x86_64-linux" [
       ./hosts/falcon/configuration.nix
-      inputs.amneziawg.nixosModules.nixos-2411
+      inputs.amneziawg.nixosModules.nixos-2505
     ];
   };
 }
