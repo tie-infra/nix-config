@@ -95,6 +95,22 @@
         "type": "indirect"
       }
     },
+    "nixpkgs-unstable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750776420,
+        "narHash": "sha256-/CG+w0o0oJ5itVklOoLbdn2dGB0wbZVOoDm4np6w09A=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "30a61f056ac492e3b7cdcb69c1e6abdcf00e39cf",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
     "root": {
       "inputs": {
         "amneziawg": "amneziawg",
@@ -102,6 +118,7 @@
         "flake-parts": "flake-parts",
         "minimal-shell": "minimal-shell",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "sops-nix": "sops-nix",
         "steam-games": "steam-games",
         "treefmt-nix": "treefmt-nix"

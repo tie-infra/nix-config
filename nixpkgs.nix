@@ -15,6 +15,11 @@
           (import ./overlays/mcactivity.nix)
           (import ./overlays/zapret/default.nix)
           (import ./overlays/sonarr/default.nix)
+          (final: _: {
+            depotdownloader =
+              final.callPackage "${inputs.nixpkgs-unstable.outPath}/pkgs/by-name/de/depotdownloader/package.nix"
+                { };
+          })
         ];
 
         config.allowUnfreePredicate =

@@ -4,6 +4,9 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
 
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-unstable.flake = false;
+
     flake-parts.url = "flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
