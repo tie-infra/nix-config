@@ -25,11 +25,16 @@
   networking = {
     hostName = "kazuma";
     firewall = {
-      allowedUDPPorts = [ 3000 ];
+      allowedUDPPorts = [
+        3000
+        7777 # satisfactory-server
+      ];
       allowedTCPPorts = [
         3001
         8080
         5657
+        7777 # satisfactory-server
+        8888 # satisfactory-server
         19999
       ];
       allowedTCPPortRanges = [
@@ -67,6 +72,7 @@
       enable = true;
       extraPackages = with pkgs; [
         eco-server
+        satisfactory-server
         javaWrappers.java8
         javaWrappers.java17
         javaWrappers.java21
