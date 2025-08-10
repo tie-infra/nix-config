@@ -143,6 +143,17 @@
             PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
             PersistentKeepalive = 30;
           }
+          # ryu
+          {
+            AdvancedSecurity = true;
+            AllowedIPs = [
+              "2a01:4f8:222:fe00::2/128"
+              "172.16.0.2/32"
+            ];
+            RouteTable = "main";
+            PublicKey = "vpHDCWEyEf/b16ALkZx94Dc+LOz2fmPqbRFwqnAiYQU=";
+            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+          }
           # eerie (TODO: remove after rolling out akane)
           {
             AdvancedSecurity = true;
