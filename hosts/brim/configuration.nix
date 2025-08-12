@@ -34,7 +34,7 @@ in
 
   profiles.btrfs-erase-your-darlings = {
     enable = true;
-    bootDisk = "/dev/disk/by-uuid/2FAC-A633";
+    bootDisk = "/dev/disk/by-uuid/9F30-7212";
     rootDisk = "/dev/disk/by-uuid/96448376-c96b-4fa0-adcb-65dee46427c0";
   };
 
