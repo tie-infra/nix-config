@@ -147,8 +147,6 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = with pkgs; [
-        satisfactory-server
-        palworld-server
         javaWrappers.java8
         javaWrappers.java17
         javaWrappers.java21
