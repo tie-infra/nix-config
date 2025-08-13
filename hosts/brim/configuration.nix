@@ -44,17 +44,15 @@ in
       allowedTCPPorts = [
         # Caddy HTTP/1 and HTTP/2
         443
+        # Rust
+        28015
+        28082
       ];
       allowedTCPPortRanges = [
-        # Brim Minecraft
+        # Minecraft
         {
           from = 25500;
           to = 25599;
-        }
-        # Shared Minecraft (for Tie)
-        {
-          from = 22500;
-          to = 22599;
         }
       ];
       allowedUDPPorts = [
@@ -69,6 +67,9 @@ in
         # Minecraft SimpleVoiceChat
         24454
         24455
+        # Rust
+        28015
+        28016
       ];
     };
   };
@@ -147,6 +148,7 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = with pkgs; [
+        rust-server
         javaWrappers.java8
         javaWrappers.java17
         javaWrappers.java21

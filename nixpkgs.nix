@@ -27,6 +27,7 @@
             allowUnfree = {
               steamworks-sdk-redist = true;
               satisfactory-server = true;
+              rust-server = true;
               palworld-server = true;
               eco-server = true;
               outline = true;
