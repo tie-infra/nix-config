@@ -10,7 +10,7 @@ import (
 )
 
 type ipblockEntry struct {
-	Domain   string   `json:"domain"`
+	Domain   string   `json:"domain,omitempty"`
 	Networks []string `json:"networks"`
 }
 
@@ -60,8 +60,12 @@ func updateJSONFile(filePath string) error {
 	}
 	for i := range ipblockEntries {
 		entry := &ipblockEntries[i]
+		domain := entry.Domain
+		if domain == "" {
+			continue
+		}
 		var err error
-		entry.Networks, err = resolveDomain(entry.Domain)
+		entry.Networks, err = resolveDomain(domain)
 		if err != nil {
 			return err
 		}
