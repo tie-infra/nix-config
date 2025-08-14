@@ -156,11 +156,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1755077644,
-        "narHash": "sha256-XQ1qvcUNnV6X36W9+Xk+T4hu549NHwPL1mwoKKJdr1g=",
+        "lastModified": 1755187919,
+        "narHash": "sha256-uBj/cwZ1D3AdQGRBYHUx3fvc1mqmAXTt1yPcNI8R/g4=",
         "owner": "tie-infra",
         "repo": "steam-games",
-        "rev": "c2d22977a4bf7762e5501c9e463649b5961ea913",
+        "rev": "7d7ac79ee829b2c6e04807d5bfde86886ca98a76",
         "type": "github"
       },
       "original": {
