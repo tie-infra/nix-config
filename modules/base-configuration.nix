@@ -25,6 +25,7 @@ in
       dool
       vim
       rcon
+      websocat
       mc
       tmux
     ];
