@@ -28,13 +28,14 @@ in
     useDHCP = true;
   };
 
-  environment.systemPackages =
-    [ setup-disk ]
-    ++ (with pkgs; [
-      # Useful for verifying that ECC is working.
-      edac-utils
-      dmidecode
-    ]);
+  environment.systemPackages = [
+    setup-disk
+  ]
+  ++ (with pkgs; [
+    # Useful for verifying that ECC is working.
+    edac-utils
+    dmidecode
+  ]);
 
   services.openssh.hostKeys = [
     {

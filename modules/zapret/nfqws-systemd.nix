@@ -60,36 +60,35 @@ let
 in
 {
   config = mkIf cfg.enable {
-    systemd.services =
-      {
-        "nfqws@" = mkIf (any (x: x != "") (attrNames cfg.instances)) {
-          enable = true;
-          inherit serviceConfig;
-        };
-      }
-      // (mapAttrs' (
-        name': config':
-        let
-          useDropin = name' != "";
-          serviceName = if useDropin then "nfqws@" + name' else "nfqws";
-          systemdService =
-            if useDropin then
-              {
-                wantedBy = [ "multi-user.target" ];
-                environment.CONFIG_FILE = config'.configFile;
-                overrideStrategy = "asDropin";
-              }
-            else
-              {
-                wantedBy = [ "multi-user.target" ];
-                environment.CONFIG_FILE = config'.configFile;
-                serviceConfig = serviceConfig // {
-                  StateDirectory = "nfqws";
-                  WorkingDirectory = "%S/nfqws";
-                };
+    systemd.services = {
+      "nfqws@" = mkIf (any (x: x != "") (attrNames cfg.instances)) {
+        enable = true;
+        inherit serviceConfig;
+      };
+    }
+    // (mapAttrs' (
+      name': config':
+      let
+        useDropin = name' != "";
+        serviceName = if useDropin then "nfqws@" + name' else "nfqws";
+        systemdService =
+          if useDropin then
+            {
+              wantedBy = [ "multi-user.target" ];
+              environment.CONFIG_FILE = config'.configFile;
+              overrideStrategy = "asDropin";
+            }
+          else
+            {
+              wantedBy = [ "multi-user.target" ];
+              environment.CONFIG_FILE = config'.configFile;
+              serviceConfig = serviceConfig // {
+                StateDirectory = "nfqws";
+                WorkingDirectory = "%S/nfqws";
               };
-        in
-        nameValuePair serviceName (mkIf config'.enable systemdService)
-      ) cfg.instances);
+            };
+      in
+      nameValuePair serviceName (mkIf config'.enable systemdService)
+    ) cfg.instances);
   };
 }

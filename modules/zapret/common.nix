@@ -92,7 +92,8 @@ let
       config.args = [
         "--new"
         "--comment=${name}"
-      ] ++ toGNUCommandLine { } config.settings;
+      ]
+      ++ toGNUCommandLine { } config.settings;
     };
 
 in
