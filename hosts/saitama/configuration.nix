@@ -87,12 +87,6 @@
   services = {
     netdata.enable = true;
 
-    caddy = {
-      enable = true;
-      email = "mr.trubach@icloud.com";
-      extraConfig = builtins.readFile ./Caddyfile;
-    };
-
     jellyfin = {
       enable = true;
       extraGroups = [
