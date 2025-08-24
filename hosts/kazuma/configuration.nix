@@ -28,6 +28,8 @@
       allowedUDPPorts = [
         3000
         7777 # satisfactory-server
+        28015 # rust-server (game)
+        28016 # rust-server (query)
       ];
       allowedTCPPorts = [
         3001
@@ -36,6 +38,8 @@
         7777 # satisfactory-server
         8888 # satisfactory-server
         19999
+        28015 # rust-server (rcon)
+        28082 # rust-server (plus)
       ];
       allowedTCPPortRanges = [
         # Minecraft
@@ -67,6 +71,7 @@
     pufferpanel = {
       enable = true;
       extraPackages = with pkgs; [
+        rust-server.oxide
         eco-server
         satisfactory-server
         javaWrappers.java8
