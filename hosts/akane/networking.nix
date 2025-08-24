@@ -96,6 +96,17 @@ let
   isplanConfigurationNetworks = map (x: x.network) isplanConfiguration;
   isplanConfigurationNetworksIpv4 = lib.filter isIpv4 isplanConfigurationNetworks;
 
+  isplanStaticLeases = {
+    saitama = {
+      Address = "10.10.100.1";
+      MACAddress = "f0:2f:74:33:72:7d";
+    };
+    kazuma = {
+      Address = "10.10.100.2";
+      MACAddress = "04:42:1a:24:7c:f1";
+    };
+  };
+
   # Netfilter queue number for nfqws DPI bypass.
   zapretQnum = 200;
   zapretFwmark = 1073741824; # 0x40000000
@@ -306,6 +317,23 @@ in
     enable = true;
     externalInterface = ispInterface;
     internalIPs = isplanConfigurationNetworksIpv4;
+    forwardPorts =
+      let
+        transmissionPort = 51413;
+        transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
+      in
+      [
+        {
+          proto = "udp";
+          sourcePort = transmissionPort;
+          destination = transmissionDest;
+        }
+        {
+          proto = "tcp";
+          sourcePort = transmissionPort;
+          destination = transmissionDest;
+        }
+      ];
   };
 
   systemd.network.config = {
@@ -428,6 +456,10 @@ in
     matchConfig = {
       Name = [
         "enp3s0"
+        "enp4s0"
+        "enp5s0"
+        "enp6s0"
+        "enp7s0"
       ];
     };
     networkConfig = {
@@ -448,10 +480,6 @@ in
   systemd.network.networks."10-bridge-lan-vlan-aware" = {
     matchConfig = {
       Name = [
-        "enp4s0"
-        "enp5s0"
-        "enp6s0"
-        "enp7s0"
         "enp8s0"
         "enp9s0"
       ];
@@ -490,7 +518,6 @@ in
       DNS = wglanConfigurationAddressesIpv4;
     };
     ipv6SendRAConfig = {
-      RetransmitSec = 1800; # 30 minutes
       DNS = wglanConfigurationAddressesIpv6;
     };
     addresses =
@@ -554,8 +581,8 @@ in
     dhcpServerConfig = {
       DNS = isplanConfigurationAddressesIpv4;
     };
+    dhcpServerStaticLeases = lib.attrValues isplanStaticLeases;
     ipv6SendRAConfig = {
-      RetransmitSec = 1800; # 30 minutes
       DNS = isplanConfigurationAddressesIpv6;
     };
     dhcpPrefixDelegationConfig = {

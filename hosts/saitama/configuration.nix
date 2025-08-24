@@ -77,11 +77,7 @@
       Name = "enp7s0";
     };
     networkConfig = {
-      DHCP = "yes";
-      IPv6PrivacyExtensions = "kernel";
-    };
-    dhcpV6Config = {
-      UseDelegatedPrefix = false;
+      DHCP = true;
     };
     linkConfig = {
       RequiredForOnline = "routable";
