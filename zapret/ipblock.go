@@ -11,20 +11,18 @@ import (
 
 type ipblockEntry struct {
 	Domain   string   `json:"domain,omitempty"`
+	Merge    bool     `json:"merge,omitempty"`
 	Networks []string `json:"networks"`
 }
 
-func resolveDomain(domain string) ([]string, error) {
+func updateDomain(domain string, oldIPAddresses []net.IP) ([]string, error) {
 	ipAddresses, err := net.LookupIP(domain)
 	if err != nil {
 		return nil, err
 	}
-	slices.SortFunc(ipAddresses, func(a, b net.IP) int {
-		if a.Equal(b) {
-			return 0
-		}
-		return bytes.Compare(a, b)
-	})
+	ipAddresses = append(ipAddresses, oldIPAddresses...)
+	sortIPAddresses(ipAddresses)
+	ipAddresses = slices.CompactFunc(ipAddresses, net.IP.Equal)
 	networks := make([]string, len(ipAddresses))
 	for i, ip := range ipAddresses {
 		mask := "/128"
@@ -34,6 +32,39 @@ func resolveDomain(domain string) ([]string, error) {
 		networks[i] = ip.String() + mask
 	}
 	return networks, nil
+}
+
+func sortIPAddresses(ips []net.IP) {
+	slices.SortFunc(ips, func(a, b net.IP) int {
+		// IPv6 comes before IPv4
+		a4, b4 := a.To4(), b.To4()
+		if a4 != nil && b4 == nil {
+			return 1
+		}
+		if a4 == nil && b4 != nil {
+			return -1
+		}
+		if a4 != nil && b4 != nil {
+			return bytes.Compare(a4, b4)
+		}
+		return bytes.Compare(a, b)
+	})
+}
+
+func parseNetworks(networks []string) ([]net.IP, error) {
+	ipAddress := make([]net.IP, len(networks))
+	for i, cidr := range networks {
+		address, network, err := net.ParseCIDR(cidr)
+		if err != nil {
+			return nil, err
+		}
+		if ones, bits := network.Mask.Size(); ones != bits {
+			// We allow only IPv6 /128 and IPv4 /32 masks.
+			return nil, fmt.Errorf("invalid network mask for %v", cidr)
+		}
+		ipAddress[i] = address
+	}
+	return ipAddress, nil
 }
 
 func unmarshalJSONFile(filePath string, v any) error {
@@ -65,7 +96,14 @@ func updateJSONFile(filePath string) error {
 			continue
 		}
 		var err error
-		entry.Networks, err = resolveDomain(domain)
+		var oldIPAddresses []net.IP
+		if entry.Merge {
+			oldIPAddresses, err = parseNetworks(entry.Networks)
+			if err != nil {
+				return err
+			}
+		}
+		entry.Networks, err = updateDomain(domain, oldIPAddresses)
 		if err != nil {
 			return err
 		}
