@@ -321,8 +321,19 @@ in
       let
         transmissionPort = 51413;
         transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
+
+        minecraftPort = 25565;
+        minecraftDest = "${isplanStaticLeases.kazuma.Address}:${toString minecraftPort}";
+
+        rustPort = 28015; # UDP (game), TCP (rcon)
+        rustDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPort}";
+        rustQueryPort = 28016; # UDP
+        rustQueryDest = "${isplanStaticLeases.kazuma.Address}:${toString rustQueryPort}";
+        rustPlusPort = 28082; # TCP
+        rustPlusDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPlusPort}";
       in
       [
+        # Transmission
         {
           proto = "udp";
           sourcePort = transmissionPort;
@@ -332,6 +343,33 @@ in
           proto = "tcp";
           sourcePort = transmissionPort;
           destination = transmissionDest;
+        }
+        # Minecraft
+        {
+          proto = "tcp";
+          sourcePort = minecraftPort;
+          destination = minecraftDest;
+        }
+        # Rust
+        {
+          proto = "udp";
+          sourcePort = rustPort;
+          destination = rustDest;
+        }
+        {
+          proto = "tcp";
+          sourcePort = rustPort;
+          destination = rustDest;
+        }
+        {
+          proto = "udp";
+          sourcePort = rustQueryPort;
+          destination = rustQueryDest;
+        }
+        {
+          proto = "tcp";
+          sourcePort = rustPlusPort;
+          destination = rustPlusDest;
         }
       ];
   };
