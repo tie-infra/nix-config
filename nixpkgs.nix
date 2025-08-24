@@ -34,6 +34,15 @@
             };
           in
           pkg: builtins.hasAttr (lib.getName pkg) allowUnfree;
+
+        # For rust-server.oxide.
+        config.allowInsecurePredicate =
+          pkg:
+          builtins.elem (lib.getName pkg) [
+            "dotnet-runtime"
+            "dotnet-sdk"
+          ]
+          && lib.versions.major (lib.getVersion pkg) == "7";
       };
 
       nixpkgsFun = newArgs: import inputs.nixpkgs (nixpkgsArgs // newArgs);

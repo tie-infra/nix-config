@@ -44,6 +44,8 @@ in
       allowedTCPPorts = [
         # Caddy HTTP/1 and HTTP/2
         443
+        # PufferPanel SFTP
+        5657
         # Rust
         28015
         28082
@@ -148,7 +150,7 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = with pkgs; [
-        rust-server
+        rust-server.oxide
         javaWrappers.java8
         javaWrappers.java17
         javaWrappers.java21
