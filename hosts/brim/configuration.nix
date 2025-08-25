@@ -46,9 +46,6 @@ in
         443
         # PufferPanel SFTP
         5657
-        # Rust
-        28015
-        28082
       ];
       allowedTCPPortRanges = [
         # Minecraft
@@ -60,18 +57,9 @@ in
       allowedUDPPorts = [
         # Caddy HTTP/3
         443
-        # Palworld
-        8211
-        # Satisfactory
-        7777
-        15000
-        15777
         # Minecraft SimpleVoiceChat
         24454
         24455
-        # Rust
-        28015
-        28016
       ];
     };
   };
@@ -148,7 +136,6 @@ in
     pufferpanel = {
       enable = true;
       extraPackages = with pkgs; [
-        rust-server.oxide
         javaWrappers.java8
         javaWrappers.java17
         javaWrappers.java21
