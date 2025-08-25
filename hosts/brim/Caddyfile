@@ -102,11 +102,6 @@ wiki.brimworld.online {
 	import brimworld-wiki
 }
 
-netdata.brim.su {
-	import tls-brim-su
-	reverse_proxy localhost:19999
-}
-
 panel.brim.su {
 	import tls-brim-su
 	reverse_proxy localhost:8080

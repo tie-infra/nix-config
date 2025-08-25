@@ -114,8 +114,6 @@ in
   };
 
   services = {
-    netdata.enable = true;
-
     syncthing = {
       enable = true;
       guiAddress = ":8384";

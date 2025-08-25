@@ -58,8 +58,6 @@
       allowedTCPPorts = [
         # Caddy
         443
-        # Netdata
-        19999
         # Transmission (BitTorrent traffic)
         51413
       ];
@@ -85,8 +83,6 @@
   };
 
   services = {
-    netdata.enable = true;
-
     jellyfin = {
       enable = true;
       extraGroups = [

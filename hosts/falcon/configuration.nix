@@ -1,3 +1,6 @@
+let
+  wireguardPort = 51820;
+in
 { config, pkgs, ... }:
 {
   system.stateVersion = "24.05";
@@ -37,8 +40,7 @@
     firewall = {
       enable = true;
       logReversePathDrops = true;
-      allowedUDPPorts = [ 51820 ];
-      allowedTCPPorts = [ 19999 ];
+      allowedUDPPorts = [ wireguardPort ];
     };
     # systemd-networkd masquerading is not flexible enough for our setup.
     # See https://github.com/systemd/systemd/issues/8040
@@ -121,7 +123,7 @@
           Kind = "wireguard";
         };
         wireguardConfig = {
-          ListenPort = 51820;
+          ListenPort = wireguardPort;
           PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
           H1 = 224412;
           H2 = 52344123;
@@ -170,10 +172,7 @@
     };
   };
 
-  services = {
-    fstrim.enable = true;
-    netdata.enable = true;
-  };
+  services.fstrim.enable = true;
 
   systemd.services.systemd-networkd = {
     serviceConfig = {

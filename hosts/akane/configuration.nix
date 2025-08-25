@@ -32,13 +32,5 @@
 
   networking.hostName = "akane";
 
-  networking.firewall.allowedTCPPorts = [
-    # Netdata
-    19999
-  ];
-
-  services = {
-    fstrim.enable = true;
-    netdata.enable = true;
-  };
+  services.fstrim.enable = true;
 }
