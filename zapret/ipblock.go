@@ -38,16 +38,16 @@ func sortIPAddresses(ips []net.IP) {
 	slices.SortFunc(ips, func(a, b net.IP) int {
 		// IPv6 comes before IPv4
 		a4, b4 := a.To4(), b.To4()
-		if a4 != nil && b4 == nil {
-			return 1
-		}
-		if a4 == nil && b4 != nil {
-			return -1
-		}
-		if a4 != nil && b4 != nil {
+		switch {
+		case a4 != nil && b4 == nil: // a is IPv4, b is IPv6
+			return 1 // a < b
+		case a4 == nil && b4 != nil: // a is IPv6, b is IPv4
+			return -1 // a > b
+		case a4 != nil && b4 != nil: // both IPv4
 			return bytes.Compare(a4, b4)
+		default: // both IPv6
+			return bytes.Compare(a, b)
 		}
-		return bytes.Compare(a, b)
 	})
 }
 
