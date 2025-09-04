@@ -126,6 +126,25 @@ let
   ipblockNetworks = lib.concatMap (x: x.networks) (lib.importJSON ../../zapret/ipblock.json);
   ipblockNetworksIpv4 = lib.filter isIpv4 ipblockNetworks;
   ipblockNetworksIpv6 = lib.filter isIpv6 ipblockNetworks;
+
+  dhcpv4Port = 67; # UDP
+  dnsPort = 53; # UDP/TCP
+  multicastDnsPort = 5353; # UDP
+
+  transmissionPort = 51413;
+  transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
+
+  minecraftPort = 25565;
+  minecraftDest = "${isplanStaticLeases.kazuma.Address}:${toString minecraftPort}";
+
+  rustPort = 28015; # UDP (game), TCP (rcon)
+  rustDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPort}";
+  rustQueryPort = 28016; # UDP
+  rustQueryDest = "${isplanStaticLeases.kazuma.Address}:${toString rustQueryPort}";
+  rustPlusPort = 28082; # TCP
+  rustPlusDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPlusPort}";
+
+  natLoopbackIpv4 = "178.140.50.38";
 in
 {
   boot.kernel.sysctl = {
@@ -153,16 +172,12 @@ in
       ]
       (_: {
         allowedUDPPorts = [
-          # DHCPv4
-          67
-          # DNS
-          53
-          # Multicast DNS
-          5353
+          dhcpv4Port
+          dnsPort
+          multicastDnsPort
         ];
         allowedTCPPorts = [
-          # DNS
-          53
+          dnsPort
         ];
       });
 
@@ -317,61 +332,53 @@ in
     enable = true;
     externalInterface = ispInterface;
     internalIPs = isplanConfigurationNetworksIpv4;
-    forwardPorts =
-      let
-        transmissionPort = 51413;
-        transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
-
-        minecraftPort = 25565;
-        minecraftDest = "${isplanStaticLeases.kazuma.Address}:${toString minecraftPort}";
-
-        rustPort = 28015; # UDP (game), TCP (rcon)
-        rustDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPort}";
-        rustQueryPort = 28016; # UDP
-        rustQueryDest = "${isplanStaticLeases.kazuma.Address}:${toString rustQueryPort}";
-        rustPlusPort = 28082; # TCP
-        rustPlusDest = "${isplanStaticLeases.kazuma.Address}:${toString rustPlusPort}";
-      in
-      [
-        # Transmission
-        {
-          proto = "udp";
-          sourcePort = transmissionPort;
-          destination = transmissionDest;
-        }
-        {
-          proto = "tcp";
-          sourcePort = transmissionPort;
-          destination = transmissionDest;
-        }
-        # Minecraft
-        {
-          proto = "tcp";
-          sourcePort = minecraftPort;
-          destination = minecraftDest;
-        }
-        # Rust
-        {
-          proto = "udp";
-          sourcePort = rustPort;
-          destination = rustDest;
-        }
-        {
-          proto = "tcp";
-          sourcePort = rustPort;
-          destination = rustDest;
-        }
-        {
-          proto = "udp";
-          sourcePort = rustQueryPort;
-          destination = rustQueryDest;
-        }
-        {
-          proto = "tcp";
-          sourcePort = rustPlusPort;
-          destination = rustPlusDest;
-        }
-      ];
+    forwardPorts = [
+      # Transmission
+      {
+        proto = "udp";
+        sourcePort = transmissionPort;
+        destination = transmissionDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      {
+        proto = "tcp";
+        sourcePort = transmissionPort;
+        destination = transmissionDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      # Minecraft
+      {
+        proto = "tcp";
+        sourcePort = minecraftPort;
+        destination = minecraftDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      # Rust
+      {
+        proto = "udp";
+        sourcePort = rustPort;
+        destination = rustDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      {
+        proto = "tcp";
+        sourcePort = rustPort;
+        destination = rustDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      {
+        proto = "udp";
+        sourcePort = rustQueryPort;
+        destination = rustQueryDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+      {
+        proto = "tcp";
+        sourcePort = rustPlusPort;
+        destination = rustPlusDest;
+        loopbackIPs = [ natLoopbackIpv4 ];
+      }
+    ];
   };
 
   systemd.network.config = {
