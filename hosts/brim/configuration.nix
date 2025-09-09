@@ -193,7 +193,7 @@ in
       settings.qnum = 200;
       profiles."".settings = {
         dpi-desync = "fakeknown";
-        dpi-desync-fooling = "badseq";
+        dpi-desync-fooling = "datanoack";
         hostlist = map pkgs.copyPathToStore [
           ../../zapret/discord-domains.txt
         ];
