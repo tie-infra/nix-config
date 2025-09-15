@@ -185,10 +185,6 @@ in
 
   services.nfqws =
     let
-      zapretDesyncTTL = 5;
-      zapretDesyncRepeats = 8;
-      zapretFakeTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_vk_com.bin;
-      zapretFakeQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_vk_com.bin;
       # Avoids auto hostlist pollution with subdomains.
       zapretHostlistFiles = map pkgs.copyPathToStore [
         ../../zapret/rutracker-domains.txt
@@ -211,16 +207,6 @@ in
           qnum = zapretQnum;
         };
         profiles = {
-          "40-googlevideo".settings = {
-            filter-l7 = "tls,quic";
-            hostlist-domains = [ "googlevideo.com" ];
-            dpi-desync = "fake";
-            dpi-desync-fake-tls-mod = "rnd,rndsni,padencap";
-            dpi-desync-fake-quic = zapretFakeQUIC;
-            dpi-desync-ttl = zapretDesyncTTL;
-            dpi-desync-repeats = zapretDesyncRepeats;
-            dpi-desync-fwmark = zapretFwmark;
-          };
           "50-https".settings = {
             filter-l7 = "http,tls,quic";
             hostlist = zapretHostlistFiles;
@@ -228,19 +214,20 @@ in
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
             hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fakedsplit";
-            dpi-desync-split-pos = 1;
-            dpi-desync-fake-tls = zapretFakeTLS;
-            dpi-desync-fake-quic = zapretFakeQUIC;
-            dpi-desync-ttl = zapretDesyncTTL;
-            dpi-desync-repeats = zapretDesyncRepeats;
+            dpi-desync = "fake";
+            dpi-desync-fooling = "datanoack";
+            dpi-desync-fake-tls-mod = "sni=www.google.com";
+            # NB we do not set dpi-desync-ttl because recently www.youtube.com
+            # stopped working with single-digit TTL values.
+            dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
           "70-discord-voice".settings = {
             filter-udp = "50000-50100";
             filter-l7 = "discord,stun";
             dpi-desync = "fake";
-            dpi-desync-ttl = zapretDesyncTTL;
+            dpi-desync-ttl = 5;
+            dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
         };
@@ -249,6 +236,7 @@ in
 
   # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
   # https://www.netfilter.org/projects/nftables/manpage.html
+  # https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks#Priority_within_hook
   networking.nftables.tables.zapret = {
     family = "inet";
     content = ''
@@ -267,21 +255,29 @@ in
         }
       }
 
-      chain postrouting {
-        type filter hook postrouting priority mangle; policy accept;
-        oifname $iface \
-          meta mark & $fwmark == 0 \
-          meta l4proto . th dport @services \
-          ct original packets 1-6 \
-          queue flags bypass to $qnum
-      }
-
-      chain prerouting {
-        type filter hook prerouting priority filter; policy accept;
+      chain prerouting-before-dstnat {
+        type filter hook prerouting priority dstnat - 1; policy accept;
+        comment "forward ingress traffic for nfqws autohostlist mode";
         iifname $iface \
           meta mark & $fwmark == 0 \
           meta l4proto . th sport @services \
           ct reply packets 1-3 \
+          queue flags bypass to $qnum
+      }
+
+      chain output-raw {
+        type filter hook output priority raw; policy accept;
+        comment "do not track nfqws packets for datanoack";
+        meta mark & $fwmark != 0 notrack
+      }
+
+      chain postrouting-after-srcnat {
+        type filter hook postrouting priority srcnat + 1; policy accept;
+        comment "forward egress traffic for nfqws DPI fooling";
+        oifname $iface \
+          meta mark & $fwmark == 0 \
+          meta l4proto . th dport @services \
+          ct original packets 1-6 \
           queue flags bypass to $qnum
       }
     '';
