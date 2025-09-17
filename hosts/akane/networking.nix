@@ -130,11 +130,12 @@ let
   dhcpv4Port = 67; # UDP
   dnsPort = 53; # UDP/TCP
   multicastDnsPort = 5353; # UDP
+  llmnrPort = 5355; # UDP/TCP
 
-  transmissionPort = 51413;
+  transmissionPort = 51413; # UDP/TCP
   transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
 
-  minecraftPort = 25565;
+  minecraftPort = 25565; # TCP
   minecraftDest = "${isplanStaticLeases.kazuma.Address}:${toString minecraftPort}";
 
   rustPort = 28015; # UDP (game), TCP (rcon)
@@ -175,9 +176,11 @@ in
           dhcpv4Port
           dnsPort
           multicastDnsPort
+          llmnrPort
         ];
         allowedTCPPorts = [
           dnsPort
+          llmnrPort
         ];
       });
 

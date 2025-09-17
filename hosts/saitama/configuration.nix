@@ -1,4 +1,11 @@
 { config, pkgs, ... }:
+let
+  multicastDnsPort = 5353; # UDP
+  llmnrPort = 5355; # UDP/TCP
+
+  caddyPort = 443; # UDP/TCP
+  transmissionPort = 51413; # UDP/TCP
+in
 {
   system.stateVersion = "23.11";
 
@@ -22,9 +29,9 @@
       # at least up to the values hardcoded here.
       #
       # Also needed for H3/QUIC in Caddy (though a smaller buffer size is sufficient),
-      # https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
-      "net.core.rmem_max" = 4194304; # 4MB
-      "net.core.wmem_max" = 1048576; # 1MB
+      # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+      "net.core.rmem_max" = 16777216; # 16MiB
+      "net.core.wmem_max" = 16777216;
     };
   };
 
@@ -52,22 +59,20 @@
     rootDisk = "/dev/disk/by-uuid/08f6c6e3-de0f-4058-a1e6-35587097e6c1";
   };
 
-  networking = {
-    hostName = "saitama";
-    firewall = {
-      allowedTCPPorts = [
-        # Caddy
-        443
-        # Transmission (BitTorrent traffic)
-        51413
-      ];
-      allowedUDPPorts = [
-        # Caddy
-        443
-        # Transmission (BitTorrent traffic)
-        51413
-      ];
-    };
+  networking.hostName = "saitama";
+
+  networking.firewall = {
+    allowedUDPPorts = [
+      multicastDnsPort
+      llmnrPort
+      caddyPort
+      transmissionPort
+    ];
+    allowedTCPPorts = [
+      llmnrPort
+      caddyPort
+      transmissionPort
+    ];
   };
 
   systemd.network.networks."10-wan" = {
@@ -76,6 +81,8 @@
     };
     networkConfig = {
       DHCP = true;
+      LLMNR = true;
+      MulticastDNS = true;
     };
     linkConfig = {
       RequiredForOnline = "routable";

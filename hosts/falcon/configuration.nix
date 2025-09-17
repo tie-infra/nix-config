@@ -94,8 +94,10 @@ in
           }
         ];
         networkConfig = {
+          DHCP = false;
           IPv6AcceptRA = false;
-          IPv6PrivacyExtensions = true;
+          LLMNR = false;
+          MulticastDNS = false;
           DNS = [
             "2606:4700:4700::1111"
             "2606:4700:4700::1001"

@@ -1,4 +1,24 @@
 { pkgs, config, ... }:
+let
+  multicastDnsPort = 5353; # UDP
+  llmnrPort = 5355; # UDP/TCP
+
+  pufferpanelWebPort = 8080;
+  pufferpanelSftpPort = 5657;
+
+  # https://satisfactory.wiki.gg/wiki/Dedicated_servers#Port_Forwarding_and_Firewall_Settings
+  satisfactoryPort = 7777; # UDP/TCP
+  satisfactoryReliablePort = 8888; # UDP/TCP
+
+  rustPort = 28015; # UDP (game), TCP (rcon)
+  rustQueryPort = 28016; # UDP
+  rustPlusPort = 28082; # TCP
+
+  minecraftPorts = {
+    from = 25500;
+    to = 25599;
+  }; # TCP
+in
 {
   system.stateVersion = "23.11";
 
@@ -22,32 +42,28 @@
     rootDisk = "/dev/disk/by-uuid/5104f49c-ff08-49dc-96e4-8fbe00702f0a";
   };
 
-  networking = {
-    hostName = "kazuma";
-    firewall = {
-      allowedUDPPorts = [
-        3000
-        7777 # satisfactory-server
-        28015 # rust-server (game)
-        28016 # rust-server (query)
-      ];
-      allowedTCPPorts = [
-        3001
-        8080
-        5657
-        7777 # satisfactory-server
-        8888 # satisfactory-server
-        28015 # rust-server (rcon)
-        28082 # rust-server (plus)
-      ];
-      allowedTCPPortRanges = [
-        # Minecraft
-        {
-          from = 25500;
-          to = 25599;
-        }
-      ];
-    };
+  networking.hostName = "kazuma";
+
+  networking.firewall = {
+    allowedUDPPorts = [
+      multicastDnsPort
+      llmnrPort
+      satisfactoryPort
+      rustPort
+      rustQueryPort
+    ];
+    allowedTCPPorts = [
+      llmnrPort
+      pufferpanelWebPort
+      pufferpanelSftpPort
+      satisfactoryPort
+      satisfactoryReliablePort
+      rustPort
+      rustPlusPort
+    ];
+    allowedTCPPortRanges = [
+      minecraftPorts
+    ];
   };
 
   systemd.network.networks."10-wan" = {
@@ -56,6 +72,8 @@
     };
     networkConfig = {
       DHCP = true;
+      LLMNR = true;
+      MulticastDNS = true;
     };
     linkConfig = {
       RequiredForOnline = "routable";
@@ -75,8 +93,8 @@
       javaWrappers.java21
     ];
     environment = {
-      PUFFER_WEB_HOST = ":8080";
-      PUFFER_DAEMON_SFTP_HOST = ":5657";
+      PUFFER_WEB_HOST = ":${toString pufferpanelWebPort}";
+      PUFFER_DAEMON_SFTP_HOST = ":${toString pufferpanelSftpPort}";
       PUFFER_PANEL_ENABLE = "false";
       PUFFER_TOKEN_PUBLIC = "https://panel.brim.su/auth/publickey"; # deprecated in v3
       PUFFER_DAEMON_AUTH_URL = "https://panel.brim.su/oauth2/token";
