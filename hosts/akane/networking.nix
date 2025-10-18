@@ -217,8 +217,9 @@ in
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
             hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fake";
+            dpi-desync = "fakedsplit";
             dpi-desync-fooling = "datanoack";
+            dpi-desync-split-pos = 1;
             dpi-desync-fake-tls-mod = "sni=www.google.com";
             # NB we do not set dpi-desync-ttl because recently www.youtube.com
             # stopped working with single-digit TTL values.
