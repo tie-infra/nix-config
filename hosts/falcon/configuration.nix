@@ -158,7 +158,7 @@ in
             PublicKey = "vpHDCWEyEf/b16ALkZx94Dc+LOz2fmPqbRFwqnAiYQU=";
             PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
           }
-          # eerie (TODO: remove after rolling out akane)
+          # kuro
           {
             AdvancedSecurity = true;
             AllowedIPs = [
@@ -166,7 +166,48 @@ in
               "172.16.0.3/32"
             ];
             RouteTable = "main";
-            PublicKey = "UaXdcPYo2GiqdXgaxlkGpeKQKO7casrRR9eJCZs5RVs=";
+            PublicKey = "rQI4OQbaV7VRPps7RoBbwOtE75f5s5BZ9GEZFxdG7i0=";
+            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+          }
+          # brim
+          {
+            AdvancedSecurity = true;
+            AllowedIPs = [
+              "2a01:4f8:222:fe00::4/128"
+              "172.16.0.4/32"
+            ];
+            RouteTable = "main";
+            PublicKey = "PDkui+w0iGkXzq5uzeH9X8Qg5D7Rb3yYb+Ju7L9/QGg=";
+            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+          }
+          {
+            AdvancedSecurity = true;
+            AllowedIPs = [
+              "2a01:4f8:222:fe00::5/128"
+              "172.16.0.5/32"
+            ];
+            RouteTable = "main";
+            PublicKey = "N2gBdRWgl9GfOmeTIJuMZQfL+Tn1DYkyJr7Zv5xk+QU=";
+            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+          }
+          {
+            AdvancedSecurity = true;
+            AllowedIPs = [
+              "2a01:4f8:222:fe00::6/128"
+              "172.16.0.6/32"
+            ];
+            RouteTable = "main";
+            PublicKey = "WOHyqlyiTShk83GGOjMalqlbZwQJSsqUVBk3vZ2q1Cc=";
+            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
+          }
+          {
+            AdvancedSecurity = true;
+            AllowedIPs = [
+              "2a01:4f8:222:fe00::7/128"
+              "172.16.0.7/32"
+            ];
+            RouteTable = "main";
+            PublicKey = "/Y67o9MFx0/ZIpQAssgrRchOYVOp+FhYcR3FueOU8nA=";
             PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
           }
         ];
