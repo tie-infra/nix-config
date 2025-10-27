@@ -6,6 +6,7 @@
       ./hosts/akane/configuration.nix
       ./hosts/akane/networking.nix
       ./hosts/akane/caddy.nix
+      ./hosts/akane/mumble-server.nix
     ];
     brim = nixosWithSystem "x86_64-linux" [ ./hosts/brim/configuration.nix ];
     kazuma = nixosWithSystem "x86_64-linux" [ ./hosts/kazuma/configuration.nix ];

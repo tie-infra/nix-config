@@ -29,6 +29,11 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_saitama
+  - path_regex: ^secrets/mumble-server\.sops\.yaml$
+    key_groups:
+      - age:
+        - *admin_tie
+        - *server_akane
   - path_regex: ^secrets/kazuma\.sops\.yaml$
     key_groups:
       - age:

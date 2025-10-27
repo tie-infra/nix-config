@@ -22,6 +22,7 @@ let
     ./modules/trust-admins.nix
     ./modules/mcactivity.nix
     ./modules/outline.nix
+    ./modules/mumble-server.nix
     ./modules/flood.nix
     ./modules/jellyfin.nix
     ./modules/minio.nix
@@ -40,6 +41,7 @@ let
     "services/misc/servarr/radarr.nix"
     "services/misc/servarr/sonarr.nix"
     "services/networking/zapret.nix"
+    "services/networking/murmur.nix"
     "services/torrent/flood.nix"
     "services/torrent/transmission.nix"
     "services/web-apps/outline.nix"
