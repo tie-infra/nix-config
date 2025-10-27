@@ -152,6 +152,9 @@ in
     # Allow nfqws to detect censorship for auto hostlist.
     # https://github.com/bol-van/zapret?tab=readme-ov-file#nftables-для-nfqws
     "net.netfilter.nf_conntrack_tcp_be_liberal" = true;
+    # For badsum DPI fooling.
+    # https://github.com/bol-van/zapret#:~:text=от%20fakedsplit/fakeddisorder.-,badsum,-портит%20контрольную%20сумму
+    "net.netfilter.nf_conntrack_checksum" = false;
   };
 
   networking.firewall = {
@@ -217,13 +220,14 @@ in
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
             hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fakedsplit";
-            dpi-desync-fooling = "datanoack";
-            dpi-desync-split-pos = 1;
+            dpi-desync = "fake";
+            dpi-desync-fooling = "badseq,badsum";
+            dpi-desync-badseq-increment = 2147483648; # 0x80000000
+            # NB googlevideo.com does not work with non-Google SNI.
             dpi-desync-fake-tls-mod = "sni=www.google.com";
             # NB we do not set dpi-desync-ttl because recently www.youtube.com
             # stopped working with single-digit TTL values.
-            dpi-desync-repeats = 5;
+            dpi-desync-repeats = 6;
             dpi-desync-fwmark = zapretFwmark;
           };
           "70-discord-voice".settings = {
