@@ -111,6 +111,21 @@ let
   zapretQnum = 200;
   zapretFwmark = 1073741824; # 0x40000000
 
+  # Inclusive port ranges for Discord voice and video.
+  # https://www.reddit.com/r/discordapp/comments/1kp3n4k/comment/n32csdd/
+  discordRtcPortRanges = [
+    {
+      from = 19294;
+      to = 19344;
+    }
+    {
+      from = 50000;
+      to = 50032;
+    }
+  ];
+
+  inclusivePortRangeString = { from, to }: "${toString from}-${toString to}";
+
   # TODO: do not allow external interfaces to poke around with private networks.
   # See also https://en.wikipedia.org/wiki/Private_network
   # and https://en.wikipedia.org/wiki/Martian_packet
@@ -204,6 +219,8 @@ in
       ];
       zapretHostlistExcludeDomains = lib.concatStringsSep "," [
         "dns.quad9.net"
+        "www.google.com"
+        "tie.rip"
       ];
     in
     {
@@ -227,11 +244,11 @@ in
             dpi-desync-fake-tls-mod = "sni=www.google.com";
             # NB we do not set dpi-desync-ttl because recently www.youtube.com
             # stopped working with single-digit TTL values.
-            dpi-desync-repeats = 6;
+            dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
           "70-discord-voice".settings = {
-            filter-udp = "50000-50100";
+            filter-udp = lib.concatMapStringsSep "," inclusivePortRangeString discordRtcPortRanges;
             filter-l7 = "discord,stun";
             dpi-desync = "fake";
             dpi-desync-ttl = 5;
@@ -259,7 +276,9 @@ in
           tcp . 80,
           tcp . 443,
           udp . 443,
-          udp . 50000-50100,
+          ${lib.concatMapStringsSep "\n" (
+            range: "    udp . ${inclusivePortRangeString range},"
+          ) discordRtcPortRanges}
         }
       }
 
