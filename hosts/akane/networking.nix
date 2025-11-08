@@ -124,6 +124,23 @@ let
     }
   ];
 
+  # https://developers.cloudflare.com/fundamentals/reference/network-ports/
+  cloudflareNetworkPorts = [
+    # HTTP
+    8080
+    8880
+    2052
+    2082
+    2086
+    2095
+    # HTTPS
+    2053
+    2083
+    2087
+    2096
+    8443
+  ];
+
   inclusivePortRangeString = { from, to }: "${toString from}-${toString to}";
 
   # TODO: do not allow external interfaces to poke around with private networks.
@@ -237,7 +254,8 @@ in
             hostlist-exclude-domains = zapretHostlistExcludeDomains;
             hostlist-auto = "hosts.txt";
             hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fake";
+            dpi-desync = "fakedsplit";
+            dpi-desync-split-pos = 1;
             dpi-desync-fooling = "badseq,badsum";
             dpi-desync-badseq-increment = 2147483648; # 0x80000000
             # NB googlevideo.com does not work with non-Google SNI.
@@ -276,6 +294,15 @@ in
           tcp . 80,
           tcp . 443,
           udp . 443,
+          ${lib.concatMapStringsSep "\n" ({ proto, service }: "    ${proto} . ${toString service},") (
+            lib.cartesianProduct {
+              proto = [
+                "tcp"
+                "udp"
+              ];
+              service = cloudflareNetworkPorts;
+            }
+          )}
           ${lib.concatMapStringsSep "\n" (
             range: "    udp . ${inclusivePortRangeString range},"
           ) discordRtcPortRanges}
