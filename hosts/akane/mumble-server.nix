@@ -17,7 +17,15 @@ in
     enable = true;
     settings.globalSection = {
       bonjour = false; # TODO: use systemd dnssd configuration
-      host = "::";
+      # Note: do not be fooled by the logs! Qt uses `0.0.0.0` instead of `::` as
+      # a string representation for unspecified IP address, QHostAddress::Any,
+      # but it is actually dual-stack.
+      # https://doc.qt.io/qt-6/qhostaddress.html#toString
+      # https://doc.qt.io/qt-6/qhostaddress.html#SpecialAddress-enum
+      # In fact, setting address to `::` explicitly will enable IPv6-only mode.
+      # This actually is reasonable behavior, albeit inconsistent with other
+      # software.
+      #host = "::";
       port = mumblePort;
       serverpassword = "{server_password}";
       channelname = ".+";
