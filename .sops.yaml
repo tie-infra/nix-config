@@ -24,6 +24,11 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_akane
+  - path_regex: ^secrets/xray\.sops\.yaml$
+    key_groups:
+      - age:
+        - *admin_tie
+        - *server_akane
   - path_regex: ^secrets/transmission\.sops\.yaml$
     key_groups:
       - age:

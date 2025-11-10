@@ -30,6 +30,7 @@ let
     ./modules/radarr.nix
     ./modules/sonarr.nix
     ./modules/transmission.nix
+    ./modules/xray.nix
     ./modules/zapret/nfqws.nix
     ./modules/zapret/nfqws-systemd.nix
     { inherit disabledModules; }
@@ -40,8 +41,9 @@ let
     "services/misc/servarr/prowlarr.nix"
     "services/misc/servarr/radarr.nix"
     "services/misc/servarr/sonarr.nix"
-    "services/networking/zapret.nix"
     "services/networking/murmur.nix"
+    "services/networking/xray.nix"
+    "services/networking/zapret.nix"
     "services/torrent/flood.nix"
     "services/torrent/transmission.nix"
     "services/web-apps/outline.nix"
