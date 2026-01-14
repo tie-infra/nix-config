@@ -192,13 +192,15 @@ in
     instances."" = {
       settings.qnum = 200;
       profiles."".settings = {
-        dpi-desync = "fakeknown";
+        dpi-desync = "fakedsplit";
         dpi-desync-fooling = "datanoack";
+        dpi-desync-split-pos = 1;
         hostlist = map pkgs.copyPathToStore [
           ../../zapret/discord-domains.txt
         ];
         hostlist-domains = lib.concatStringsSep "," [
           "cloudflare-ech.com" # TLS ECH
+          "repo.nickuc.com"
         ];
       };
     };
