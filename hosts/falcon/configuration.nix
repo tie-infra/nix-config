@@ -92,6 +92,10 @@ in
             Gateway = "213.133.111.97";
             GatewayOnLink = true;
           }
+          {
+            Type = "unreachable";
+            Destination = "192.168.0.0/16";
+          }
         ];
         networkConfig = {
           DHCP = false;
