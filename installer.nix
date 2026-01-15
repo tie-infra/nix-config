@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 let
   installer = inputs.nixpkgs.lib.nixosSystem {
     modules = [

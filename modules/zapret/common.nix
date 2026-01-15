@@ -8,7 +8,6 @@ let
     literalExpression
     mkOption
     optionals
-    types
     ;
   inherit (lib.types)
     attrsOf

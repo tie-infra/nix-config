@@ -223,22 +223,9 @@ in
 
   services.nfqws =
     let
-      # Avoids auto hostlist pollution with subdomains.
-      zapretHostlistFiles = map pkgs.copyPathToStore [
-        ../../zapret/rutracker-domains.txt
-        ../../zapret/discord-domains.txt
-        ../../zapret/youtube-domains.txt
-        ../../zapret/twitter-domains.txt
-        ../../zapret/facebook-domains.txt
-      ];
-      zapretHostlistDomains = lib.concatStringsSep "," [
-        "cloudflare-ech.com"
-      ];
-      zapretHostlistExcludeDomains = lib.concatStringsSep "," [
-        "dns.quad9.net"
-        "www.google.com"
-        "tie.rip"
-      ];
+      fakeGoogleQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_www_google_com.bin;
+      fakeGoogleTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_www_google_com.bin;
+      fakeMaxTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_max_ru.bin;
     in
     {
       enable = true;
@@ -247,29 +234,81 @@ in
           qnum = zapretQnum;
         };
         profiles = {
-          "50-https".settings = {
+          "10-discord-voice".settings = {
+            filter-udp = lib.concatMapStringsSep "," inclusivePortRangeString discordRtcPortRanges;
+            filter-l7 = "discord,stun";
+
+            dpi-desync = "fake";
+            dpi-desync-ttl = 5;
+            dpi-desync-repeats = 5;
+            dpi-desync-fwmark = zapretFwmark;
+          };
+
+          # NB googlevideo.com does not work with non-Google SNI.
+          "20-https-google".settings = {
             filter-l7 = "http,tls,quic";
-            hostlist = zapretHostlistFiles;
-            hostlist-domains = zapretHostlistDomains;
-            hostlist-exclude-domains = zapretHostlistExcludeDomains;
-            hostlist-auto = "hosts.txt";
-            hostlist-auto-fail-threshold = 3;
-            dpi-desync = "fakedsplit";
-            dpi-desync-split-pos = 1;
-            dpi-desync-fooling = "badseq,badsum";
-            dpi-desync-badseq-increment = 2147483648; # 0x80000000
-            # NB googlevideo.com does not work with non-Google SNI.
-            dpi-desync-fake-tls-mod = "sni=www.google.com";
+
+            hostlist = map pkgs.copyPathToStore [
+              ../../zapret/youtube-domains.txt
+            ];
+
+            dpi-desync = "fake";
+            dpi-desync-fake-quic = fakeGoogleQUIC;
+            dpi-desync-fake-tls = fakeGoogleTLS;
+            dpi-desync-fooling = "ts";
+
             # NB we do not set dpi-desync-ttl because recently www.youtube.com
             # stopped working with single-digit TTL values.
             dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
-          "70-discord-voice".settings = {
-            filter-udp = lib.concatMapStringsSep "," inclusivePortRangeString discordRtcPortRanges;
-            filter-l7 = "discord,stun";
+
+          "30-https-ipsets".settings = {
+            filter-l7 = "http,tls,quic";
+
+            ipset = map pkgs.copyPathToStore [
+              ../../zapret/cloudflare-ipset.txt
+              ../../zapret/digitalocean-ipset.txt
+              ../../zapret/hetzner-ipset.txt
+            ];
+
             dpi-desync = "fake";
-            dpi-desync-ttl = 5;
+            dpi-desync-fake-quic = fakeGoogleQUIC;
+            dpi-desync-fake-tls = fakeMaxTLS;
+            dpi-desync-fooling = "ts";
+
+            dpi-desync-repeats = 5;
+            dpi-desync-fwmark = zapretFwmark;
+          };
+
+          "40-https-domains".settings = {
+            filter-l7 = "http,tls,quic";
+
+            hostlist-auto = "hosts.txt";
+            hostlist-auto-fail-threshold = 3;
+
+            # Avoids auto hostlist pollution with subdomains.
+            hostlist = map pkgs.copyPathToStore [
+              ../../zapret/rutracker-domains.txt
+              ../../zapret/discord-domains.txt
+              ../../zapret/youtube-domains.txt
+              ../../zapret/twitter-domains.txt
+              ../../zapret/facebook-domains.txt
+            ];
+            hostlist-domains = lib.concatStringsSep "," [
+              "cloudflare-ech.com"
+            ];
+            hostlist-exclude-domains = lib.concatStringsSep "," [
+              "dns.quad9.net"
+              "www.google.com"
+              "tie.rip"
+            ];
+
+            dpi-desync = "fake";
+            dpi-desync-fake-quic = fakeGoogleQUIC;
+            dpi-desync-fake-tls = fakeMaxTLS;
+            dpi-desync-fooling = "ts";
+
             dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
