@@ -252,6 +252,12 @@ in
               ../../zapret/youtube-domains.txt
             ];
 
+            # Uh, for some reason *.discord.media (used for voice/video) also
+            # does not work with non-Google SNI.
+            hostlist-domains = [
+              "discord.media"
+            ];
+
             dpi-desync = "fake";
             dpi-desync-fake-quic = fakeGoogleQUIC;
             dpi-desync-fake-tls = fakeGoogleTLS;
@@ -267,9 +273,16 @@ in
             filter-l7 = "http,tls,quic";
 
             ipset = map pkgs.copyPathToStore [
+              ../../zapret/akamai-ipset.txt
+              ../../zapret/aws-ipset.txt
+              ../../zapret/cdn77-ipset.txt
               ../../zapret/cloudflare-ipset.txt
+              ../../zapret/constant-ipset.txt
+              ../../zapret/contabo-ipset.txt
               ../../zapret/digitalocean-ipset.txt
               ../../zapret/hetzner-ipset.txt
+              ../../zapret/oracle-ipset.txt
+              ../../zapret/scaleway-ipset.txt
             ];
 
             dpi-desync = "fake";

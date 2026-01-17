@@ -1,4 +1,4 @@
-# Source: https://raw.githubusercontent.com/123jjck/cdn-ip-ranges/refs/heads/main/digitalocean/digitalocean_plain.txt
+# Source: https://github.com/123jjck/cdn-ip-ranges/blob/main/digitalocean/digitalocean_plain.txt
 5.101.96.0/21
 5.101.104.0/22
 24.144.64.0/21
