@@ -167,7 +167,7 @@ let
   transmissionPort = 51413; # UDP/TCP
   transmissionDest = "${isplanStaticLeases.saitama.Address}:${toString transmissionPort}";
 
-  minecraftPort = 25565; # TCP
+  minecraftPort = 25566; # TCP
   minecraftDest = "${isplanStaticLeases.kazuma.Address}:${toString minecraftPort}";
 
   rustPort = 28015; # UDP (game), TCP (rcon)
@@ -277,6 +277,7 @@ in
               ../../zapret/aws-ipset.txt
               ../../zapret/cdn77-ipset.txt
               ../../zapret/cloudflare-ipset.txt
+              ../../zapret/cogent-ipset.txt
               ../../zapret/constant-ipset.txt
               ../../zapret/contabo-ipset.txt
               ../../zapret/digitalocean-ipset.txt
