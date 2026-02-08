@@ -4,12 +4,6 @@
   pkgs,
   ...
 }:
-let
-  caddySecrets = [
-    "brim-su-key.pem"
-    "brimworld-online-key.pem"
-  ];
-in
 {
   system.stateVersion = "23.11";
 
@@ -42,8 +36,6 @@ in
     hostName = "brim";
     firewall = {
       allowedTCPPorts = [
-        # Caddy HTTP/1 and HTTP/2
-        443
         # PufferPanel SFTP
         5657
       ];
@@ -55,8 +47,6 @@ in
         }
       ];
       allowedUDPPorts = [
-        # Caddy HTTP/3
-        443
         # Minecraft SimpleVoiceChat
         24454
         24455
@@ -126,12 +116,6 @@ in
     };
 
     outline.enable = true;
-
-    caddy = {
-      enable = true;
-      adapter = "caddyfile";
-      configFile = ./Caddyfile;
-    };
 
     pufferpanel = {
       enable = true;
@@ -229,6 +213,7 @@ in
       NODE_ENV = "production";
 
       URL = "https://brimworld.online";
+      CDN_URL = "https://brimworld.online";
       PORT = "3000";
 
       DATABASE_URL = "postgresql://localhost/outline?user=outline&host=/run/postgresql&sslmode=disable";
@@ -271,16 +256,6 @@ in
     ];
   };
 
-  systemd.services.caddy = {
-    environment = {
-      TLS_CERTIFICATE_PATH_FOR_BRIM_SU = ./certs/brim-su.pem;
-      TLS_CERTIFICATE_PATH_FOR_BRIMWORLD_ONLINE = ./certs/brimworld-online.pem;
-    };
-    serviceConfig.LoadCredential = map (
-      name: name + ":" + config.sops.secrets."caddy/${name}".path
-    ) caddySecrets;
-  };
-
   sops.templates."minio.env".content = ''
     MINIO_ROOT_PASSWORD=${config.sops.placeholder."minio/root-password"}
   '';
@@ -296,40 +271,30 @@ in
     AWS_SECRET_ACCESS_KEY=${config.sops.placeholder."outline/s3-secret-access-key"}
   '';
 
-  sops.secrets =
-    lib.listToAttrs (
-      map (secret: {
-        name = "caddy/" + secret;
-        value = {
-          restartUnits = [ "caddy.service" ];
-          sopsFile = ../../secrets/brim.sops.yaml;
-        };
-      }) caddySecrets
-    )
-    // {
-      "outline/secret-key" = {
-        restartUnits = [ "outline.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
-      "outline/utils-secret" = {
-        restartUnits = [ "outline.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
-      "outline/discord-client-secret" = {
-        restartUnits = [ "outline.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
-      "outline/s3-secret-access-key" = {
-        restartUnits = [ "outline.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
-      "discord/brimworld-bot-token" = {
-        restartUnits = [ "mcactivity.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
-      "minio/root-password" = {
-        restartUnits = [ "minio.service" ];
-        sopsFile = ../../secrets/brim.sops.yaml;
-      };
+  sops.secrets = {
+    "outline/secret-key" = {
+      restartUnits = [ "outline.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
     };
+    "outline/utils-secret" = {
+      restartUnits = [ "outline.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "outline/discord-client-secret" = {
+      restartUnits = [ "outline.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "outline/s3-secret-access-key" = {
+      restartUnits = [ "outline.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "discord/brimworld-bot-token" = {
+      restartUnits = [ "mcactivity.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "minio/root-password" = {
+      restartUnits = [ "minio.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+  };
 }
