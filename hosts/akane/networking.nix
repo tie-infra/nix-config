@@ -273,17 +273,7 @@ in
             filter-l7 = "http,tls,quic";
 
             ipset = map pkgs.copyPathToStore [
-              ../../zapret/akamai-ipset.txt
-              ../../zapret/aws-ipset.txt
-              ../../zapret/cdn77-ipset.txt
-              ../../zapret/cloudflare-ipset.txt
-              ../../zapret/cogent-ipset.txt
-              ../../zapret/constant-ipset.txt
-              ../../zapret/contabo-ipset.txt
-              ../../zapret/digitalocean-ipset.txt
-              ../../zapret/hetzner-ipset.txt
-              ../../zapret/oracle-ipset.txt
-              ../../zapret/scaleway-ipset.txt
+              ../../zapret/ipset/ipset.txt
             ];
 
             dpi-desync = "fake";
