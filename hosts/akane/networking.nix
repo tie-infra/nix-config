@@ -222,10 +222,14 @@ in
   networking.mssfix.enable = true;
 
   services.nfqws =
+    # https://hyperion-cs.github.io/dpi-checkers/ru/tcp-16-20/
     let
       fakeGoogleQUIC = pkgs.copyPathToStore ../../zapret/quic_initial_www_google_com.bin;
       fakeGoogleTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_www_google_com.bin;
-      fakeMaxTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_max_ru.bin;
+      # https://github.com/Flowseal/zapret-discord-youtube/pull/9824
+      fakeGithubTLS = pkgs.copyPathToStore ../../zapret/tls_clienthello_github_com.bin;
+      # https://github.com/Flowseal/zapret-discord-youtube/pull/10293
+      fakeStun = pkgs.copyPathToStore ../../zapret/stun.bin;
     in
     {
       enable = true;
@@ -278,7 +282,10 @@ in
 
             dpi-desync = "fake";
             dpi-desync-fake-quic = fakeGoogleQUIC;
-            dpi-desync-fake-tls = fakeMaxTLS;
+            dpi-desync-fake-tls = [
+              fakeStun
+              fakeGithubTLS
+            ];
             dpi-desync-fooling = "ts";
 
             dpi-desync-repeats = 5;
@@ -310,7 +317,10 @@ in
 
             dpi-desync = "fake";
             dpi-desync-fake-quic = fakeGoogleQUIC;
-            dpi-desync-fake-tls = fakeMaxTLS;
+            dpi-desync-fake-tls = [
+              fakeStun
+              fakeGithubTLS
+            ];
             dpi-desync-fooling = "ts";
 
             dpi-desync-repeats = 5;

@@ -29,6 +29,7 @@ var asnList = []struct {
 	Name string
 	ASNs []string
 }{
+	// https://hyperion-cs.github.io/dpi-checkers/ru/tcp-16-20/suite.v2.json
 	{"Scaleway", []string{"AS12876"}},
 	{"Hetzner", []string{"AS24940", "AS213230", "AS212317"}},
 	{"Akamai", []string{"AS20940", "AS16625"}},
@@ -54,6 +55,8 @@ var asnList = []struct {
 	{"Cogent", []string{"AS174"}},
 	{"Riot Games, Inc", []string{"AS6507"}},
 	{"Linode", []string{"AS63949"}},
+	{"FranTech Solutions", []string{"AS53667"}},
+	{"Melbikomas UAB", []string{"AS8849"}},
 }
 
 func asnPrefixes2(yield func(netip.Prefix, error) bool) {
@@ -114,7 +117,7 @@ func main1() error {
 
 	var buf bytes.Buffer
 	for _, prefix := range ipSet.Prefixes() {
-		_, _ = buf.WriteString(prefix.String())
+		_, _ = buf.WriteString(prefix.Masked().String())
 		_ = buf.WriteByte('\n')
 	}
 
