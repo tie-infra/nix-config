@@ -39,7 +39,6 @@ in
     graphics.enable = true;
     amdgpu = {
       initrd.enable = true;
-      amdvlk.enable = true;
       opencl.enable = true;
     };
   };
@@ -133,8 +132,6 @@ in
 
     transmission = {
       enable = true;
-      # TODO: update to transmission_4; don’t forget to backup!
-      package = pkgs.transmission_3;
       settings = {
         port-forwarding-enabled = false;
         encryption = 2; # required

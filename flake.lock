@@ -2,11 +2,11 @@
   "nodes": {
     "amneziawg": {
       "locked": {
-        "lastModified": 1750921012,
-        "narHash": "sha256-LKP76X+Gihv6VyCcEL78Z7oOTjdO2BsvqG6lJOqlyX0=",
+        "lastModified": 1772001402,
+        "narHash": "sha256-HCn0hDJhmLr5CbqT+pvm6zfCKtCTMBEVk+SnOpCsM+c=",
         "owner": "tie-infra",
         "repo": "amneziawg",
-        "rev": "c0c5cade1f302278a6a0c2ff0ccece4bb4c76a93",
+        "rev": "5a4e27e8d5279036392066ec831f7deb65f10287",
         "type": "github"
       },
       "original": {

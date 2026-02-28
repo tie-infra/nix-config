@@ -20,6 +20,7 @@
     ];
     falcon = nixosWithSystem "x86_64-linux" [
       ./hosts/falcon/configuration.nix
+      inputs.amneziawg.nixosModules.nixos-2511
     ];
   };
 }

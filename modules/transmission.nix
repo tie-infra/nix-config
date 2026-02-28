@@ -14,7 +14,7 @@ in
 {
   options.services.transmission = {
     enable = lib.mkEnableOption "Transmission daemon";
-    package = lib.mkPackageOption pkgs "transmission" { };
+    package = lib.mkPackageOption pkgs "transmission_4" { };
 
     cacertBundle = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
