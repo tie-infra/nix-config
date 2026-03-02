@@ -229,7 +229,7 @@
               {
                 handler = "static_response";
                 status_code = 302; # Found
-                headers.Location = [ "https://vk.com/brimworld?w=app5619682_-209836751%2523592836" ];
+                headers.Location = [ "https://brimworld.online/s/3447b683-0b35-4ccd-b0cd-2f677ac812f4/doc/anketa-E2ivmU3h16" ];
               }
             ];
           }
