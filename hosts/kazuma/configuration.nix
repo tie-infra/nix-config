@@ -91,6 +91,7 @@ in
       javaWrappers.java8
       javaWrappers.java17
       javaWrappers.java21
+      javaWrappers.java25
     ];
     environment = {
       PUFFER_WEB_HOST = ":${toString pufferpanelWebPort}";
