@@ -12,6 +12,7 @@
     brim = nixosWithSystem "x86_64-linux" [
       ./hosts/brim/configuration.nix
       ./hosts/brim/caddy.nix
+      ./hosts/brim/mumble-server.nix
     ];
     kazuma = nixosWithSystem "x86_64-linux" [ ./hosts/kazuma/configuration.nix ];
     saitama = nixosWithSystem "x86_64-linux" [

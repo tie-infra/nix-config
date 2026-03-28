@@ -39,6 +39,7 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_akane
+        - *server_brim
   - path_regex: ^secrets/kazuma\.sops\.yaml$
     key_groups:
       - age:
