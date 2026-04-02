@@ -146,8 +146,41 @@
     prologue = {
       enable = true;
       appUrl = "https://chat.brim.su";
-      # TODO: replace with correct hash from first nix build error
       srcHash = "sha256-H46m38tWX/+pRU5Q9LG8osHXzXeeYMj4QNF7GsYekrE=";
+    };
+
+    # Outgoing-only mail server for Prologue notifications.
+    postfix = {
+      enable = true;
+      hostname = "brim.su";
+      domain = "brim.su";
+      origin = "brim.su";
+      destination = [ ]; # no local delivery
+      config = {
+        # Outgoing only — reject all incoming mail
+        inet_interfaces = "loopback-only";
+        # TLS for outgoing
+        smtp_tls_security_level = "may";
+        smtp_tls_CApath = "/etc/ssl/certs";
+        # DKIM milter
+        smtpd_milters = "unix:/run/opendkim/opendkim.sock";
+        non_smtpd_milters = "unix:/run/opendkim/opendkim.sock";
+        milter_default_action = "accept";
+      };
+    };
+
+    opendkim = {
+      enable = true;
+      domains = "brim.su";
+      selector = "mail";
+      configFile = pkgs.writeText "opendkim.conf" ''
+        Socket unix:/run/opendkim/opendkim.sock
+        Domain brim.su
+        Selector mail
+        KeyFile /var/lib/opendkim/keys/brim.su/mail.private
+        Canonicalization relaxed/simple
+        Mode s
+      '';
     };
 
     mcactivity = {
@@ -263,6 +296,9 @@
       "multicast"
     ];
   };
+
+  # Allow Postfix to access OpenDKIM socket.
+  users.users.${config.services.postfix.user}.extraGroups = [ config.services.opendkim.group ];
 
   sops.templates."minio.env".content = ''
     MINIO_ROOT_PASSWORD=${config.sops.placeholder."minio/root-password"}
