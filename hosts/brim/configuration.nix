@@ -152,11 +152,11 @@
     # Outgoing-only mail server for Prologue notifications.
     postfix = {
       enable = true;
-      hostname = "brim.su";
-      domain = "brim.su";
-      origin = "brim.su";
-      destination = [ ]; # no local delivery
-      config = {
+      settings.main = {
+        myhostname = "brim.su";
+        mydomain = "brim.su";
+        myorigin = "brim.su";
+        mydestination = ""; # no local delivery
         # Outgoing only — reject all incoming mail
         inet_interfaces = "loopback-only";
         # TLS for outgoing
@@ -173,14 +173,6 @@
       enable = true;
       domains = "brim.su";
       selector = "mail";
-      configFile = pkgs.writeText "opendkim.conf" ''
-        Socket unix:/run/opendkim/opendkim.sock
-        Domain brim.su
-        Selector mail
-        KeyFile /var/lib/opendkim/keys/brim.su/mail.private
-        Canonicalization relaxed/simple
-        Mode s
-      '';
     };
 
     mcactivity = {
