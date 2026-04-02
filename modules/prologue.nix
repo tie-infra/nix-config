@@ -56,19 +56,23 @@ let
     stateDir="${cfg.stateDir}"
     version="${cfg.version}"
 
+    # Ensure Caddy can traverse the state directory
+    chmod 0755 "$stateDir"
+
     current_version=$(cat "$stateDir/.version" 2>/dev/null || echo "")
     if [ "$current_version" != "$version" ]; then
       rm -rf "$stateDir/www"
       cp -rT "${src}/public_html" "$stateDir/www"
-      chmod -R u+w "$stateDir/www"
       echo "$version" > "$stateDir/.version"
     fi
 
     mkdir -p "$stateDir/www/app/config"
-    install -m 0400 "${configFile}" "$stateDir/www/app/config/config.php"
+    install -m 0400 -o prologue -g prologue "${configFile}" "$stateDir/www/app/config/config.php"
 
     mkdir -p "$stateDir/storage/logs"
     mkdir -p "$stateDir/storage/attachments"
+
+    chown -R prologue:prologue "$stateDir/www" "$stateDir/storage" "$stateDir/.version"
   '';
 in
 {
