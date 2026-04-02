@@ -67,7 +67,28 @@ let
     fi
 
     mkdir -p "$stateDir/www/app/config"
-    install -m 0400 -o prologue -g prologue "${configFile}" "$stateDir/www/app/config/config.php"
+
+    # Use example config as base (contains DATABASE_SCHEMA_SQL)
+    # and override application settings via sed.
+    cp "${src}/public_html/app/config/example.config.php" "$stateDir/www/app/config/config.php"
+
+    db_pass=$(cat "${config.sops.secrets."prologue/db-password".path}")
+    csrf=$(cat "${config.sops.secrets."prologue/csrf-secret".path}")
+
+    ${pkgs.gnused}/bin/sed -i \
+      -e "s|\$db_host = '.*';|\$db_host = '${cfg.database.host}';|" \
+      -e "s|\$db_user = '.*';|\$db_user = '${cfg.database.user}';|" \
+      -e "s|\$db_pass = '.*';|\$db_pass = '$db_pass';|" \
+      -e "s|\$db_name = '.*';|\$db_name = '${cfg.database.name}';|" \
+      -e "s|\$app_url = '.*';|\$app_url = '${cfg.appUrl}';|" \
+      -e "s|\$app_name = '.*';|\$app_name = '${cfg.appName}';|" \
+      -e "s|\$storage_filesystem_root = '.*';|\$storage_filesystem_root = '$stateDir/storage';|" \
+      -e "s|\$log_directory = '.*';|\$log_directory = '$stateDir/storage/logs';|" \
+      -e "s|\$csrf_secret = '.*';|\$csrf_secret = '$csrf';|" \
+      "$stateDir/www/app/config/config.php"
+
+    chown prologue:prologue "$stateDir/www/app/config/config.php"
+    chmod 0400 "$stateDir/www/app/config/config.php"
 
     mkdir -p "$stateDir/storage/logs"
     mkdir -p "$stateDir/storage/attachments"
