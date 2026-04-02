@@ -76,15 +76,15 @@ let
     csrf=$(cat "${config.sops.secrets."prologue/csrf-secret".path}")
 
     ${pkgs.gnused}/bin/sed -i \
-      -e "s|\$db_host = '.*';|\$db_host = '${cfg.database.host}';|" \
-      -e "s|\$db_user = '.*';|\$db_user = '${cfg.database.user}';|" \
-      -e "s|\$db_pass = '.*';|\$db_pass = '$db_pass';|" \
-      -e "s|\$db_name = '.*';|\$db_name = '${cfg.database.name}';|" \
-      -e "s|\$app_url = '.*';|\$app_url = '${cfg.appUrl}';|" \
-      -e "s|\$app_name = '.*';|\$app_name = '${cfg.appName}';|" \
-      -e "s|\$storage_filesystem_root = '.*';|\$storage_filesystem_root = '$stateDir/storage';|" \
-      -e "s|\$log_directory = '.*';|\$log_directory = '$stateDir/storage/logs';|" \
-      -e "s|\$csrf_secret = '.*';|\$csrf_secret = '$csrf';|" \
+      -e "s|\$CONFIG_DB_HOST = '.*';|\$CONFIG_DB_HOST = '${cfg.database.host}';|" \
+      -e "s|\$CONFIG_DB_USER = '.*';|\$CONFIG_DB_USER = '${cfg.database.user}';|" \
+      -e "s|\$CONFIG_DB_PASS = '.*';|\$CONFIG_DB_PASS = '$db_pass';|" \
+      -e "s|\$CONFIG_DB_NAME = '.*';|\$CONFIG_DB_NAME = '${cfg.database.name}';|" \
+      -e "s|\$CONFIG_APP_URL = '.*';|\$CONFIG_APP_URL = '${cfg.appUrl}';|" \
+      -e "s|\$CONFIG_APP_NAME = '.*';|\$CONFIG_APP_NAME = '${cfg.appName}';|" \
+      -e "s|\$CONFIG_STORAGE_FILESYSTEM_ROOT = '.*';|\$CONFIG_STORAGE_FILESYSTEM_ROOT = '$stateDir/storage';|" \
+      -e "s|\$CONFIG_LOG_DIRECTORY = '.*';|\$CONFIG_LOG_DIRECTORY = '$stateDir/storage/logs';|" \
+      -e "s|\$CONFIG_CSRF_SECRET = '.*';|\$CONFIG_CSRF_SECRET = '$csrf';|" \
       "$stateDir/www/app/config/config.php"
 
     chown prologue:prologue "$stateDir/www/app/config/config.php"
