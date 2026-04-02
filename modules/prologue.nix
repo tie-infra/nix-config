@@ -85,6 +85,11 @@ let
           "$f"
       done
 
+      # Patch screen sharing to include audio.
+      ${pkgs.gnused}/bin/sed -i \
+        's/getDisplayMedia({ video: videoConstraints, audio: false })/getDisplayMedia({ video: videoConstraints, audio: true })/' \
+        "$stateDir/www/assets/js/call.js"
+
       # Patch 2FA email provider too
       if [ -f "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php" ]; then
         ${pkgs.gnused}/bin/sed -i \
