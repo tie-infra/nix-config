@@ -147,7 +147,7 @@
       enable = true;
       appUrl = "https://chat.brim.su";
       # TODO: replace with correct hash from first nix build error
-      srcHash = lib.fakeHash;
+      srcHash = "sha256-H46m38tWX/+pRU5Q9LG8osHXzXeeYMj4QNF7GsYekrE=";
     };
 
     mcactivity = {
