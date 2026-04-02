@@ -110,7 +110,9 @@ let
       ${pkgs.gnused}/bin/sed -i \
         "s|4-32|3-32|g" \
         "$stateDir/www/app/controllers/InstallController.php" \
-        "$stateDir/www/app/controllers/AuthController.php"
+        "$stateDir/www/app/controllers/AuthController.php" \
+        "$stateDir/www/app/views/auth/register.php" \
+        "$stateDir/www/app/views/settings.php"
 
       echo "$version" > "$stateDir/.version"
     fi
