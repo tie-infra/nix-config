@@ -56,15 +56,6 @@ let
     stateDir="${cfg.stateDir}"
     version="${cfg.version}"
 
-    # Generate self-signed cert for Postfix STARTTLS on localhost
-    if [ ! -f "$stateDir/postfix-selfsigned-cert.pem" ]; then
-      ${pkgs.openssl}/bin/openssl req -x509 -newkey rsa:2048 -nodes \
-        -keyout "$stateDir/postfix-selfsigned-key.pem" \
-        -out "$stateDir/postfix-selfsigned-cert.pem" \
-        -days 3650 -subj "/CN=localhost"
-      chmod 0600 "$stateDir/postfix-selfsigned-key.pem"
-    fi
-
     # Ensure Caddy can traverse the state directory
     chmod 0755 "$stateDir"
 

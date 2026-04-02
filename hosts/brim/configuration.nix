@@ -152,6 +152,11 @@
     # Outgoing-only mail server for Prologue notifications.
     postfix = {
       enable = true;
+      enableSubmission = true;
+      submissionOptions = {
+        smtpd_tls_security_level = "encrypt";
+        milter_macro_daemon_name = "ORIGINATING";
+      };
       settings.main = {
         myhostname = "brim.su";
         mydomain = "brim.su";
@@ -162,9 +167,9 @@
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
-        # TLS for incoming (localhost, for Prologue STARTTLS)
-        smtpd_tls_cert_file = "/var/lib/prologue/postfix-selfsigned-cert.pem";
-        smtpd_tls_key_file = "/var/lib/prologue/postfix-selfsigned-key.pem";
+        # TLS cert from Caddy ACME
+        smtpd_tls_cert_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.crt";
+        smtpd_tls_key_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.key";
         smtpd_tls_security_level = "may";
         # DKIM milter
         smtpd_milters = "unix:/run/opendkim/opendkim.sock";
@@ -293,8 +298,11 @@
     ];
   };
 
-  # Allow Postfix to access OpenDKIM socket.
-  users.users.${config.services.postfix.user}.extraGroups = [ config.services.opendkim.group ];
+  # Allow Postfix to access OpenDKIM socket and Caddy TLS certs.
+  users.users.${config.services.postfix.user}.extraGroups = [
+    config.services.opendkim.group
+    config.services.caddy.group
+  ];
 
   sops.templates."minio.env".content = ''
     MINIO_ROOT_PASSWORD=${config.sops.placeholder."minio/root-password"}
