@@ -182,11 +182,15 @@ in
       serviceConfig.ExecStartPre = [ setupScript ];
     };
 
+    # Ensure Caddy can traverse the state directory.
+    systemd.tmpfiles.rules = [
+      "d ${cfg.stateDir} 0755 prologue prologue -"
+    ];
+
     users.users.prologue = {
       isSystemUser = true;
       group = "prologue";
       home = cfg.stateDir;
-      createHome = true;
     };
     users.groups.prologue = { };
   };
