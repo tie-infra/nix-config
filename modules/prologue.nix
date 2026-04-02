@@ -73,15 +73,23 @@ let
       rm -rf "$stateDir/www"
       cp -rT "${src}/public_html" "$stateDir/www"
 
-      # Patch PHPMailer: skip TLS certificate verification for localhost.
-      ${pkgs.gnused}/bin/sed -i 's/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            \$mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
+      # Patch PHPMailer: skip TLS cert verification and disable AUTH for localhost.
+      for f in \
         "$stateDir/www/app/controllers/AdminController.php" \
         "$stateDir/www/app/controllers/AuthController.php" \
-        "$stateDir/www/app/controllers/HomeController.php"
+        "$stateDir/www/app/controllers/HomeController.php" \
+      ; do
+        ${pkgs.gnused}/bin/sed -i \
+          -e 's/\$mail->SMTPAuth = true;/\$mail->SMTPAuth = false;/' \
+          -e 's/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            \$mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
+          "$f"
+      done
 
       # Patch 2FA email provider too
       if [ -f "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php" ]; then
-        ${pkgs.gnused}/bin/sed -i 's/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            \$mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
+        ${pkgs.gnused}/bin/sed -i \
+          -e 's/\$mail->SMTPAuth = true;/\$mail->SMTPAuth = false;/' \
+          -e 's/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/\$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            \$mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
           "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php"
       fi
 
