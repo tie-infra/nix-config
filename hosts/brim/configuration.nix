@@ -168,7 +168,7 @@
         # Listen on all interfaces (submission needs public IP for TLS CN match).
         # Port 25 blocked by firewall. Submission 587 restricted to localhost.
         inet_interfaces = "all";
-        mynetworks = "127.0.0.0/8 [::1]/128";
+        mynetworks = [ "127.0.0.0/8" "[::1]/128" ];
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
