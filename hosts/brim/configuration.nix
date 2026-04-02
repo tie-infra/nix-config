@@ -152,9 +152,12 @@
     # Outgoing-only mail server for Prologue notifications.
     postfix = {
       enable = true;
+      # Submission on port 587 for Prologue (connects to brim.su:587).
+      # Restricted to localhost via mynetworks + permit_mynetworks.
       enableSubmission = true;
       submissionOptions = {
         smtpd_tls_security_level = "encrypt";
+        smtpd_client_restrictions = "permit_mynetworks,reject";
         milter_macro_daemon_name = "ORIGINATING";
       };
       settings.main = {
@@ -162,8 +165,10 @@
         mydomain = "brim.su";
         myorigin = "brim.su";
         mydestination = ""; # no local delivery
-        # Outgoing only — reject all incoming mail
-        inet_interfaces = "loopback-only";
+        # Listen on all interfaces (submission needs public IP for TLS CN match).
+        # Port 25 blocked by firewall. Submission 587 restricted to localhost.
+        inet_interfaces = "all";
+        mynetworks = "127.0.0.0/8 [::1]/128";
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
