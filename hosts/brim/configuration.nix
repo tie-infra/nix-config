@@ -143,6 +143,13 @@
       environmentFile = config.sops.templates."minio.env".path;
     };
 
+    prologue = {
+      enable = true;
+      appUrl = "https://chat.brim.su";
+      # TODO: replace with correct hash from first nix build error
+      srcHash = lib.fakeHash;
+    };
+
     mcactivity = {
       enable = true;
       settings = {
@@ -295,6 +302,16 @@
     };
     "minio/root-password" = {
       restartUnits = [ "minio.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "prologue/db-password" = {
+      restartUnits = [ "phpfpm-prologue.service" ];
+      owner = "prologue";
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "prologue/csrf-secret" = {
+      restartUnits = [ "phpfpm-prologue.service" ];
+      owner = "prologue";
       sopsFile = ../../secrets/brim.sops.yaml;
     };
   };

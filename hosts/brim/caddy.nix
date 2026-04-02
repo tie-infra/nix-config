@@ -116,6 +116,72 @@
             ];
           }
           {
+            match = [ { host = [ "chat.brim.su" ]; } ];
+            terminal = true;
+            handle = [
+              {
+                handler = "subroute";
+                routes = [
+                  {
+                    # Serve uploaded files from storage
+                    match = [ { path = [ "/storage/*" ]; } ];
+                    handle = [
+                      {
+                        handler = "file_server";
+                        root = "/var/lib/prologue";
+                      }
+                    ];
+                  }
+                  {
+                    # Try file, then rewrite to index.php (front controller)
+                    match = [
+                      {
+                        file = {
+                          root = "/var/lib/prologue/www";
+                          try_files = [
+                            "{http.request.uri.path}"
+                            "index.php"
+                          ];
+                          split_path = [ ".php" ];
+                        };
+                      }
+                    ];
+                    handle = [
+                      {
+                        handler = "rewrite";
+                        uri = "{http.matchers.file.relative}";
+                      }
+                    ];
+                  }
+                  {
+                    # Proxy PHP to FPM
+                    match = [ { path = [ "*.php" "*.php/*" ]; } ];
+                    handle = [
+                      {
+                        handler = "reverse_proxy";
+                        upstreams = [ { dial = "unix//run/phpfpm/prologue.sock"; } ];
+                        transport = {
+                          protocol = "fastcgi";
+                          root = "/var/lib/prologue/www";
+                          split_path = [ ".php" ];
+                        };
+                      }
+                    ];
+                  }
+                  {
+                    # Static files
+                    handle = [
+                      {
+                        handler = "file_server";
+                        root = "/var/lib/prologue/www";
+                      }
+                    ];
+                  }
+                ];
+              }
+            ];
+          }
+          {
             match = [ { host = [ "outline.brim.su" ]; } ];
             terminal = true;
             handle = [

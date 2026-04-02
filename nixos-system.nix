@@ -21,6 +21,7 @@ let
     ./modules/btrfs-erase-your-darlings.nix
     ./modules/trust-admins.nix
     ./modules/mcactivity.nix
+    ./modules/prologue.nix
     ./modules/outline.nix
     ./modules/mumble-server.nix
     ./modules/flood.nix
