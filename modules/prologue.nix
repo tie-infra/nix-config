@@ -151,6 +151,9 @@ in
       phpOptions = ''
         upload_max_filesize = 512M
         post_max_size = 512M
+        error_reporting = E_ALL
+        log_errors = On
+        error_log = ${cfg.stateDir}/storage/logs/php-error.log
       '';
     };
 
