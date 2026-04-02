@@ -98,6 +98,15 @@ let
           "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php"
       fi
 
+      # Allow 3-character usernames (default is 4+).
+      ${pkgs.gnused}/bin/sed -i \
+        "s|{3,31}|{2,31}|g" \
+        "$stateDir/www/app/models/User.php"
+      ${pkgs.gnused}/bin/sed -i \
+        "s|4-32|3-32|g" \
+        "$stateDir/www/app/controllers/InstallController.php" \
+        "$stateDir/www/app/controllers/AuthController.php"
+
       echo "$version" > "$stateDir/.version"
     fi
 
