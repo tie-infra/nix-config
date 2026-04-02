@@ -157,7 +157,9 @@
       enableSubmission = true;
       submissionOptions = {
         smtpd_tls_security_level = "encrypt";
-        smtpd_client_restrictions = "permit_mynetworks,reject";
+        smtpd_sasl_auth_enable = "yes";
+        smtpd_client_restrictions = "permit_sasl_authenticated,permit_mynetworks,reject";
+        smtpd_recipient_restrictions = "permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination";
         milter_macro_daemon_name = "ORIGINATING";
       };
       settings.main = {
@@ -169,6 +171,9 @@
         # Port 25 blocked by firewall. Submission 587 restricted to localhost.
         inet_interfaces = "all";
         mynetworks = [ "127.0.0.0/8" "[::1]/128" ];
+        # SASL auth via sasldb for submission
+        smtpd_sasl_type = "cyrus";
+        smtpd_sasl_path = "smtpd";
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
