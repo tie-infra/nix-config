@@ -152,34 +152,19 @@
     # Outgoing-only mail server for Prologue notifications.
     postfix = {
       enable = true;
-      # Submission on port 587 for Prologue (connects to brim.su:587).
-      # Restricted to localhost via mynetworks + permit_mynetworks.
-      enableSubmission = true;
-      submissionOptions = {
-        smtpd_tls_security_level = "encrypt";
-        smtpd_sasl_auth_enable = "yes";
-        smtpd_client_restrictions = "permit_sasl_authenticated,permit_mynetworks,reject";
-        smtpd_recipient_restrictions = "permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination";
-        milter_macro_daemon_name = "ORIGINATING";
-      };
       settings.main = {
         myhostname = "brim.su";
         mydomain = "brim.su";
         myorigin = "brim.su";
         mydestination = ""; # no local delivery
-        # Listen on all interfaces (submission needs public IP for TLS CN match).
-        # Port 25 blocked by firewall. Submission 587 restricted to localhost.
-        inet_interfaces = "all";
-        mynetworks = [ "127.0.0.0/8" "[::1]/128" ];
-        # SASL auth via sasldb for submission
-        smtpd_sasl_type = "cyrus";
-        smtpd_sasl_path = "smtpd";
+        inet_interfaces = "loopback-only";
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
-        # TLS cert from Caddy ACME
-        smtpd_tls_cert_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.crt";
-        smtpd_tls_key_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.key";
+        # Self-signed TLS for incoming (localhost, Prologue PHPMailer
+        # forces STARTTLS; cert verification disabled via patch).
+        smtpd_tls_cert_file = "/var/lib/prologue/postfix-selfsigned-cert.pem";
+        smtpd_tls_key_file = "/var/lib/prologue/postfix-selfsigned-key.pem";
         smtpd_tls_security_level = "may";
         # DKIM milter
         smtpd_milters = "unix:/run/opendkim/opendkim.sock";
@@ -308,11 +293,8 @@
     ];
   };
 
-  # Allow Postfix to access OpenDKIM socket and Caddy TLS certs.
-  users.users.${config.services.postfix.user}.extraGroups = [
-    config.services.opendkim.group
-    config.services.caddy.group
-  ];
+  # Allow Postfix to access OpenDKIM socket.
+  users.users.${config.services.postfix.user}.extraGroups = [ config.services.opendkim.group ];
 
   sops.templates."minio.env".content = ''
     MINIO_ROOT_PASSWORD=${config.sops.placeholder."minio/root-password"}

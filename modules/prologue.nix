@@ -56,6 +56,15 @@ let
     stateDir="${cfg.stateDir}"
     version="${cfg.version}"
 
+    # Generate self-signed cert for Postfix STARTTLS on localhost
+    if [ ! -f "$stateDir/postfix-selfsigned-cert.pem" ]; then
+      ${pkgs.openssl}/bin/openssl req -x509 -newkey rsa:2048 -nodes \
+        -keyout "$stateDir/postfix-selfsigned-key.pem" \
+        -out "$stateDir/postfix-selfsigned-cert.pem" \
+        -days 3650 -subj "/CN=localhost"
+      chmod 0600 "$stateDir/postfix-selfsigned-key.pem"
+    fi
+
     # Ensure Caddy can traverse the state directory
     chmod 0755 "$stateDir"
 
@@ -63,6 +72,19 @@ let
     if [ "$current_version" != "$version" ]; then
       rm -rf "$stateDir/www"
       cp -rT "${src}/public_html" "$stateDir/www"
+
+      # Patch PHPMailer: skip TLS certificate verification for localhost.
+      ${pkgs.gnused}/bin/sed -i 's/$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            $mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
+        "$stateDir/www/app/controllers/AdminController.php" \
+        "$stateDir/www/app/controllers/AuthController.php" \
+        "$stateDir/www/app/controllers/HomeController.php"
+
+      # Patch 2FA email provider too
+      if [ -f "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php" ]; then
+        ${pkgs.gnused}/bin/sed -i 's/$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;/$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;\n            $mail->SMTPOptions = ["ssl" => ["verify_peer" => false, "verify_peer_name" => false, "allow_self_signed" => true]];/' \
+          "$stateDir/www/app/modules/2fa/email/EmailTwoFAProvider.php"
+      fi
+
       echo "$version" > "$stateDir/.version"
     fi
 
