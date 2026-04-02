@@ -162,6 +162,10 @@
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
+        # TLS for incoming (localhost, for Prologue STARTTLS)
+        smtpd_tls_cert_file = "/var/lib/prologue/postfix-selfsigned-cert.pem";
+        smtpd_tls_key_file = "/var/lib/prologue/postfix-selfsigned-key.pem";
+        smtpd_tls_security_level = "may";
         # DKIM milter
         smtpd_milters = "unix:/run/opendkim/opendkim.sock";
         non_smtpd_milters = "unix:/run/opendkim/opendkim.sock";
