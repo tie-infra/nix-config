@@ -112,7 +112,8 @@ let
         "$stateDir/www/app/controllers/InstallController.php" \
         "$stateDir/www/app/controllers/AuthController.php" \
         "$stateDir/www/app/views/auth/register.php" \
-        "$stateDir/www/app/views/settings.php"
+        "$stateDir/www/app/views/settings.php" \
+        "$stateDir/www/app/config/config.php"
 
       echo "$version" > "$stateDir/.version"
     fi
