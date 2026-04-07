@@ -177,6 +177,9 @@
       enable = true;
       domains = "brim.su";
       selector = "mail";
+      settings = {
+        UMask = "0117";
+      };
     };
 
     mcactivity = {
