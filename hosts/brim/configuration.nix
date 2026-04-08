@@ -158,6 +158,9 @@
         myorigin = "brim.su";
         mydestination = ""; # no local delivery
         inet_interfaces = "loopback-only";
+        # Send outgoing mail only via IPv4 to match SPF record.
+        smtp_bind_address = "185.148.38.208";
+        inet_protocols = "all";
         # TLS for outgoing
         smtp_tls_security_level = "may";
         smtp_tls_CApath = "/etc/ssl/certs";
