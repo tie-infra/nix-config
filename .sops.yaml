@@ -5,7 +5,7 @@ keys:
   - &server_akane age1peysazn863qdnquutt3gvnm60utvr7czmuq0pppnz6v6ngaepy9q4x3glm
   - &server_brim age15c06e7kj3t5vjxp7tjkal2qs655wvzgh7qy8h4rk6hpkrlzvssjqyp84zw
   - &admin_tie age1y20x3mwhjaax0q5zc9mwytuste6r02m2m2ee26sz4595u0yxtp3qpk9z4t
-  - &admin_brim age1vx2a9gx2gw6720xnhk2qm2qhfnrv0jkv3z7w28xa0p8y9453m90qdgk88w
+  - &admin_brim age1fd38nsq5lnwy0p9vtgtf6u0tzjpsmv965vt2nez2frcz5tud4pqq0f0eng
 creation_rules:
   - path_regex: ^secrets/wireguard-psk\.sops\.yaml$
     key_groups:
