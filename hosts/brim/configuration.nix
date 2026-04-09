@@ -38,6 +38,8 @@
       allowedTCPPorts = [
         # PufferPanel SFTP
         5657
+        # SMTP submission
+        587
       ];
       allowedTCPPortRanges = [
         # Minecraft
@@ -141,6 +143,85 @@
         MINIO_ROOT_USER = "minio";
       };
       environmentFile = config.sops.templates."minio.env".path;
+    };
+
+    prologue = {
+      enable = true;
+      appUrl = "https://chat.brim.su";
+      srcHash = "sha256-H46m38tWX/+pRU5Q9LG8osHXzXeeYMj4QNF7GsYekrE=";
+    };
+
+    # Mail server: localhost for Prologue + submission 587 for Gmail Send As.
+    postfix = {
+      enable = true;
+      enableSubmission = true;
+      submissionOptions = {
+        smtpd_tls_security_level = "encrypt";
+        smtpd_tls_cert_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.crt";
+        smtpd_tls_key_file = "/var/lib/caddy/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/brim.su/brim.su.key";
+        smtpd_sasl_auth_enable = "yes";
+        smtpd_client_restrictions = "permit_sasl_authenticated,reject";
+        smtpd_recipient_restrictions = "permit_sasl_authenticated,reject_unauth_destination";
+        milter_macro_daemon_name = "ORIGINATING";
+      };
+      settings.main = {
+        myhostname = "brim.su";
+        mydomain = "brim.su";
+        myorigin = "brim.su";
+        mydestination = ""; # no local delivery
+        # Localhost for Prologue, all interfaces for submission.
+        inet_interfaces = "all";
+        # Send outgoing mail only via IPv4 to match SPF record.
+        smtp_bind_address = "185.148.38.208";
+        inet_protocols = "all";
+        # TLS for outgoing
+        smtp_tls_security_level = "may";
+        smtp_tls_CApath = "/etc/ssl/certs";
+        # Self-signed TLS for localhost (Prologue PHPMailer STARTTLS)
+        smtpd_tls_cert_file = "/var/lib/prologue/postfix-selfsigned-cert.pem";
+        smtpd_tls_key_file = "/var/lib/prologue/postfix-selfsigned-key.pem";
+        smtpd_tls_security_level = "may";
+        # SASL via Dovecot
+        smtpd_sasl_type = "dovecot";
+        smtpd_sasl_path = "/run/dovecot2/auth-postfix";
+        # DKIM milter
+        smtpd_milters = "unix:/run/opendkim/opendkim.sock";
+        non_smtpd_milters = "unix:/run/opendkim/opendkim.sock";
+        milter_default_action = "accept";
+      };
+    };
+
+    # Minimal Dovecot — only SASL auth for Postfix submission, no IMAP.
+    dovecot2 = {
+      enable = true;
+      enableImap = false;
+      enablePop3 = false;
+      extraConfig = ''
+        service auth {
+          unix_listener auth-postfix {
+            mode = 0660
+            user = postfix
+            group = postfix
+          }
+        }
+        passdb {
+          driver = passwd-file
+          args = /run/secrets/postfix-sasl-passwd
+        }
+        userdb {
+          driver = static
+          args = uid=postfix gid=postfix home=/tmp
+        }
+      '';
+    };
+
+    opendkim = {
+      enable = true;
+      domains = "brim.su";
+      selector = "mail";
+      settings = {
+        UMask = "0117";
+      };
     };
 
     mcactivity = {
@@ -257,6 +338,12 @@
     ];
   };
 
+  # Allow Postfix to access OpenDKIM socket and Caddy TLS certs.
+  users.users.${config.services.postfix.user}.extraGroups = [
+    config.services.opendkim.group
+    config.services.caddy.group
+  ];
+
   sops.templates."minio.env".content = ''
     MINIO_ROOT_PASSWORD=${config.sops.placeholder."minio/root-password"}
   '';
@@ -295,6 +382,21 @@
     };
     "minio/root-password" = {
       restartUnits = [ "minio.service" ];
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "prologue/db-password" = {
+      restartUnits = [ "phpfpm-prologue.service" ];
+      owner = "prologue";
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "postfix/sasl-passwd" = {
+      restartUnits = [ "dovecot2.service" ];
+      path = "/run/secrets/postfix-sasl-passwd";
+      sopsFile = ../../secrets/brim.sops.yaml;
+    };
+    "prologue/csrf-secret" = {
+      restartUnits = [ "phpfpm-prologue.service" ];
+      owner = "prologue";
       sopsFile = ../../secrets/brim.sops.yaml;
     };
   };
