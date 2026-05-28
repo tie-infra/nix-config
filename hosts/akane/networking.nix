@@ -243,7 +243,10 @@ in
             filter-l7 = "discord,stun";
 
             dpi-desync = "fake";
+            dpi-desync-fake-discord = fakeGoogleQUIC;
+            dpi-desync-fake-stun = fakeGoogleQUIC;
             dpi-desync-ttl = 5;
+
             dpi-desync-repeats = 5;
             dpi-desync-fwmark = zapretFwmark;
           };
