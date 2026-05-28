@@ -13,6 +13,9 @@
           inputs.btrfs-rollback.overlays.default
           (import ./overlays/java-wrappers.nix)
           (import ./overlays/mcactivity.nix)
+          (import ./overlays/mlspp.nix)
+          (import ./overlays/libdave.nix)
+          (import ./overlays/mumble-discord-bridge.nix)
           (import ./overlays/zapret/default.nix)
           (import ./overlays/sonarr/default.nix)
         ];

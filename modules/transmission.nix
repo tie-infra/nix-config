@@ -179,6 +179,9 @@ in
         ];
         SystemCallErrorNumber = "EPERM";
         SystemCallArchitectures = "native";
+
+        # https://github.com/transmission/transmission/issues/5385#issuecomment-3287711920
+        LimitNOFILE = 1048576;
       };
     };
 

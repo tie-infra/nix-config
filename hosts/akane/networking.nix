@@ -280,6 +280,13 @@ in
               ../../zapret/ipset/ipset.txt
             ];
 
+            ipset-exclude-ip = lib.concatStringsSep "," [
+              # falcon subnets
+              "2a01:4f8:222:fe00::/56"
+              "2a01:4f8:222:1618::/64"
+              "213.133.111.103/32"
+            ];
+
             dpi-desync = "fake";
             dpi-desync-fake-quic = fakeGoogleQUIC;
             dpi-desync-fake-tls = [
@@ -346,6 +353,8 @@ in
         elements = {
           tcp . 80,
           tcp . 443,
+          tcp . 5432,
+          tcp . 6432,
           udp . 443,
           ${lib.concatMapStringsSep "\n" ({ proto, service }: "    ${proto} . ${toString service},") (
             lib.cartesianProduct {

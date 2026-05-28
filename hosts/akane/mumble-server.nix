@@ -6,11 +6,43 @@
 }:
 let
   mumblePort = 64738;
+
+  discordGuildID = "657631261497753610";
+  discordChannelID = "899024400060403712";
 in
 {
   networking.firewall = {
     allowedUDPPorts = [ mumblePort ];
     allowedTCPPorts = [ mumblePort ];
+  };
+
+  services.mumble-discord-bridge = {
+    enable = true;
+    args = [
+      "-chat-bridge"
+      "-discord-gid=${discordGuildID}"
+      "-discord-cid=${discordChannelID}"
+      "-mumble-address=localhost"
+      "-mumble-port=${toString mumblePort}"
+      "-mumble-bot"
+      "-mumble-insecure"
+    ];
+  };
+
+  systemd.services.mumble-discord-bridge = {
+    serviceConfig = {
+      EnvironmentFile = [
+        config.sops.templates."mumble-discord-bridge.env".path
+      ];
+    };
+  };
+
+  sops.templates."mumble-discord-bridge.env" = {
+    restartUnits = [ config.systemd.services.mumble-discord-bridge.name ];
+    content = ''
+      MUMBLE_PASSWORD=${config.sops.placeholder."mumble-server/password"}
+      DISCORD_TOKEN=${config.sops.placeholder."mumble-discord-bridge/bot-token"}
+    '';
   };
 
   services.mumble-server = {
@@ -99,11 +131,18 @@ in
 
   sops.secrets = {
     "mumble-server/password" = {
-      restartUnits = [ config.systemd.services.mumble-server.name ];
+      restartUnits = [
+        config.systemd.services.mumble-server.name
+        config.systemd.services.mumble-discord-bridge.name
+      ];
       sopsFile = ../../secrets/mumble-server.sops.yaml;
     };
     "mumble-server/superuser-password" = {
       restartUnits = [ config.systemd.services.mumble-server.name ];
+      sopsFile = ../../secrets/mumble-server.sops.yaml;
+    };
+    "mumble-discord-bridge/bot-token" = {
+      restartUnits = [ config.systemd.services.mumble-discord-bridge.name ];
       sopsFile = ../../secrets/mumble-server.sops.yaml;
     };
   };
