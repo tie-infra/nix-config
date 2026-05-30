@@ -2,7 +2,6 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
-  applyPatches,
   pkgconf,
   libopus,
   libdave,
