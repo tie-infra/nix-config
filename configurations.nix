@@ -1,4 +1,4 @@
-{ inputs, nixosWithSystem, ... }:
+{ nixosWithSystem, ... }:
 {
   flake.nixosConfigurations = {
     bootstrap-x86-64 = nixosWithSystem "x86_64-linux" [ ./hosts/bootstrap/configuration.nix ];
@@ -20,7 +20,6 @@
     ];
     falcon = nixosWithSystem "x86_64-linux" [
       ./hosts/falcon/configuration.nix
-      inputs.amneziawg.nixosModules.nixos-2511
     ];
   };
 }

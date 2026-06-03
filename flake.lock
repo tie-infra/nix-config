@@ -1,20 +1,5 @@
 {
   "nodes": {
-    "amneziawg": {
-      "locked": {
-        "lastModified": 1772001402,
-        "narHash": "sha256-HCn0hDJhmLr5CbqT+pvm6zfCKtCTMBEVk+SnOpCsM+c=",
-        "owner": "tie-infra",
-        "repo": "amneziawg",
-        "rev": "5a4e27e8d5279036392066ec831f7deb65f10287",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tie-infra",
-        "repo": "amneziawg",
-        "type": "github"
-      }
-    },
     "btrfs-rollback": {
       "inputs": {
         "flake-parts": [
@@ -97,7 +82,6 @@
     },
     "root": {
       "inputs": {
-        "amneziawg": "amneziawg",
         "btrfs-rollback": "btrfs-rollback",
         "flake-parts": "flake-parts",
         "minimal-shell": "minimal-shell",

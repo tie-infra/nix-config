@@ -131,10 +131,6 @@ in
         wireguardConfig = {
           ListenPort = wireguardPort;
           PrivateKeyFile = config.sops.secrets."wireguard/pk.txt".path;
-          H1 = 224412;
-          H2 = 52344123;
-          H3 = 6713390;
-          H4 = 2537922;
         };
         wireguardPeers = [
           # akane
@@ -150,69 +146,6 @@ in
             Endpoint = "akane.tie.rip:51820";
             PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
             PersistentKeepalive = 30;
-          }
-          # ryu
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::2/128"
-              "172.16.0.2/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "vpHDCWEyEf/b16ALkZx94Dc+LOz2fmPqbRFwqnAiYQU=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-          }
-          # kuro
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::3/128"
-              "172.16.0.3/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "rQI4OQbaV7VRPps7RoBbwOtE75f5s5BZ9GEZFxdG7i0=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-          }
-          # brim
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::4/128"
-              "172.16.0.4/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "PDkui+w0iGkXzq5uzeH9X8Qg5D7Rb3yYb+Ju7L9/QGg=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-          }
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::5/128"
-              "172.16.0.5/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "N2gBdRWgl9GfOmeTIJuMZQfL+Tn1DYkyJr7Zv5xk+QU=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-          }
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::6/128"
-              "172.16.0.6/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "WOHyqlyiTShk83GGOjMalqlbZwQJSsqUVBk3vZ2q1Cc=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
-          }
-          {
-            AdvancedSecurity = true;
-            AllowedIPs = [
-              "2a01:4f8:222:fe00::7/128"
-              "172.16.0.7/32"
-            ];
-            RouteTable = "main";
-            PublicKey = "/Y67o9MFx0/ZIpQAssgrRchOYVOp+FhYcR3FueOU8nA=";
-            PresharedKeyFile = config.sops.secrets."wireguard/psk.txt".path;
           }
         ];
       };
