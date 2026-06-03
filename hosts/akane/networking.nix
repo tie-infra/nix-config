@@ -267,7 +267,10 @@ in
 
             dpi-desync = "fake";
             dpi-desync-fake-quic = fakeGoogleQUIC;
-            dpi-desync-fake-tls = fakeGoogleTLS;
+            dpi-desync-fake-tls = [
+              fakeStun
+              fakeGithubTLS
+            ];
             dpi-desync-fooling = "ts";
 
             # NB we do not set dpi-desync-ttl because recently www.youtube.com
