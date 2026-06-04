@@ -21,7 +21,7 @@ let
     submodule
     ;
   inherit (lib.cli)
-    toGNUCommandLine
+    toCommandLineGNU
     ;
 
   argType = nullOr (oneOf [
@@ -92,7 +92,7 @@ let
         "--new"
         "--comment=${name}"
       ]
-      ++ toGNUCommandLine { } config.settings;
+      ++ toCommandLineGNU { } config.settings;
     };
 
 in
@@ -151,7 +151,7 @@ in
         let
           desyncArgs = concatMap (x: optionals x.enable x.args) (attrValues config.profiles);
           args =
-            toGNUCommandLine { } config.settings
+            toCommandLineGNU { } config.settings
             # Initial profile is implicit so remove first --new flag.
             ++ drop 1 desyncArgs;
           configFile = generateConfigFile "${service.name}-${name}.config" args;

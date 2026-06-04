@@ -409,7 +409,7 @@ in
     family = "inet";
     content = ''
       define local = ${isplanInterface}
-      define tunnel = ${wireguardInterface}
+      define remote = ${wireguardInterface}
 
       # nftables currently does not have a type that represents a union of
       # `ipv{6,4}_addr`. See https://unix.stackexchange.com/a/647640
@@ -437,7 +437,7 @@ in
 
       chain postrouting {
         type nat hook postrouting priority srcnat; policy accept;
-        iifname $local oifname $tunnel \
+        iifname $local oifname $remote \
           meta protocol vmap {
             ip : jump postrouting_ipv4,
             ip6 : jump postrouting_ipv6,
@@ -867,16 +867,11 @@ in
     };
   };
 
-  services.resolved = {
-    extraConfig =
-      lib.concatLines (
-        map (address: "DNSStubListenerExtra=" + address) (
-          wglanConfigurationAddresses ++ isplanConfigurationAddresses
-        )
-      )
-      + ''
-        StaleRetentionSec=1d
-      '';
+  services.resolved.settings = {
+    Resolve = {
+      DNSStubListenerExtra = wglanConfigurationAddresses ++ isplanConfigurationAddresses;
+      StaleRetentionSec = "1d";
+    };
   };
 
   systemd.services.systemd-networkd = {

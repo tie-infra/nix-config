@@ -115,7 +115,7 @@ in
     # Enable systemd-networkd for local DNS resolution and cache.
     resolved = {
       enable = true;
-      fallbackDns = [ ];
+      settings.Resolve.FallbackDNS = [ ];
     };
 
     # Enable OpenSSH sever that uses systemd socket activation instead of

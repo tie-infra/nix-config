@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-25.11";
+    nixpkgs.url = "nixpkgs/nixos-26.05";
 
     flake-parts.url = "flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";

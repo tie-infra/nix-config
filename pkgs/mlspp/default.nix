@@ -8,13 +8,13 @@
 }:
 stdenv.mkDerivation {
   pname = "mlspp";
-  version = "0-unstable-2025-11-25";
+  version = "0-unstable-2026-04-13";
 
   src = fetchFromGitHub {
     owner = "cisco";
     repo = "mlspp";
-    rev = "61e4d76dbe6628cbe36ffb9cab684f3bee390d05";
-    hash = "sha256-V2ptsh7CFW0eN46RdDeCVO++DkFKyRFvwnQqvQ7l6Qs=";
+    rev = "92aaa4134fa45ec39957a7c81a342401fba7feb2";
+    hash = "sha256-HElw0fvL7ClDSXBDYRw1qcPw73oWvbMfi7skQokyftY=";
   };
 
   nativeBuildInputs = [
@@ -25,6 +25,8 @@ stdenv.mkDerivation {
     openssl
     nlohmann_json
   ];
+
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=maybe-uninitialized";
 
   meta = {
     homepage = "https://github.com/cisco/mlspp";

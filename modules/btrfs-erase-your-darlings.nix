@@ -73,7 +73,6 @@ in
         path = [ pkgs.btrfs-rollback ];
         inherit script;
 
-        wants = [ "systemd-udev-settle.service" ];
         after = [
           "systemd-udev-settle.service"
           "systemd-modules-load.service"
@@ -93,6 +92,14 @@ in
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
+
+          # FIXME: systemd-udev-settle.service is obsolete. We wait for the udev
+          # events queue to empty in the hope that the root disk device becomes
+          # available. This is terribly broken and essentially no better than
+          # a random sleep(). Perhaps btrfs-rollback should be waiting for the
+          # device to be ready? See https://github.com/openzfs/zfs/issues/10891
+          # for ideas and inspiration.
+          ExecStartPre = "${lib.getExe' pkgs.systemd "udevadm"} settle --timeout=180";
         };
       };
     };
