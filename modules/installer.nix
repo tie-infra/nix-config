@@ -26,7 +26,12 @@ in
   networking = {
     hostName = "installer";
     useDHCP = true;
+
+    # https://github.com/NixOS/nixpkgs/commit/1ef7d63228898f5b04019b8f3883f4d2f58f81cf
+    networkmanager.enable = lib.mkForce false;
   };
+
+  boot.zfs.forceImportRoot = false;
 
   environment.systemPackages = [
     setup-disk
