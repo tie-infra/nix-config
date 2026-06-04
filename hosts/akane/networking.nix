@@ -269,7 +269,7 @@ in
             dpi-desync-fake-quic = fakeGoogleQUIC;
             dpi-desync-fake-tls = [
               fakeStun
-              fakeGithubTLS
+              fakeGoogleTLS
             ];
             dpi-desync-fooling = "ts";
 
