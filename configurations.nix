@@ -8,6 +8,7 @@
       ./hosts/akane/caddy.nix
       ./hosts/akane/mumble-server.nix
       ./hosts/akane/xray.nix
+      ./hosts/akane/mcp.nix
     ];
     brim = nixosWithSystem "x86_64-linux" [
       ./hosts/brim/configuration.nix

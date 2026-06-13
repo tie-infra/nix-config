@@ -18,6 +18,8 @@
           (import ./overlays/mumble-discord-bridge.nix)
           (import ./overlays/zapret/default.nix)
           (import ./overlays/sonarr/default.nix)
+          (import ./overlays/markdown-to-confluence.nix)
+          (import ./overlays/mcp-atlassian.nix)
         ];
 
         config.allowUnfreePredicate =

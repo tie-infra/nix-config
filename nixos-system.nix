@@ -24,6 +24,7 @@ let
     ./modules/outline.nix
     ./modules/mumble-server.nix
     ./modules/mumble-discord-bridge.nix
+    ./modules/mcp-atlassian.nix
     ./modules/flood.nix
     ./modules/jellyfin.nix
     ./modules/minio.nix
