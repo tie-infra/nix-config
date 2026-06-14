@@ -2,8 +2,53 @@
   config,
   ...
 }:
+let
+  outlinePort = 3000;
+in
 {
-  services.outline.enable = true;
+  services.caddy.settings.apps.http.servers.default = {
+    routes = [
+      {
+        match = [
+          {
+            host = [
+              "brimworld.online"
+              "wiki.brimworld.online"
+            ];
+            path = [ "/" ];
+          }
+        ];
+        handle = [
+          {
+            handler = "static_response";
+            status_code = 302; # Found
+            headers.Location = [ "/s/3447b683-0b35-4ccd-b0cd-2f677ac812f4" ];
+          }
+        ];
+      }
+      {
+        match = [
+          {
+            host = [
+              "outline.brim.su"
+              "brimworld.online"
+              "wiki.brimworld.online"
+            ];
+          }
+        ];
+        handle = [
+          {
+            handler = "reverse_proxy";
+            upstreams = [ { dial = "localhost:${toString outlinePort}"; } ];
+          }
+        ];
+      }
+    ];
+  };
+
+  services.outline = {
+    enable = true;
+  };
 
   services.redis.servers.outline = {
     enable = true;
@@ -14,9 +59,9 @@
     environment = {
       NODE_ENV = "production";
 
-      URL = "https://brimworld.online";
-      CDN_URL = "https://brimworld.online";
-      PORT = "3000";
+      URL = "https://outline.brim.su";
+      CDN_URL = "https://outline.brim.su";
+      PORT = toString outlinePort;
 
       DATABASE_URL = "postgresql://localhost/outline?user=outline&host=/run/postgresql&sslmode=disable";
       REDIS_URL = "unix://${config.services.redis.servers.outline.unixSocket}";
@@ -37,10 +82,10 @@
       FILE_STORAGE_UPLOAD_MAX_SIZE = "100000000"; # 100 MB
     };
 
-    restartTriggers = [ config.sops.templates."outline.env".file ];
-
     serviceConfig = {
-      EnvironmentFile = config.sops.templates."outline.env".path;
+      EnvironmentFile = [
+        config.sops.templates."outline.env".path
+      ];
       SupplementaryGroups = [
         config.users.groups.postgres.name
         config.services.redis.servers.outline.user
@@ -48,29 +93,43 @@
     };
   };
 
-  sops.templates."outline.env".content = ''
-    SECRET_KEY=${config.sops.placeholder."outline/secret-key"}
-    UTILS_SECRET=${config.sops.placeholder."outline/utils-secret"}
-    DISCORD_CLIENT_SECRET=${config.sops.placeholder."outline/discord-client-secret"}
-    AWS_SECRET_ACCESS_KEY=${config.sops.placeholder."outline/s3-secret-access-key"}
-  '';
+  sops.templates."outline.env" = {
+    content = ''
+      SECRET_KEY=${config.sops.placeholder."outline/secret-key"}
+      UTILS_SECRET=${config.sops.placeholder."outline/utils-secret"}
+      DISCORD_CLIENT_SECRET=${config.sops.placeholder."outline/discord-client-secret"}
+      AWS_SECRET_ACCESS_KEY=${config.sops.placeholder."outline/s3-secret-access-key"}
+    '';
+    restartUnits = [
+      config.systemd.services.outline.name
+    ];
+  };
 
-  sops.secrets = {
-    "outline/secret-key" = {
-      restartUnits = [ "outline.service" ];
-      sopsFile = ../../secrets/brim.sops.yaml;
-    };
-    "outline/utils-secret" = {
-      restartUnits = [ "outline.service" ];
-      sopsFile = ../../secrets/brim.sops.yaml;
-    };
-    "outline/discord-client-secret" = {
-      restartUnits = [ "outline.service" ];
-      sopsFile = ../../secrets/brim.sops.yaml;
-    };
-    "outline/s3-secret-access-key" = {
-      restartUnits = [ "outline.service" ];
-      sopsFile = ../../secrets/brim.sops.yaml;
-    };
+  sops.secrets."outline/secret-key" = {
+    sopsFile = ../../secrets/brim.sops.yaml;
+    restartUnits = [
+      config.systemd.services.outline.name
+    ];
+  };
+
+  sops.secrets."outline/utils-secret" = {
+    sopsFile = ../../secrets/brim.sops.yaml;
+    restartUnits = [
+      config.systemd.services.outline.name
+    ];
+  };
+
+  sops.secrets."outline/discord-client-secret" = {
+    sopsFile = ../../secrets/brim.sops.yaml;
+    restartUnits = [
+      config.systemd.services.outline.name
+    ];
+  };
+
+  sops.secrets."outline/s3-secret-access-key" = {
+    sopsFile = ../../secrets/brim.sops.yaml;
+    restartUnits = [
+      config.systemd.services.outline.name
+    ];
   };
 }
