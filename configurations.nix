@@ -12,7 +12,12 @@
     ];
     brim = nixosWithSystem "x86_64-linux" [
       ./hosts/brim/configuration.nix
+      ./hosts/brim/networking.nix
       ./hosts/brim/caddy.nix
+      ./hosts/brim/outline.nix
+      ./hosts/brim/garage.nix
+      ./hosts/brim/pufferpanel.nix
+      ./hosts/brim/syncthing.nix
     ];
     kazuma = nixosWithSystem "x86_64-linux" [ ./hosts/kazuma/configuration.nix ];
     saitama = nixosWithSystem "x86_64-linux" [

@@ -1,4 +1,8 @@
 {
+  config,
+  ...
+}:
+{
   networking.firewall = {
     allowedUDPPorts = [ 443 ];
     allowedTCPPorts = [ 443 ];
@@ -10,49 +14,6 @@
       apps.http.servers.default = {
         listen = [ ":443" ];
         routes = [
-          {
-            match = [ { host = [ "brim.su" ]; } ];
-            terminal = true;
-            handle = [
-              {
-                handler = "subroute";
-                routes = [
-                  {
-                    match = [
-                      {
-                        expression = {
-                          expr = "{http.request.uri}.endsWith(\"/\")";
-                          name = "document"; # FIXME: caddy panics if name is nil
-                        };
-                      }
-                    ];
-                    handle = [
-                      {
-                        handler = "rewrite";
-                        uri = "{http.request.uri}index.html";
-                      }
-                    ];
-                  }
-                  {
-                    handle = [
-                      {
-                        handler = "rewrite";
-                        uri = "/brim-website{http.request.uri}";
-                      }
-                    ];
-                  }
-                  {
-                    handle = [
-                      {
-                        handler = "reverse_proxy";
-                        upstreams = [ { dial = "localhost:9000"; } ];
-                      }
-                    ];
-                  }
-                ];
-              }
-            ];
-          }
           {
             match = [ { host = [ "hunt-api.brim.su" ]; } ];
             terminal = true;
@@ -74,17 +35,6 @@
             ];
           }
           {
-            match = [ { host = [ "assets.brim.su" ]; } ];
-            terminal = true;
-            handle = [
-              {
-                handler = "static_response";
-                status_code = 301; # Moved Permanently
-                headers.Location = [ "https://brim.su/assets/" ];
-              }
-            ];
-          }
-          {
             match = [ { host = [ "ip.brim.su" ]; } ];
             terminal = true;
             handle = [
@@ -92,26 +42,6 @@
                 handler = "static_response";
                 headers.Content-Type = [ "text/plain" ];
                 body = "{http.request.remote.host}";
-              }
-            ];
-          }
-          {
-            match = [ { host = [ "storage.brim.su" ]; } ];
-            terminal = true;
-            handle = [
-              {
-                handler = "reverse_proxy";
-                upstreams = [ { dial = "localhost:9001"; } ];
-              }
-            ];
-          }
-          {
-            match = [ { host = [ "s3.brim.su" ]; } ];
-            terminal = true;
-            handle = [
-              {
-                handler = "reverse_proxy";
-                upstreams = [ { dial = "localhost:9000"; } ];
               }
             ];
           }
@@ -236,20 +166,6 @@
             ];
           }
           {
-            match = [ { host = [ "api.brim.su" ]; } ];
-            terminal = true;
-            handle = [
-              {
-                handler = "rewrite";
-                uri = "/brimworld-api{http.request.uri}";
-              }
-              {
-                handler = "reverse_proxy";
-                upstreams = [ { dial = "localhost:9000"; } ];
-              }
-            ];
-          }
-          {
             match = [ { host = [ "automodpack.brimworld.online" ]; } ];
             terminal = true;
             handle = [
@@ -314,19 +230,49 @@
           }
         ];
       };
-      apps.tls.automation.policies = [
-        {
-          #subjects = [
-          #  # TODO
-          #];
-          issuers = [
-            {
-              email = "dev@brim.su";
-              module = "acme";
-            }
-          ];
-        }
+      apps.tls = {
+        certificates.automate = [
+          "brim.su"
+          "*.brim.su"
+          "brimworld.online"
+          "*.brimworld.online"
+        ];
+        automation.policies = [
+          {
+            issuers = [
+              {
+                module = "acme";
+                email = "dev@brim.su";
+                challenges.dns = {
+                  provider = {
+                    name = "cloudflare";
+                    api_token = "{env.CLOUDFLARE_DNS_API_TOKEN}";
+                  };
+                };
+              }
+            ];
+          }
+        ];
+      };
+    };
+  };
+
+  systemd.services.caddy = {
+    serviceConfig = {
+      EnvironmentFile = [
+        config.sops.templates."caddy.env".path
       ];
     };
+  };
+
+  sops.templates."caddy.env" = {
+    content = ''
+      CLOUDFLARE_DNS_API_TOKEN=${config.sops.placeholder."cloudflare/dns-api-token"}
+    '';
+  };
+
+  sops.secrets."cloudflare/dns-api-token" = {
+    sopsFile = ../../secrets/brim.sops.yaml;
+    restartUnits = [ config.systemd.services.caddy.name ];
   };
 }

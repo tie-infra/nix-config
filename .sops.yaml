@@ -44,6 +44,12 @@ creation_rules:
       - age:
         - *admin_tie
         - *server_akane
+  - path_regex: ^secrets/garage\.sops\.yaml$
+    key_groups:
+      - age:
+        - *admin_tie
+        - *admin_brim
+        - *server_brim
   - path_regex: ^secrets/kazuma\.sops\.yaml$
     key_groups:
       - age:

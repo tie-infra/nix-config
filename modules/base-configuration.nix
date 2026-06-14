@@ -47,6 +47,9 @@ in
   # Use /etc overlayfs instead of generating it with Perl script.
   system.etc.overlay.enable = true;
 
+  # Do not generate documentation for NixOS modules.
+  documentation.nixos.enable = false;
+
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
   # For some workloads, zram provides significant RAM usage savings with
@@ -133,5 +136,8 @@ in
         LoginGraceTime = "15s";
       };
     };
+
+    # Extend caddy with non-standard plugins.
+    caddy.package = pkgs.caddy-with-plugins;
   };
 }

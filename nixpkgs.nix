@@ -12,7 +12,6 @@
           inputs.steam-games.overlays.default
           inputs.btrfs-rollback.overlays.default
           (import ./overlays/java-wrappers.nix)
-          (import ./overlays/mcactivity.nix)
           (import ./overlays/mlspp.nix)
           (import ./overlays/libdave.nix)
           (import ./overlays/mumble-discord-bridge.nix)
@@ -20,6 +19,7 @@
           (import ./overlays/sonarr/default.nix)
           (import ./overlays/markdown-to-confluence.nix)
           (import ./overlays/mcp-atlassian.nix)
+          (import ./overlays/caddy-with-plugins.nix)
         ];
 
         config.allowUnfreePredicate =

@@ -20,14 +20,14 @@ let
     ./modules/base-configuration.nix
     ./modules/btrfs-erase-your-darlings.nix
     ./modules/trust-admins.nix
-    ./modules/mcactivity.nix
     ./modules/outline.nix
     ./modules/mumble-server.nix
     ./modules/mumble-discord-bridge.nix
     ./modules/mcp-atlassian.nix
     ./modules/flood.nix
     ./modules/jellyfin.nix
-    ./modules/minio.nix
+    ./modules/garage.nix
+    ./modules/garage-webui.nix
     ./modules/prowlarr.nix
     ./modules/radarr.nix
     ./modules/sonarr.nix
@@ -49,7 +49,7 @@ let
     "services/torrent/flood.nix"
     "services/torrent/transmission.nix"
     "services/web-apps/outline.nix"
-    "services/web-servers/minio.nix"
+    "services/web-servers/garage.nix"
   ];
 
   nixosSystem =
