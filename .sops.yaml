@@ -7,55 +7,55 @@ keys:
   - &admin_tie age1y20x3mwhjaax0q5zc9mwytuste6r02m2m2ee26sz4595u0yxtp3qpk9z4t
   - &admin_brim age1fd38nsq5lnwy0p9vtgtf6u0tzjpsmv965vt2nez2frcz5tud4pqq0f0eng
 creation_rules:
-  - path_regex: ^secrets/wireguard-psk\.sops\.yaml$
+  - path_regex: ^secrets[/\\]wireguard-psk\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *admin_brim
         - *server_akane
         - *server_falcon
-  - path_regex: ^secrets/wireguard-pk-falcon\.sops\.yaml$
+  - path_regex: ^secrets[/\\]wireguard-pk-falcon\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_falcon
-  - path_regex: ^secrets/wireguard-pk-akane\.sops\.yaml$
+  - path_regex: ^secrets[/\\]wireguard-pk-akane\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_akane
-  - path_regex: ^secrets/xray\.sops\.yaml$
+  - path_regex: ^secrets[/\\]xray\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_akane
-  - path_regex: ^secrets/mcp\.sops\.yaml$
+  - path_regex: ^secrets[/\\]mcp\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_akane
-  - path_regex: ^secrets/transmission\.sops\.yaml$
+  - path_regex: ^secrets[/\\]transmission\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_saitama
-  - path_regex: ^secrets/mumble-server\.sops\.yaml$
+  - path_regex: ^secrets[/\\]mumble-server\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_akane
-  - path_regex: ^secrets/garage\.sops\.yaml$
+  - path_regex: ^secrets[/\\]garage\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *admin_brim
         - *server_brim
-  - path_regex: ^secrets/kazuma\.sops\.yaml$
+  - path_regex: ^secrets[/\\]kazuma\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie
         - *server_kazuma
-  - path_regex: ^secrets/brim\.sops\.yaml$
+  - path_regex: ^secrets[/\\]brim\.sops\.yaml$
     key_groups:
       - age:
         - *admin_tie

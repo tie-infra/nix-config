@@ -19,6 +19,7 @@
       ./hosts/brim/garage.nix
       ./hosts/brim/pufferpanel.nix
       ./hosts/brim/syncthing.nix
+      ./hosts/brim/sing-box.nix
     ];
     kazuma = nixosWithSystem "x86_64-linux" [ ./hosts/kazuma/configuration.nix ];
     saitama = nixosWithSystem "x86_64-linux" [
